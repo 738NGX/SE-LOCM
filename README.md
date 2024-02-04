@@ -1,2 +1,2 @@
-# AlgorithmEpoch_LegacyOfChineseMathematics
-缉古算今(Algorithm Epoch:Legacy of Chinese Mathematics)
+# SE-LOCM
+缉古算今(Stagnated Epoch:Legacy of Chinese Mathematics)
