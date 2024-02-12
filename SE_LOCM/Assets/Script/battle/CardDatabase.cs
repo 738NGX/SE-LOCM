@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 
 public enum CardType{Attack,Spell,Equip};           // 攻击 锦囊 装备
-public enum CardRarity{Base,Ordinary,Rare};         // 基础 普通 稀有
+public enum CardRarity{Base,Ordinary,Rare,Epic};         // 基础 普通 稀有
 public static class CardDatabase
 {
     private static readonly TextAsset csvData=AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Script/battle/carddb.csv");

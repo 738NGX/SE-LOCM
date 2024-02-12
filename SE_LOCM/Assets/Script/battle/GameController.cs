@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
     public List<Enemy> enemies;         // 敌人
     public DisplayController dc;        // 显示控制
     public HandCardsUI hcui;            // 手牌显示控制
+    public AudioClip sfxStart;          // 战斗开始音效
 
     public int roundCount;              // 回合数
     public GameStage gameStage;         // 游戏阶段
@@ -21,7 +22,12 @@ public class GameController : MonoBehaviour
     void Start()
     {
         roundCount=1;
-        StartCoroutine(dc.AnimatePanelAndText(new(){"战","斗","开","始"}));
+
+        AudioSource sfxStartSource=gameObject.AddComponent<AudioSource>();
+        sfxStartSource.clip=sfxStart;
+        sfxStartSource.Play();
+
+        StartCoroutine(dc.AnimatePanelAndText(new(){"战","斗","开","始"},1f));
         gameStage=GameStage.Pre;
     }
     void Update()

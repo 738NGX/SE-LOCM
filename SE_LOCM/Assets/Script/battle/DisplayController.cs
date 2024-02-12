@@ -23,10 +23,10 @@ public class DisplayController : MonoBehaviour
     {
         drawPileUI.text=gc.drawPile.drawPile.Count.ToString();
         discardPileUI.text=gc.discardPile.discardPile.Count.ToString();
-        HPUI.text="HP: "+gc.player.hp+"/"+gc.player.hp_limit;
+        HPUI.text=gc.player.hp+"/"+gc.player.hp_limit;
         SPUI.text=gc.player.sp+"/"+gc.player.sp_init;
     }
-    public IEnumerator AnimatePanelAndText(List<string> texts)
+    public IEnumerator AnimatePanelAndText(List<string> texts,float time=0.5f)
     {
         isAnimating=true;
 
@@ -43,7 +43,7 @@ public class DisplayController : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(time);
 
         foreach (Transform child in panel.transform)
         {

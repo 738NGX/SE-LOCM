@@ -30,10 +30,11 @@ public class HandCardsUI : MonoBehaviour
         {
             // 从模板创建新卡牌
             GameObject CardObject=Instantiate(cardTemplate,transform);
+            CardTemplate cardTemplateComponent=CardObject.GetComponent<CardTemplate>();
+            AudioSource cardTemplateAudio=CardObject.GetComponent<AudioSource>();
 
             float cardPositionX=i*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
             CardObject.transform.localPosition=new Vector3(cardPositionX,0,0);
-            CardTemplate cardTemplateComponent=CardObject.GetComponent<CardTemplate>();
             cardTemplateComponent.originalPosition=CardObject.transform.position;
             cardTemplateComponent.originalScale=new Vector3(1,1);
 
@@ -69,6 +70,7 @@ public class HandCardsUI : MonoBehaviour
             Sequence s=DOTween.Sequence();
             s.Append(CardObject.transform.DOMove(new Vector3(-8f,-4f),0.5f).From());
             s.Join(CardObject.transform.DOScale(0,0.5f).From());
+            cardTemplateAudio.Play();
             s.Play();
 
             yield return new WaitForSeconds(0.2f);

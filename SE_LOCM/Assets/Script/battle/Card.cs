@@ -59,6 +59,7 @@ public class Card
                 case "基础": rarity=CardRarity.Base;        break;
                 case "普通": rarity=CardRarity.Ordinary;    break;
                 case "稀有": rarity=CardRarity.Rare;        break;
+                case "史诗": rarity=CardRarity.Epic;        break;
             }
         }
         else Debug.LogError($"Card ID not found in database:{id}");

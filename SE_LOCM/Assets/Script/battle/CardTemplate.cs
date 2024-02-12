@@ -6,6 +6,7 @@ public class CardTemplate : MonoBehaviour
     public Vector3 originalScale;
     public Vector3 originalPosition;
     public Camera mainCamera;
+    public AudioSource audioSource;
     private int originalIndex;
     private bool isDragging=false;
     private void Start()
@@ -15,6 +16,7 @@ public class CardTemplate : MonoBehaviour
     private void OnMouseEnter()
     {
         transform.SetAsLastSibling();
+        audioSource.Play();
         transform.DOMove(originalPosition+Vector3.up*0.75f,0.1f);
         transform.DOScale(originalScale*1.1f,0.1f);
     }
