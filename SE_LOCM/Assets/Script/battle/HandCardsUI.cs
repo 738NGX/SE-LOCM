@@ -105,9 +105,12 @@ public class HandCardsUI : MonoBehaviour
     public void RemoveCard()
     {
         int i=0;
-        foreach(Transform child in transform)
+        for(int j=0;j<transform.childCount;j++)
         {
-            if(!child.gameObject.TryGetComponent<CardTemplate>(out var cardTemplateComponent)) continue;
+            Transform child=transform.GetChild(j);
+            var cardTemplateComponent=child.gameObject.GetComponent<CardTemplate>();
+            if(!cardTemplateComponent.inHand) continue;
+
             cardTemplateComponent.index=i;
             Vector3 lastPosition=cardTemplateComponent.originalPosition;
 
@@ -136,7 +139,7 @@ public class HandCardsUI : MonoBehaviour
             TextMeshProUGUI cardQuote=child.gameObject.transform.Find("原文").GetComponent<TextMeshProUGUI>();
             cardQuote.text=hc.handCards[i].displayInfo.quote;
             
-            float cardPositionX=i*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
+            float cardPositionX=cardTemplateComponent.index*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
             child.gameObject.transform.localPosition=new Vector3(cardPositionX,0,0);
             cardTemplateComponent.originalPosition=child.gameObject.transform.position;
             child.gameObject.transform.position=lastPosition;

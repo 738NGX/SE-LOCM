@@ -10,23 +10,20 @@ public class CardTemplate : MonoBehaviour
     public AudioSource audioSource;
     public GameController gc;
     public int index;
-    private int originalIndex;
+    public bool inHand=true;
     private bool isDragging=false;
     private bool inPlayArea=false;
-    private void Start()
-    {
-        originalIndex=transform.GetSiblingIndex();
-    }
     private void OnMouseEnter()
     {
         transform.SetAsLastSibling();
+        Debug.Log(index);
         audioSource.Play();
         transform.DOMove(originalPosition+Vector3.up*0.75f,0.1f);
         transform.DOScale(originalScale*1.1f,0.1f);
     }
     private void OnMouseExit()
     {
-        transform.SetSiblingIndex(originalIndex);
+        transform.SetSiblingIndex(index);
         transform.DOScale(originalScale,0.1f);
         transform.DOMove(originalPosition,0.1f);
     }
@@ -57,15 +54,13 @@ public class CardTemplate : MonoBehaviour
     }
     void OnMouseUp()
     {
-        // 停止拖动并返回起始位置
         if(inPlayArea&&gc.handCards.handCards[index].cost<=gc.player.sp)
         {
+            inHand=false;
             gc.CardExecuteAction(gc.handCards.handCards[index].id);
             StartCoroutine(RemoveCard());
-            Destroy(this);
         }
         isDragging=false;
-        // 使用DOTween来移动GameObject回到起始位置
         transform.DOMove(originalPosition,0.1f);
     }
     private IEnumerator RemoveCard()
@@ -74,15 +69,11 @@ public class CardTemplate : MonoBehaviour
         gc.player.ReduceSP(gc.handCards.handCards[index].cost);
         gc.discardPile.AddCardToDiscard(gc.handCards.handCards[index]);
         gc.handCards.RemoveCard(gc.handCards.handCards[index]);
-        
-        gc.hcui.RemoveCard();
 
-        Sequence s=DOTween.Sequence();
-        s.Append(transform.DOMove(new Vector3(8f,-4f),0.5f));
-        s.Join(transform.DOScale(0,0.5f));
         audioSource.Play();
-        s.Play();
-
+        transform.DOMove(new Vector3(8f,-4f),0.5f);
+        transform.DOScale(0,0.5f);
+        gc.hcui.RemoveCard();
         yield return new WaitForSeconds(0.5f);
     }
 }
