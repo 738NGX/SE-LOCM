@@ -64,16 +64,4 @@ public class Card
         }
         else Debug.LogError($"Card ID not found in database:{id}");
     }
-
-    // 手牌打出时调用
-    public void ExecuteAction()
-    {
-        // 根据ID映射到具体的函数或逻辑
-        switch (id)
-        {
-            default:
-                Debug.LogWarning("No action defined for this card ID: " + id);
-                break;
-        }
-    }
 }

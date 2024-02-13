@@ -13,17 +13,17 @@ public class HandCards : MonoBehaviour
             handCards.Add(card);
         }
     }
-    public void DrawCards(List<Card> cards)
+    public void DrawCard(List<Card> cards)
     {
         foreach(var card in cards) AddCardToHand(card);
     }
     // 从手牌中移除卡牌
-    public void RemoveCardFromHand(Card card)
+    public void RemoveCard(Card card)
     {
         handCards.Remove(card);
     }
-    public void RemoveCards(List<Card> cards)
+    public void RemoveCard(List<Card> cards)
     {
-        foreach(var card in cards) RemoveCardFromHand(card);
+        foreach(var card in cards) RemoveCard(card);
     }
 }

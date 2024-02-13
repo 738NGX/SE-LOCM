@@ -9,7 +9,8 @@ public class Enemy : MonoBehaviour
     public int dp;                  // 基础防御力
     public float attack_factor;     // 攻击倍率
     public float defence_factor;    // 防御倍率
-    public int hp_limit;           // 体力上限
+    public int hp_limit;            // 体力上限
+    public int shield;              // 护盾值
     void Start()
     {
         hp_limit=hp;

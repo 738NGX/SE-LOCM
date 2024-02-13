@@ -22,6 +22,16 @@ public class DrawPile : MonoBehaviour
         Shuffle(); // 初始时洗牌
     }
     
+    public void AddCardToDraw(Card card)
+    {
+        drawPile.Add(card);
+    }
+    public void AddCardToDraw(List<Card> cards)
+    {
+        foreach(Card card in cards) AddCardToDraw(card);
+        Shuffle();
+    }
+
     // 洗牌方法
     public void Shuffle()
     {

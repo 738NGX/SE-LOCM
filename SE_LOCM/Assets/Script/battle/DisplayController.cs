@@ -8,14 +8,20 @@ using DG.Tweening;
 public class DisplayController : MonoBehaviour
 {
     public GameController gc;
+    public bool isAnimating=false;
+    public TMP_FontAsset usingFont;
+    public Transform higherCanvas;
     public TextMeshProUGUI drawPileUI;
     public TextMeshProUGUI discardPileUI;
+    public GameObject playerObject;
+    public List<GameObject> enemyObjects;
     public TextMeshProUGUI HPUI;
     public TextMeshProUGUI SPUI;
-    public Transform canvasTransform;
-    public TMP_FontAsset usingFont;
-    public bool isAnimating=false;
-
+    public TextMeshProUGUI playerShield;
+    public List<TextMeshProUGUI> EnemyHPUI;
+    public List<TextMeshProUGUI> EnemyShield;
+    public GameObject shield;
+    
     private GameObject panel;
     private readonly float textWidth=100f;
 
@@ -25,12 +31,18 @@ public class DisplayController : MonoBehaviour
         discardPileUI.text=gc.discardPile.discardPile.Count.ToString();
         HPUI.text=gc.player.hp+"/"+gc.player.hp_limit;
         SPUI.text=gc.player.sp+"/"+gc.player.sp_init;
+        playerShield.text=gc.player.shield.ToString();
+        for(int i=0;i<gc.enemies.Count;i++)
+        {
+            EnemyHPUI[i].text=gc.enemies[i].hp+"/"+gc.enemies[i].hp_limit;
+            EnemyShield[i].text=gc.enemies[i].shield.ToString();
+        }
     }
     public IEnumerator AnimatePanelAndText(List<string> texts,float time=0.5f)
     {
         isAnimating=true;
 
-        panel=CreatePanel(canvasTransform,canvasTransform.GetComponent<RectTransform>().sizeDelta.x,300);
+        panel=CreatePanel(higherCanvas,higherCanvas.GetComponent<RectTransform>().sizeDelta.x,300);
         panel.transform.DOScaleX(0,0.5f).From();
 
         float textHorizontalOffset=100f;
@@ -80,11 +92,11 @@ public class DisplayController : MonoBehaviour
         text.font=usingFont;
         text.fontSize=120;
         text.alignment=TextAlignmentOptions.Center;
-        RectTransform rectTransform = textObject.GetComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(textWidth,30);
-        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        RectTransform rectTransform=textObject.GetComponent<RectTransform>();
+        rectTransform.sizeDelta=new Vector2(textWidth,30);
+        rectTransform.anchorMin=new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax=new Vector2(0.5f, 0.5f);
+        rectTransform.pivot=new Vector2(0.5f, 0.5f);
 
         float positionX=startX+index*(textWidth+offset);
         rectTransform.anchoredPosition=new Vector2(positionX,0);

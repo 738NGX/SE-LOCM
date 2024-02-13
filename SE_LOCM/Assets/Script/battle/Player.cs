@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public int sp_init;         // 每回合初始法术值
     public int attack_addon;    // 攻击加成
     public int defence_addon;   // 防御加成
+    public int shield;          // 护盾
 
     void Start()
     {
