@@ -52,15 +52,7 @@ public class GameController : MonoBehaviour
         {
             // 默认情况下可以摸5张牌
             int drawNum=5;
-            // 不够抽的时候从弃牌堆补牌
-            if(drawPile.drawPile.Count<drawNum)
-            {
-                StartCoroutine(hcui.ReturnCards());
-                drawPile.AddCardToDraw(discardPile.discardPile);
-                discardPile.discardPile.Clear();
-            }
-            drawNum=drawPile.drawPile.Count<drawNum ? drawPile.drawPile.Count : drawNum;    // 可能补完牌还不够抽
-            handCards.DrawCard(drawPile.DrawCards(drawNum));
+            DrawCards(drawNum);
             hcui.DrawCards();
             // 结束摸牌阶段
             gameStage=GameStage.Play;
@@ -91,14 +83,36 @@ public class GameController : MonoBehaviour
             gameStage=GameStage.Pre;
         }
     }
+    public void DrawCards(int drawNum)
+    {
+        // 不够抽的时候从弃牌堆补牌
+        if(drawPile.drawPile.Count<drawNum)
+        {
+            StartCoroutine(hcui.ReturnCards());
+            drawPile.AddCardToDraw(discardPile.discardPile);
+            discardPile.discardPile.Clear();
+        }
+        drawNum=drawPile.drawPile.Count<drawNum ? drawPile.drawPile.Count : drawNum;    // 可能补完牌还不够抽
+        handCards.DrawCard(drawPile.DrawCards(drawNum));
+    }
     public void CardExecuteAction(int id,bool isPlused=false)
     {
         switch (id)
         {
+            case 100: Card100ExecuteAction(isPlused); break;
             case 101: Card101ExecuteAction(isPlused); break;
             case 102: Card102ExecuteAction(isPlused); break;
+            case 103: Card102ExecuteAction(isPlused); break;
+            case 104: Card104ExecuteAction(isPlused); break;
             default: break;
         }
+    }
+    private void Card100ExecuteAction(bool isPlused)
+    {
+        int val=!isPlused ? 1 : 2;
+        StartCoroutine(UpArrow());
+        AttackAddonAdjust(val);
+        DefenceAddonAdjust(val);
     }
     private void Card101ExecuteAction(bool isPlused)
     {
@@ -109,6 +123,11 @@ public class GameController : MonoBehaviour
     {
         int val=!isPlused ? 6 : 8;
         StartCoroutine(AddShield(val));
+    }
+    private void Card104ExecuteAction(bool isPlused)
+    {
+        int val=!isPlused ? 6 : 8;
+        SingleAttack(val);
     }
     private void SingleAttack(int val)
     {
@@ -127,5 +146,25 @@ public class GameController : MonoBehaviour
         player.shield+=val;
         shield.transform.DOScale(0,0.1f);
         yield return new WaitForSeconds(0.1f);
+    }
+    private IEnumerator UpArrow()
+    {
+        GameObject arrow=Instantiate(dc.upArrow,transform);
+        arrow.transform.SetParent(dc.higherCanvas.transform,false);
+        arrow.transform.position=new Vector3(500f,650f);
+        arrow.SetActive(true);
+        arrow.GetComponent<AudioSource>().Play();
+        arrow.transform.DOScale(0,0.25f).From();
+        yield return new WaitForSeconds(0.25f);
+        arrow.transform.DOScale(0,0.1f);
+        yield return new WaitForSeconds(0.1f);
+    }
+    private void AttackAddonAdjust(int val)
+    {
+        player.attack_addon+=val;
+    }
+    private void DefenceAddonAdjust(int val)
+    {
+        player.defence_addon+=val;
     }
 }

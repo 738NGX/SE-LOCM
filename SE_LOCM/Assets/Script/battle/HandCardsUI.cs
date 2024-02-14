@@ -45,107 +45,103 @@ public class HandCardsUI : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         Destroy(CardObject);
     }
+    private void CardDisplayInfoUpdate(GameObject obj,Card card)
+    {
+        // 为卡牌信息赋值
+        Image image=obj.transform.Find("牌面").GetComponent<Image>();
+        if(card.type==CardType.Attack)
+        {
+            image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_attack.png");
+        }
+        else if(card.type==CardType.Spell)
+        {
+            image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_spell.png");
+        }
+        else
+        {
+            image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_equip.png");
+        }
+        TextMeshProUGUI cardName=obj.transform.Find("牌名").GetComponent<TextMeshProUGUI>();
+        cardName.text=card.displayInfo.name;
+        TextMeshProUGUI cardCost=obj.transform.Find("消耗").GetComponent<TextMeshProUGUI>();
+        cardCost.text=card.displayInfo.cost;
+        TextMeshProUGUI cardType=obj.transform.Find("属性").GetComponent<TextMeshProUGUI>();
+        cardType.text=card.displayInfo.type;
+        TextMeshProUGUI cardEffect=obj.transform.Find("效果").GetComponent<TextMeshProUGUI>();
+        cardEffect.text=card.displayInfo.effect;
+        TextMeshProUGUI cardQuote=obj.transform.Find("原文").GetComponent<TextMeshProUGUI>();
+        cardQuote.text=card.displayInfo.quote;
+    }
     public void DrawCards()
     {
-        StartCoroutine(DrawCardsCoroutine());
-    }
-    private IEnumerator DrawCardsCoroutine()
-    {
-        // 为每张手牌创建一个新的实例
-        for(int i=0;i<hc.handCards.Count;i++)
+        int currentDisplayCards=0;
+        foreach(Transform child in transform)
         {
-            // 从模板创建新卡牌
+            if(!child.TryGetComponent<CardTemplate>(out var cardTemplate)) continue;
+            if(cardTemplate.inHand) currentDisplayCards++;
+        }
+        StartCoroutine(DrawCardsCoroutine(currentDisplayCards));
+    }
+    private IEnumerator DrawCardsCoroutine(int currentDisplayCards)
+    {
+        int k=0;
+        for(int i=0;i<transform.childCount;i++)
+        {
+            Transform child=transform.GetChild(i);
+            if(!child.gameObject.TryGetComponent<CardTemplate>(out var cardTemplateComponent)) continue;
+            if(!cardTemplateComponent.inHand) continue;
+
+            cardTemplateComponent.index=k;
+            CardDisplayInfoUpdate(child.gameObject,hc.handCards[k]);
+
+            float cardPositionX=cardTemplateComponent.index*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
+            child.gameObject.transform.localPosition=new Vector3(cardPositionX,0,0);
+            (child.gameObject.transform.position, cardTemplateComponent.originalPosition)=(cardTemplateComponent.originalPosition, child.gameObject.transform.position);
+            child.gameObject.transform.DOMove(cardTemplateComponent.originalPosition,0.1f);
+
+            k++;
+        }
+        for(int i=currentDisplayCards;i<hc.handCards.Count;i++)
+        {
             GameObject CardObject=Instantiate(cardTemplate,transform);
             CardTemplate cardTemplateComponent=CardObject.GetComponent<CardTemplate>();
             AudioSource cardTemplateAudio=CardObject.GetComponent<AudioSource>();
 
             cardTemplateComponent.index=i;
+            CardDisplayInfoUpdate(CardObject,hc.handCards[i]);
+            CardObject.transform.SetParent(transform,false);
+            CardObject.SetActive(true);
+
             float cardPositionX=i*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
             CardObject.transform.localPosition=new Vector3(cardPositionX,0,0);
             cardTemplateComponent.originalPosition=CardObject.transform.position;
             cardTemplateComponent.originalScale=new Vector3(1,1);
 
-            // 为卡牌信息赋值
-            Image image=CardObject.transform.Find("牌面").GetComponent<Image>();
-            if(hc.handCards[i].type==CardType.Attack)
-            {
-                image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_attack.png");
-            }
-            else if(hc.handCards[i].type==CardType.Spell)
-            {
-                image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_spell.png");
-            }
-            else
-            {
-                image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_equip.png");
-            }
-            TextMeshProUGUI cardName=CardObject.transform.Find("牌名").GetComponent<TextMeshProUGUI>();
-            cardName.text=hc.handCards[i].displayInfo.name;
-            TextMeshProUGUI cardCost=CardObject.transform.Find("消耗").GetComponent<TextMeshProUGUI>();
-            cardCost.text=hc.handCards[i].displayInfo.cost;
-            TextMeshProUGUI cardType=CardObject.transform.Find("属性").GetComponent<TextMeshProUGUI>();
-            cardType.text=hc.handCards[i].displayInfo.type;
-            TextMeshProUGUI cardEffect=CardObject.transform.Find("效果").GetComponent<TextMeshProUGUI>();
-            cardEffect.text=hc.handCards[i].displayInfo.effect;
-            TextMeshProUGUI cardQuote=CardObject.transform.Find("原文").GetComponent<TextMeshProUGUI>();
-            cardQuote.text=hc.handCards[i].displayInfo.quote;
-
-            // 设置新卡牌是手牌堆的子对象
-            CardObject.transform.SetParent(transform, false);
-            CardObject.SetActive(true);
-
             CardObject.transform.DOMove(new Vector3(-8f,-4f),0.5f).From();
             CardObject.transform.DOScale(0,0.5f).From();
             cardTemplateAudio.Play();
-
 
             yield return new WaitForSeconds(0.2f);
         }
     }
     public void RemoveCard()
     {
-        int i=0;
-        for(int j=0;j<transform.childCount;j++)
+        int k=0;
+        for(int i=0;i<transform.childCount;i++)
         {
-            Transform child=transform.GetChild(j);
+            Transform child=transform.GetChild(i);
             var cardTemplateComponent=child.gameObject.GetComponent<CardTemplate>();
             if(!cardTemplateComponent.inHand) continue;
 
-            cardTemplateComponent.index=i;
-            Vector3 lastPosition=cardTemplateComponent.originalPosition;
+            cardTemplateComponent.index=k;
+            CardDisplayInfoUpdate(child.gameObject,hc.handCards[k]);
 
-            // 为卡牌信息赋值
-            Image image=child.gameObject.transform.Find("牌面").GetComponent<Image>();
-            if(hc.handCards[i].type==CardType.Attack)
-            {
-                image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_attack.png");
-            }
-            else if(hc.handCards[i].type==CardType.Spell)
-            {
-                image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_spell.png");
-            }
-            else
-            {
-                image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_equip.png");
-            }
-            TextMeshProUGUI cardName=child.gameObject.transform.Find("牌名").GetComponent<TextMeshProUGUI>();
-            cardName.text=hc.handCards[i].displayInfo.name;
-            TextMeshProUGUI cardCost=child.gameObject.transform.Find("消耗").GetComponent<TextMeshProUGUI>();
-            cardCost.text=hc.handCards[i].displayInfo.cost;
-            TextMeshProUGUI cardType=child.gameObject.transform.Find("属性").GetComponent<TextMeshProUGUI>();
-            cardType.text=hc.handCards[i].displayInfo.type;
-            TextMeshProUGUI cardEffect=child.gameObject.transform.Find("效果").GetComponent<TextMeshProUGUI>();
-            cardEffect.text=hc.handCards[i].displayInfo.effect;
-            TextMeshProUGUI cardQuote=child.gameObject.transform.Find("原文").GetComponent<TextMeshProUGUI>();
-            cardQuote.text=hc.handCards[i].displayInfo.quote;
-            
             float cardPositionX=cardTemplateComponent.index*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
             child.gameObject.transform.localPosition=new Vector3(cardPositionX,0,0);
-            cardTemplateComponent.originalPosition=child.gameObject.transform.position;
-            child.gameObject.transform.position=lastPosition;
+            (child.gameObject.transform.position, cardTemplateComponent.originalPosition)=(cardTemplateComponent.originalPosition, child.gameObject.transform.position);
             child.gameObject.transform.DOMove(cardTemplateComponent.originalPosition,0.1f);
 
-            i++;
+            k++;
         }
     }
     public IEnumerator DisCards()

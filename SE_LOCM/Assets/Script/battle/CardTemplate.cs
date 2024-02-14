@@ -67,7 +67,12 @@ public class CardTemplate : MonoBehaviour
     {
         Debug.Log(gc.handCards.handCards[index].displayInfo.name);
         gc.player.ReduceSP(gc.handCards.handCards[index].cost);
-        gc.discardPile.AddCardToDiscard(gc.handCards.handCards[index]);
+        if(gc.handCards.handCards[index].type==CardType.Equip)
+        {
+            gc.discardPile.AddCardToDisposable(gc.handCards.handCards[index]);
+        }
+        else gc.discardPile.AddCardToDiscard(gc.handCards.handCards[index]);
+        
         gc.handCards.RemoveCard(gc.handCards.handCards[index]);
 
         audioSource.Play();

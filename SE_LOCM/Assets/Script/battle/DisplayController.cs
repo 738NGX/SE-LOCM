@@ -13,14 +13,18 @@ public class DisplayController : MonoBehaviour
     public Transform higherCanvas;
     public TextMeshProUGUI drawPileUI;
     public TextMeshProUGUI discardPileUI;
+    public TextMeshProUGUI disposablePileUI;
     public GameObject playerObject;
     public List<GameObject> enemyObjects;
     public TextMeshProUGUI HPUI;
     public TextMeshProUGUI SPUI;
+    public TextMeshProUGUI playerAttackAddon;
+    public TextMeshProUGUI playerDefenceAddon;
     public TextMeshProUGUI playerShield;
     public List<TextMeshProUGUI> EnemyHPUI;
     public List<TextMeshProUGUI> EnemyShield;
     public GameObject shield;
+    public GameObject upArrow;
     
     private GameObject panel;
     private readonly float textWidth=100f;
@@ -29,8 +33,11 @@ public class DisplayController : MonoBehaviour
     {
         drawPileUI.text=gc.drawPile.drawPile.Count.ToString();
         discardPileUI.text=gc.discardPile.discardPile.Count.ToString();
+        disposablePileUI.text=gc.discardPile.disposablePile.Count.ToString();
         HPUI.text=gc.player.hp+"/"+gc.player.hp_limit;
         SPUI.text=gc.player.sp+"/"+gc.player.sp_init;
+        playerAttackAddon.text=(gc.player.attack_addon<0 ? "" : "+")+gc.player.attack_addon;
+        playerDefenceAddon.text=(gc.player.defence_addon<0 ? "" : "+")+gc.player.defence_addon;
         playerShield.text=gc.player.shield.ToString();
         for(int i=0;i<gc.enemies.Count;i++)
         {
