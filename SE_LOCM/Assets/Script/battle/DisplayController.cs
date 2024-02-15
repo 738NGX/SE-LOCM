@@ -22,7 +22,9 @@ public class DisplayController : MonoBehaviour
     public TextMeshProUGUI playerDefenceAddon;
     public TextMeshProUGUI playerShield;
     public List<TextMeshProUGUI> EnemyHPUI;
+    public List<Image> EnemyHPSlider;
     public List<TextMeshProUGUI> EnemyShield;
+    public GameObject bezierArrow;
     public GameObject shield;
     public GameObject upArrow;
     
@@ -44,6 +46,11 @@ public class DisplayController : MonoBehaviour
             EnemyHPUI[i].text=gc.enemies[i].hp+"/"+gc.enemies[i].hp_limit;
             EnemyShield[i].text=gc.enemies[i].shield.ToString();
         }
+    }
+    public void UpdateHPSlider(int i)
+    {
+        if(i==-1) return;
+        DOTween.To(()=>EnemyHPSlider[i].fillAmount,x=>EnemyHPSlider[i].fillAmount=x,(float)gc.enemies[i].hp/gc.enemies[i].hp_limit,0.25f);
     }
     public IEnumerator AnimatePanelAndText(List<string> texts,float time=0.5f)
     {
@@ -90,7 +97,7 @@ public class DisplayController : MonoBehaviour
         
         return panel;
     }
-    GameObject CreateText(Transform parent, string textContent, float startX, int index, float offset)
+    private GameObject CreateText(Transform parent, string textContent, float startX, int index, float offset)
     {
         GameObject textObject=new("Text");
         textObject.transform.SetParent(parent, false);

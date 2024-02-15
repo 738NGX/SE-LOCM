@@ -15,9 +15,15 @@ public class DrawPile : MonoBehaviour
             new Card(110),new Card(111),new Card(112),new Card(113),new Card(114),
             new Card(115),new Card(116),new Card(117),new Card(118),new Card(119),
             new Card(120),new Card(121)*/
+            
             new Card(100),new Card(103),new Card(104),
             new Card(101),new Card(101),new Card(101),new Card(101),
             new Card(102),new Card(102),new Card(102),new Card(102),
+            /*
+            new Card(103),new Card(101),
+            new Card(101),new Card(101),new Card(101),new Card(101),
+            new Card(101),new Card(101),new Card(101),new Card(101),
+            */
         };
         Shuffle(); // 初始时洗牌
     }

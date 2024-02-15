@@ -26,4 +26,5 @@ public class HandCards : MonoBehaviour
     {
         foreach(var card in cards) RemoveCard(card);
     }
+    public Card Top(){return handCards[^1];}
 }

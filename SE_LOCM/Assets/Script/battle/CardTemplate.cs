@@ -11,7 +11,7 @@ public class CardTemplate : MonoBehaviour
     public GameController gc;
     public int index;
     public bool inHand=true;
-    private bool isDragging=false;
+    public bool isDragging=false;
     private bool inPlayArea=false;
     private void OnMouseEnter()
     {
@@ -57,8 +57,9 @@ public class CardTemplate : MonoBehaviour
         if(inPlayArea&&gc.handCards.handCards[index].cost<=gc.player.sp)
         {
             inHand=false;
-            gc.CardExecuteAction(gc.handCards.handCards[index].id);
+            int id=gc.handCards.handCards[index].id;
             StartCoroutine(RemoveCard());
+            gc.CardExecuteAction(id);
         }
         isDragging=false;
         transform.DOMove(originalPosition,0.1f);
@@ -76,9 +77,10 @@ public class CardTemplate : MonoBehaviour
         gc.handCards.RemoveCard(gc.handCards.handCards[index]);
 
         audioSource.Play();
-        transform.DOMove(new Vector3(8f,-4f),0.5f);
-        transform.DOScale(0,0.5f);
+        transform.DOMove(new Vector3(8f,-4f),0.25f);
+        transform.DOScale(0,0.25f);
         gc.hcui.RemoveCard();
-        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(gc.hcui.CardDisplayUpdate());
+        yield return new WaitForSeconds(0.25f);
     }
 }

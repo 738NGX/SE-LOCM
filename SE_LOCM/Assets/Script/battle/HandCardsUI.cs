@@ -25,7 +25,7 @@ public class HandCardsUI : MonoBehaviour
     }
     */
     
-    public IEnumerator ReturnCards()
+    public void ReturnCards()
     {
         Vector3[] path=new Vector3[3];
         path[0]=new Vector3(8f,-4f);
@@ -42,8 +42,6 @@ public class HandCardsUI : MonoBehaviour
         cardTemplateAudio.Play();
         CardObject.transform.DOPath(path,0.5f,PathType.CatmullRom);
         CardObject.transform.DOScale(0,0.5f);
-        yield return new WaitForSeconds(0.5f);
-        Destroy(CardObject);
     }
     private void CardDisplayInfoUpdate(GameObject obj,Card card)
     {
@@ -72,18 +70,22 @@ public class HandCardsUI : MonoBehaviour
         TextMeshProUGUI cardQuote=obj.transform.Find("原文").GetComponent<TextMeshProUGUI>();
         cardQuote.text=card.displayInfo.quote;
     }
+    private void CardDisplayIndexUpdate(Transform transform)
+    {
+        foreach(Transform child in transform)
+        {
+            if(!child.TryGetComponent<CardTemplate>(out var cardTemplate)) continue;
+            if(cardTemplate.inHand) child.SetSiblingIndex(cardTemplate.index);
+        }
+    }
     public void DrawCards()
     {
         int currentDisplayCards=0;
         foreach(Transform child in transform)
         {
-            if(!child.TryGetComponent<CardTemplate>(out var cardTemplate)) continue;
-            if(cardTemplate.inHand) currentDisplayCards++;
+            if(!child.TryGetComponent<CardTemplate>(out var cardTemplateCount)) continue;
+            if(cardTemplateCount.inHand&&!cardTemplateCount.isDragging) currentDisplayCards++;
         }
-        StartCoroutine(DrawCardsCoroutine(currentDisplayCards));
-    }
-    private IEnumerator DrawCardsCoroutine(int currentDisplayCards)
-    {
         int k=0;
         for(int i=0;i<transform.childCount;i++)
         {
@@ -97,7 +99,6 @@ public class HandCardsUI : MonoBehaviour
             float cardPositionX=cardTemplateComponent.index*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
             child.gameObject.transform.localPosition=new Vector3(cardPositionX,0,0);
             (child.gameObject.transform.position, cardTemplateComponent.originalPosition)=(cardTemplateComponent.originalPosition, child.gameObject.transform.position);
-            child.gameObject.transform.DOMove(cardTemplateComponent.originalPosition,0.1f);
 
             k++;
         }
@@ -105,23 +106,19 @@ public class HandCardsUI : MonoBehaviour
         {
             GameObject CardObject=Instantiate(cardTemplate,transform);
             CardTemplate cardTemplateComponent=CardObject.GetComponent<CardTemplate>();
-            AudioSource cardTemplateAudio=CardObject.GetComponent<AudioSource>();
 
             cardTemplateComponent.index=i;
             CardDisplayInfoUpdate(CardObject,hc.handCards[i]);
             CardObject.transform.SetParent(transform,false);
             CardObject.SetActive(true);
 
+            cardTemplateComponent.originalScale=new Vector3(1,1);
+            
             float cardPositionX=i*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
             CardObject.transform.localPosition=new Vector3(cardPositionX,0,0);
             cardTemplateComponent.originalPosition=CardObject.transform.position;
-            cardTemplateComponent.originalScale=new Vector3(1,1);
-
-            CardObject.transform.DOMove(new Vector3(-8f,-4f),0.5f).From();
-            CardObject.transform.DOScale(0,0.5f).From();
-            cardTemplateAudio.Play();
-
-            yield return new WaitForSeconds(0.2f);
+            CardObject.transform.position=new Vector3(-8f,-4f); 
+            CardObject.transform.localScale=Vector3.zero;
         }
     }
     public void RemoveCard()
@@ -130,7 +127,7 @@ public class HandCardsUI : MonoBehaviour
         for(int i=0;i<transform.childCount;i++)
         {
             Transform child=transform.GetChild(i);
-            var cardTemplateComponent=child.gameObject.GetComponent<CardTemplate>();
+            if(!child.TryGetComponent<CardTemplate>(out var cardTemplateComponent)) continue;
             if(!cardTemplateComponent.inHand) continue;
 
             cardTemplateComponent.index=k;
@@ -144,14 +141,36 @@ public class HandCardsUI : MonoBehaviour
             k++;
         }
     }
+    public IEnumerator CardDisplayUpdate()
+    {
+        foreach(Transform child in transform)
+        {
+            if(!child.TryGetComponent<CardTemplate>(out var cardTemplateComponent)) continue;
+            if(cardTemplateComponent.inHand&&!cardTemplateComponent.isDragging)
+            {
+                if(child.position==new Vector3(-8f,-4f))
+                {
+                    child.GetComponent<AudioSource>().Play();
+                    child.DOScale(cardTemplateComponent.originalScale,0.25f); 
+                    child.DOMove(cardTemplateComponent.originalPosition,0.25f);
+                    yield return new WaitForSeconds(0.15f);
+                }
+                else
+                {
+                    child.DOMove(cardTemplateComponent.originalPosition,0.25f);
+                }
+            }
+        }
+        CardDisplayIndexUpdate(transform);
+    }
     public IEnumerator DisCards()
     {
         foreach(Transform child in transform)
         {
-            child.gameObject.transform.DOMove(new Vector3(8f,-4f),0.5f);
-            child.gameObject.transform.DOScale(0,0.5f);
+            child.gameObject.transform.DOMove(new Vector3(8f,-4f),0.25f);
+            child.gameObject.transform.DOScale(0,0.25f);
         }
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.25f);
         foreach(Transform child in transform)
         {
             Destroy(child.gameObject);
