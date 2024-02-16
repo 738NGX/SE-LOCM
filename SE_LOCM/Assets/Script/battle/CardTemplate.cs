@@ -15,22 +15,28 @@ public class CardTemplate : MonoBehaviour
     private bool inPlayArea=false;
     private void OnMouseEnter()
     {
-        transform.SetAsLastSibling();
-        Debug.Log(index);
-        audioSource.Play();
-        transform.DOMove(originalPosition+Vector3.up*0.75f,0.1f);
-        transform.DOScale(originalScale*1.1f,0.1f);
+        if(gc.gameStage==GameStage.Play)
+        {
+            transform.SetAsLastSibling();
+            //Debug.Log(index);
+            audioSource.Play();
+            transform.DOMove(originalPosition+Vector3.up*0.75f,0.1f);
+            transform.DOScale(originalScale*1.1f,0.1f);
+        }
     }
     private void OnMouseExit()
     {
         transform.SetSiblingIndex(index);
-        transform.DOScale(originalScale,0.1f);
-        transform.DOMove(originalPosition,0.1f);
+        if(inHand)
+        {
+            transform.DOScale(originalScale,0.1f);
+            transform.DOMove(originalPosition,0.1f);
+        }
     }
     void OnMouseDown()
     {
         // 开始拖动
-        isDragging = true;
+        if(gc.gameStage==GameStage.Play) isDragging=true;
     }
     void Update()
     {
@@ -54,25 +60,47 @@ public class CardTemplate : MonoBehaviour
     }
     void OnMouseUp()
     {
-        if(inPlayArea&&gc.handCards.handCards[index].cost<=gc.player.sp)
+        if(inPlayArea&&gc.waitingDiscardCount>0)
+        {
+            inHand=false;
+            StartCoroutine(DisCard());
+            gc.waitingDiscardCount--;
+        }
+        else if(inPlayArea&&gc.handCards.handCards[index].cost<=gc.player.sp)
         {
             inHand=false;
             int id=gc.handCards.handCards[index].id;
+            gc.handCards.handCards[index].Play();
             StartCoroutine(RemoveCard());
             gc.CardExecuteAction(id);
         }
+        else transform.DOMove(originalPosition,0.1f);
         isDragging=false;
-        transform.DOMove(originalPosition,0.1f);
     }
     private IEnumerator RemoveCard()
     {
-        Debug.Log(gc.handCards.handCards[index].displayInfo.name);
+        //Debug.Log(gc.handCards.handCards[index].displayInfo.name);
         gc.player.ReduceSP(gc.handCards.handCards[index].cost);
-        if(gc.handCards.handCards[index].type==CardType.Equip)
+        if(gc.handCards.handCards[index].disposable)
         {
             gc.discardPile.AddCardToDisposable(gc.handCards.handCards[index]);
         }
         else gc.discardPile.AddCardToDiscard(gc.handCards.handCards[index]);
+        
+        gc.handCards.RemoveCard(gc.handCards.handCards[index]);
+
+        audioSource.Play();
+        transform.DOMove(new Vector3(8f,-4f),0.25f);
+        transform.DOScale(0,0.25f);
+        gc.hcui.RemoveCard();
+        StartCoroutine(gc.hcui.CardDisplayUpdate());
+        yield return new WaitForSeconds(0.25f);
+    }
+    private IEnumerator DisCard()
+    {
+        //Debug.Log(gc.handCards.handCards[index].displayInfo.name);
+
+        gc.discardPile.AddCardToDiscard(gc.handCards.handCards[index]);
         
         gc.handCards.RemoveCard(gc.handCards.handCards[index]);
 

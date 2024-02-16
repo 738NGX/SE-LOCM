@@ -23,4 +23,5 @@ public class DiscardPile : MonoBehaviour
     {
         foreach(Card card in cards) AddCardToDisposable(card);
     }
+    public Card Top(){return discardPile[^1];}
 }

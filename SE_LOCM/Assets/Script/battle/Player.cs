@@ -29,8 +29,13 @@ public class Player : MonoBehaviour
     public void ReduceHP(int val)
     {
         if(val<1) return;
-        if(hp-val<=0) hp=0;
-        else hp-=val;
+        if(hp+shield-val<=0) hp=0;
+        else if(val>shield)
+        {
+            hp-=val-shield;
+            shield=0;
+        }
+        else shield-=val;
     }
     public void RecoverSP(){sp=sp_init;}
     public void AddSP(int val)

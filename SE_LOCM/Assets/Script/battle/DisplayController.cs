@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using DG.Tweening;
+using UnityEditor;
 
 public class DisplayController : MonoBehaviour
 {
@@ -20,10 +21,13 @@ public class DisplayController : MonoBehaviour
     public TextMeshProUGUI SPUI;
     public TextMeshProUGUI playerAttackAddon;
     public TextMeshProUGUI playerDefenceAddon;
+    public Image playerHPSlider;
     public TextMeshProUGUI playerShield;
     public List<TextMeshProUGUI> EnemyHPUI;
     public List<Image> EnemyHPSlider;
     public List<TextMeshProUGUI> EnemyShield;
+    public List<Image> EnemyIntend;
+    public List<TextMeshProUGUI> EnemyIntendVal;
     public GameObject bezierArrow;
     public GameObject shield;
     public GameObject upArrow;
@@ -45,12 +49,26 @@ public class DisplayController : MonoBehaviour
         {
             EnemyHPUI[i].text=gc.enemies[i].hp+"/"+gc.enemies[i].hp_limit;
             EnemyShield[i].text=gc.enemies[i].shield.ToString();
+            EnemyIntend[i].sprite=gc.enemies[i].intendType switch
+            {
+                IntendType.Attack => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_attack.png"),
+                IntendType.Defence => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_defence.png"),
+                IntendType.Buff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_buff.png"),
+                IntendType.Debuff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_debuff.png"),
+                IntendType.Recover => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_recover.png"),
+                IntendType.Sleep => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_sleep.png"),
+                _ => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_unknown.png"),
+            };
+            EnemyIntendVal[i].text=gc.enemies[i].intendValue<0?"":gc.enemies[i].intendValue.ToString()+(gc.enemies[i].intendTimes<2?"":"x"+gc.enemies[i].intendTimes);
         }
     }
     public void UpdateHPSlider(int i)
     {
-        if(i==-1) return;
-        DOTween.To(()=>EnemyHPSlider[i].fillAmount,x=>EnemyHPSlider[i].fillAmount=x,(float)gc.enemies[i].hp/gc.enemies[i].hp_limit,0.25f);
+        if(i==-1)
+        {
+            DOTween.To(()=>playerHPSlider.fillAmount,x=>playerHPSlider.fillAmount=x,(float)gc.player.hp/gc.player.hp_limit,0.25f);
+        }
+        else DOTween.To(()=>EnemyHPSlider[i].fillAmount,x=>EnemyHPSlider[i].fillAmount=x,(float)gc.enemies[i].hp/gc.enemies[i].hp_limit,0.25f);
     }
     public IEnumerator AnimatePanelAndText(List<string> texts,float time=0.5f)
     {
@@ -70,6 +88,7 @@ public class DisplayController : MonoBehaviour
         }
 
         yield return new WaitForSeconds(time);
+        yield return new WaitUntil(()=>gc.waitingDiscardCount==0);
 
         foreach (Transform child in panel.transform)
         {

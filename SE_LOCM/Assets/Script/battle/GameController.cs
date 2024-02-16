@@ -18,6 +18,10 @@ public class GameController : MonoBehaviour
     public HandCardsUI hcui;            // 手牌显示控制
     public AudioClip sfxStart;          // 开始音效
     public AudioClip sfxAttack;         // 攻击音效
+    public AudioClip sfxDefence;        // 防御音效
+    public AudioClip sfxBuff;           // 正面效果音效
+    public AudioClip sfxDeuff;          // 负面效果音效
+    public AudioClip sfxRecover;        // 回复效果音效
     public AudioClip sfxHurt;           // 受伤音效
     public AudioClip sfxVictory;        // 战胜音效
     public AudioClip sfxDefeat;         // 战败音效
@@ -25,8 +29,8 @@ public class GameController : MonoBehaviour
     public int roundCount;              // 回合数
     public GameStage gameStage;         // 游戏阶段
     public int enemyCount;              // 存活敌人数量
-    public int selectedEnemyIndex=-2;
-    
+    public int waitingDiscardCount=0;   // 等待回合内弃牌数量
+    public int selectedEnemyIndex=-2;   // 选中敌人序号,-2不选择,-1待选择
     
     public void PlayAudio(AudioClip clip)
     {
@@ -55,6 +59,9 @@ public class GameController : MonoBehaviour
         // 游戏阶段检查
         if(gameStage==GameStage.Pre)
         {
+            // 敌人产生回合意图
+            foreach(Enemy enemy in enemies) enemy.Prepare();
+            
             StartCoroutine(dc.AnimatePanelAndText(new(){"玩","家","回","合"}));
             player.sp=player.sp_init;
             
@@ -85,6 +92,7 @@ public class GameController : MonoBehaviour
         else if(gameStage==GameStage.Enemy)
         {
             StartCoroutine(dc.AnimatePanelAndText(new(){"敌","人","回","合"}));
+            foreach(Enemy enemy in enemies) enemy.Execute();
             // 结束敌人阶段
             gameStage=GameStage.End;
         }
@@ -98,38 +106,46 @@ public class GameController : MonoBehaviour
         else if(gameStage==GameStage.Victory)
         {
             PlayAudio(sfxVictory);
-            StartCoroutine(dc.AnimatePanelAndText(new(){"战","斗","胜","利"},1f));
+            StartCoroutine(dc.AnimatePanelAndText(new(){"战","斗","胜","利"},2f));
             gameStage=GameStage.Null;
         }
         else if(gameStage==GameStage.Defeat)
         {
+            dc.playerObject.GetComponent<Animator>().SetBool("Die",true);
             PlayAudio(sfxDefeat);
-            StartCoroutine(dc.AnimatePanelAndText(new(){"战","斗","失","败"},1f));
+            StartCoroutine(dc.AnimatePanelAndText(new(){"战","斗","失","败"},2f));
             gameStage=GameStage.Null;
         }
     }
     
     // 抽牌
-    public void DrawCards(int drawNum)
+    public void DrawCards(int val)
     {
         // 不够抽的时候从弃牌堆补牌
-        if(drawPile.drawPile.Count<drawNum)
+        if(drawPile.drawPile.Count<val)
         {
             hcui.ReturnCards();
             drawPile.AddCardToDraw(discardPile.discardPile);
             discardPile.discardPile.Clear();
         }
-        drawNum=drawPile.drawPile.Count<drawNum ? drawPile.drawPile.Count : drawNum;    // 可能补完牌还不够抽
-        handCards.DrawCard(drawPile.DrawCards(drawNum));
+        val=drawPile.drawPile.Count<val ? drawPile.drawPile.Count : val;    // 可能补完牌还不够抽
+        handCards.DrawCard(drawPile.DrawCards(val));
         hcui.DrawCards();
         StartCoroutine(hcui.CardDisplayUpdate());
     }
-    // 选择攻击
-    private void SelectAttack(int val)
+    // 等待弃牌
+    public void WaitingDiscards(int val)
     {
-        StartCoroutine(SelectAttackCoroutine(val));
+        if(handCards.handCards.Count<val) return;
+        waitingDiscardCount+=val;
+        StartCoroutine(dc.AnimatePanelAndText(new(){"弃",val.ToString(),"张","牌"},0f));
     }
-    private IEnumerator SelectAttackCoroutine(int val)
+    // 选择攻击
+    private void SelectAttack(int val,int times=1)
+    {
+        StartCoroutine(SelectAttackCoroutine(val,times));
+    }
+    private IEnumerator SelectAttackCoroutine(int val,int times)
     {
         dc.bezierArrow.SetActive(true);
         selectedEnemyIndex=-1;
@@ -138,17 +154,13 @@ public class GameController : MonoBehaviour
 
         dc.bezierArrow.SetActive(false);
 
-        if(selectedEnemyIndex>=0&&selectedEnemyIndex<enemies.Count)
+        for(int i=0;i<times;i++)
         {
             enemies[selectedEnemyIndex].ReduceHP(val);
             PlayAudio(sfxAttack);
             dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
-            dc.UpdateHPSlider(selectedEnemyIndex);
-            dc.enemyObjects[selectedEnemyIndex].GetComponent<Animator>().SetTrigger("Hurt");
             Camera.main.transform.DOShakePosition(0.5f,0.5f);
-            PlayAudio(sfxHurt);
         }
-        else Debug.LogError("Selected enemy index is out of range.");
 
         selectedEnemyIndex=-2;
     }
@@ -182,7 +194,7 @@ public class GameController : MonoBehaviour
         shield.transform.SetParent(dc.higherCanvas.transform,false);
         shield.transform.position=new Vector3(500f,650f);
         shield.SetActive(true);
-        shield.GetComponent<AudioSource>().Play();
+        PlayAudio(sfxDefence);
         shield.transform.DOScale(0,0.25f).From();
         yield return new WaitForSeconds(0.25f);
         player.shield+=val;
@@ -196,7 +208,7 @@ public class GameController : MonoBehaviour
         arrow.transform.SetParent(dc.higherCanvas.transform,false);
         arrow.transform.position=new Vector3(500f,650f);
         arrow.SetActive(true);
-        arrow.GetComponent<AudioSource>().Play();
+        PlayAudio(sfxBuff);
         arrow.transform.DOScale(0,0.25f).From();
         yield return new WaitForSeconds(0.25f);
         arrow.transform.DOScale(0,0.1f);
@@ -227,6 +239,16 @@ public class GameController : MonoBehaviour
             case 102: Card102ExecuteAction(isPlused); break;
             case 103: Card103ExecuteAction(isPlused); break;
             case 104: Card104ExecuteAction(isPlused); break;
+            case 105: Card105ExecuteAction(isPlused); break;
+            case 106: Card106ExecuteAction(isPlused); break;
+            case 107: Card107ExecuteAction(isPlused); break;
+            case 108: Card108ExecuteAction(isPlused); break;
+            case 109: Card109ExecuteAction(isPlused); break;
+            case 110: Card110ExecuteAction(isPlused); break;
+            case 111: Card111ExecuteAction(isPlused); break;
+            case 112: Card112ExecuteAction(isPlused); break;
+            case 113: Card113ExecuteAction(isPlused); break;
+            case 114: Card114ExecuteAction(isPlused); break;
             default: break;
         }
     }
@@ -262,5 +284,96 @@ public class GameController : MonoBehaviour
         // 筹算除法
         int val=!isPlused ? 12 : 18;
         AllAttack(val/enemies.Count);
+    }
+    private void Card105ExecuteAction(bool isPlused)
+    {
+        // 合分术
+        int val=!isPlused ? 3 : 5;
+        AddShield(val+player.defence_addon);
+        SelectAttack(val+player.attack_addon);
+    }
+    private void Card106ExecuteAction(bool isPlused)
+    {
+        // 减分术
+        int val=!isPlused ? 6 : 8;
+        AddShield(val+player.defence_addon);
+        WaitingDiscards(1);
+    }
+    private void Card107ExecuteAction(bool isPlused)
+    {
+        // 约分术
+        int val=!isPlused ? 5 : 7;
+        SelectAttack(val+player.attack_addon);
+    }
+    private void Card108ExecuteAction(bool isPlused)
+    {
+        // 课分术
+        DrawCards(1);
+        int val=!isPlused ? handCards.Top().cost : handCards.Top().cost/2;
+        WaitingDiscards(val);
+    }
+    private void Card109ExecuteAction(bool isPlused)
+    {
+        // 课分术
+        StartCoroutine(Card109ExecuteActionCoroutine(isPlused));
+    }
+    private IEnumerator Card109ExecuteActionCoroutine(bool isPlused)
+    {
+        int val=!isPlused ? 8 : 12;
+        float factor=!isPlused ? 1 : 1.5f;
+        
+        dc.bezierArrow.SetActive(true);
+        selectedEnemyIndex=-1;
+
+        yield return new WaitUntil(()=>selectedEnemyIndex!=-1);
+
+        dc.bezierArrow.SetActive(false);
+
+        if(enemies[selectedEnemyIndex].intendType==IntendType.Attack)
+        {
+            AddShield((int)(enemies[selectedEnemyIndex].intendValue*factor)+player.defence_addon);
+        }
+        else
+        {
+            enemies[selectedEnemyIndex].ReduceHP(val);
+            PlayAudio(sfxAttack);
+            dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
+            Camera.main.transform.DOShakePosition(0.5f,0.5f);
+        }
+
+        selectedEnemyIndex=-2;
+    }
+    private void Card110ExecuteAction(bool isPlused)
+    {
+        // 经分术
+        int val=!isPlused ? 24 : 36;
+        AllAttack(val/enemies.Count);
+    }
+    private void Card111ExecuteAction(bool isPlused)
+    {
+        // 乘分术
+        int val=!isPlused ? 3 : 4;
+        DrawCards(val);
+        WaitingDiscards(1);
+    }
+    private void Card112ExecuteAction(bool isPlused)
+    {
+        // 方田术
+        int val=!isPlused ? 4 : 6;
+        SelectAttack(val+player.attack_addon,2);
+    }
+    private void Card113ExecuteAction(bool isPlused)
+    {
+        // 里田术
+        DrawCards(1);
+        if(isPlused||handCards.Top().type==CardType.Spell) AddShield(5);
+    }
+    private void Card114ExecuteAction(bool isPlused)
+    {
+        // 大广田术
+        Card card=discardPile.Top();
+        if(card.id!=114) Debug.LogError("id114 error");
+        int val=!isPlused ? 9+(card.playTimes-1)*3 : 9+(card.playTimes-1)*3;
+        SelectAttack(val+player.attack_addon);
     }
 }

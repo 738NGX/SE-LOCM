@@ -15,6 +15,7 @@ public static class CardDatabase
             string[] dataLines=csvData.text.Split('\n');
             for(int i=1;i<dataLines.Length;i++)
             {
+                if(dataLines.Length==0) continue;
                 CardDisplayInfo entry=new(dataLines[i]);
                 data.Add(entry.id,entry);
             }
