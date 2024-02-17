@@ -40,10 +40,10 @@ public class DisplayController : MonoBehaviour
         drawPileUI.text=gc.drawPile.drawPile.Count.ToString();
         discardPileUI.text=gc.discardPile.discardPile.Count.ToString();
         disposablePileUI.text=gc.discardPile.disposablePile.Count.ToString();
-        HPUI.text=gc.player.hp+"/"+gc.player.hp_limit;
-        SPUI.text=gc.player.sp+"/"+gc.player.sp_init;
-        playerAttackAddon.text=(gc.player.attack_addon<0 ? "" : "+")+gc.player.attack_addon;
-        playerDefenceAddon.text=(gc.player.defence_addon<0 ? "" : "+")+gc.player.defence_addon;
+        HPUI.text=gc.player.hp+"/"+gc.player.hpLimit;
+        SPUI.text=gc.player.sp+"/"+gc.player.spInit;
+        playerAttackAddon.text=(gc.player.ap<0 ? "" : "+")+gc.player.ap;
+        playerDefenceAddon.text=(gc.player.dp<0 ? "" : "+")+gc.player.dp;
         playerShield.text=gc.player.shield.ToString();
         for(int i=0;i<gc.enemies.Count;i++)
         {
@@ -66,7 +66,7 @@ public class DisplayController : MonoBehaviour
     {
         if(i==-1)
         {
-            DOTween.To(()=>playerHPSlider.fillAmount,x=>playerHPSlider.fillAmount=x,(float)gc.player.hp/gc.player.hp_limit,0.25f);
+            DOTween.To(()=>playerHPSlider.fillAmount,x=>playerHPSlider.fillAmount=x,(float)gc.player.hp/gc.player.hpLimit,0.25f);
         }
         else DOTween.To(()=>EnemyHPSlider[i].fillAmount,x=>EnemyHPSlider[i].fillAmount=x,(float)gc.enemies[i].hp/gc.enemies[i].hp_limit,0.25f);
     }

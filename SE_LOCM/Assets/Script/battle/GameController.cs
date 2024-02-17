@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     public Player player;               // 玩家
     public List<Enemy> enemies;         // 敌人
     public DisplayController dc;        // 显示控制
+    public SavesController sc;          // 存档控制
     public HandCardsUI hcui;            // 手牌显示控制
     public AudioClip sfxStart;          // 开始音效
     public AudioClip sfxAttack;         // 攻击音效
@@ -40,6 +41,7 @@ public class GameController : MonoBehaviour
     }
     void Start()
     {
+        sc.LoadLocalData();
         roundCount=1;
         enemyCount=enemies.Count;
 
@@ -63,7 +65,7 @@ public class GameController : MonoBehaviour
             foreach(Enemy enemy in enemies) enemy.Prepare();
             
             StartCoroutine(dc.AnimatePanelAndText(new(){"玩","家","回","合"}));
-            player.sp=player.sp_init;
+            player.sp=player.spInit;
             
             // 结束准备阶段
             gameStage=GameStage.Draw;
@@ -217,12 +219,12 @@ public class GameController : MonoBehaviour
     // 攻击力调整
     private void AttackAddonAdjust(int val)
     {
-        player.attack_addon+=val;
+        player.ap+=val;
     }
     // 防御力调整
     private void DefenceAddonAdjust(int val)
     {
-        player.defence_addon+=val;
+        player.dp+=val;
     }
 
     /**-------------------------------------
@@ -264,13 +266,13 @@ public class GameController : MonoBehaviour
     {
         // 筹算加法
         int val=!isPlused ? 6 : 8;
-        SelectAttack(val+player.attack_addon);
+        SelectAttack(val+player.ap);
     }
     private void Card102ExecuteAction(bool isPlused)
     {
         // 筹算减法
         int val=!isPlused ? 6 : 8;
-        AddShield(val+player.defence_addon);
+        AddShield(val+player.dp);
     }
     private void Card103ExecuteAction(bool isPlused)
     {
@@ -289,21 +291,21 @@ public class GameController : MonoBehaviour
     {
         // 合分术
         int val=!isPlused ? 3 : 5;
-        AddShield(val+player.defence_addon);
-        SelectAttack(val+player.attack_addon);
+        AddShield(val+player.dp);
+        SelectAttack(val+player.ap);
     }
     private void Card106ExecuteAction(bool isPlused)
     {
         // 减分术
         int val=!isPlused ? 6 : 8;
-        AddShield(val+player.defence_addon);
+        AddShield(val+player.dp);
         WaitingDiscards(1);
     }
     private void Card107ExecuteAction(bool isPlused)
     {
         // 约分术
         int val=!isPlused ? 5 : 7;
-        SelectAttack(val+player.attack_addon);
+        SelectAttack(val+player.ap);
     }
     private void Card108ExecuteAction(bool isPlused)
     {
@@ -331,7 +333,7 @@ public class GameController : MonoBehaviour
 
         if(enemies[selectedEnemyIndex].intendType==IntendType.Attack)
         {
-            AddShield((int)(enemies[selectedEnemyIndex].intendValue*factor)+player.defence_addon);
+            AddShield((int)(enemies[selectedEnemyIndex].intendValue*factor)+player.dp);
         }
         else
         {
@@ -360,7 +362,7 @@ public class GameController : MonoBehaviour
     {
         // 方田术
         int val=!isPlused ? 4 : 6;
-        SelectAttack(val+player.attack_addon,2);
+        SelectAttack(val+player.ap,2);
     }
     private void Card113ExecuteAction(bool isPlused)
     {
@@ -374,6 +376,6 @@ public class GameController : MonoBehaviour
         Card card=discardPile.Top();
         if(card.id!=114) Debug.LogError("id114 error");
         int val=!isPlused ? 9+(card.playTimes-1)*3 : 9+(card.playTimes-1)*3;
-        SelectAttack(val+player.attack_addon);
+        SelectAttack(val+player.ap);
     }
 }

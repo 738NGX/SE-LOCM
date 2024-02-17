@@ -3,24 +3,11 @@ using System.Collections.Generic;
 
 public class DrawPile : MonoBehaviour
 {
-    public List<Card> drawPile;
+    public List<Card> drawPile=new(){};
 
-    void Start()
+    public void Init(List<(int,bool)> database)
     {
-        drawPile=new()
-        {
-            /*
-            new Card(100),new Card(101),new Card(102),new Card(103),new Card(104),
-            new Card(105),new Card(106),new Card(107),new Card(108),new Card(109),
-            new Card(110),new Card(111),new Card(112),new Card(113),new Card(114),
-            new Card(115),new Card(116),new Card(117),new Card(118),new Card(119),
-            new Card(120),new Card(121)*/
-            
-            new Card(101),new Card(101),new Card(101),new Card(102),new Card(102),new Card(102),
-            new Card(100),new Card(101),new Card(102),new Card(103),new Card(104),
-            new Card(105),new Card(106),new Card(107),new Card(108),new Card(109),
-            new Card(110),new Card(111),new Card(112),new Card(113),new Card(114),
-        };
+        foreach(var data in database) drawPile.Add(new Card(data.Item1,data.Item2));
         Shuffle(); // 初始时洗牌
     }
     

@@ -1,40 +1,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum BuffStage{Intend,Effect,End};
-public enum BuffType{Strengthen,Harden,Infirmity,Frail};
+// 强化,硬化,虚弱,脆弱,回复,中毒
+public enum BuffType{Strengthen,Harden,Infirmity,Frail,Recover,Poisoned};
+// 护甲,免疫
+public enum LatentBuffType{Armor,Immunity};
 
+// 普通buff
 public class Buff
 {
-    public BuffType buffType;
-    public BuffStage buffStage;
-    public bool isPlused;
+    public BuffContainer container;
+    public BuffType type;
     public int remainRounds;
-    public Player effectPlayer=null;
-    public List<Enemy> effectEnemies=null;
-
-    private readonly GameController gc;
     private int endRound;
 
-    public Buff(GameController gc,BuffType buffType,int effectRounds,bool isPlused=false,Player effectPlayer=null,List<Enemy> effectEnemies=null)
+    public Buff(BuffContainer buffContainer,BuffType buffType,int effectRounds)
     {
-        if(effectPlayer==null&&effectEnemies==null) Debug.LogError("No Effective Object.");
-        this.gc=gc;
-        this.buffType=buffType;
-        this.isPlused=isPlused;
-        this.effectPlayer=effectPlayer;
-        this.effectEnemies=effectEnemies;
-        
+        container=buffContainer;
+        type=buffType;
         remainRounds=effectRounds;
-        endRound=gc.roundCount+effectRounds;
+        endRound=container.gc.roundCount+effectRounds;
     }
-
+    public bool IsDebuff()
+    {
+        return type==BuffType.Infirmity||type==BuffType.Frail||type==BuffType.Poisoned;
+    }
     public void RoundCountUpdate()
     {
-        remainRounds=endRound-gc.roundCount;
+        remainRounds=endRound-container.gc.roundCount;
     }
     public void AdjustEndRound(int val)
     {
         endRound+=val;
     }
+}
+
+// 延时Buff
+public class LatentBuff
+{
+    public BuffContainer container;
+    public LatentBuffType type;
 }
