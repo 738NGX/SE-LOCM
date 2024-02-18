@@ -331,16 +331,14 @@ public class GameController : MonoBehaviour
 
         dc.bezierArrow.SetActive(false);
 
-        if(enemies[selectedEnemyIndex].intendType==IntendType.Attack)
-        {
-            AddShield((int)(enemies[selectedEnemyIndex].intendValue*factor)+player.dp);
-        }
-        else
-        {
-            enemies[selectedEnemyIndex].ReduceHP(val);
+        enemies[selectedEnemyIndex].ReduceHP(val);
             PlayAudio(sfxAttack);
             dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
             Camera.main.transform.DOShakePosition(0.5f,0.5f);
+
+        if(enemies[selectedEnemyIndex].intendType==IntendType.Attack)
+        {
+            AddShield((int)(enemies[selectedEnemyIndex].intendValue*factor)+player.dp);
         }
 
         selectedEnemyIndex=-2;

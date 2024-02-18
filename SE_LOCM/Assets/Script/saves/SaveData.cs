@@ -2,9 +2,32 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
+using UnityEditor;
 
 public class LocalSaveDataManager
 {
+    [MenuItem("存档测试/存档")]
+    public static void SaveCustomLocalData()
+    {
+        LocalSaveData localSaveData=new()
+        {
+            hp=70,
+            hpLimit=70,
+            initAp=0,
+            initDp=0,
+            initSp=3,
+            coins=114,
+            cardsData=new(){
+                (101,false),(101,false),(101,false),(101,false),(103,false),
+                (102,false),(102,false),(102,false),(102,false),(104,false),
+                (100,false)
+            },
+            booksData=new(){},
+            currentLevel=0,
+            currentPos=0
+        };
+        SaveLocalData(localSaveData);
+    }
     public static void SaveLocalData(LocalSaveData localSaveData)
     {
         if(!File.Exists(Application.persistentDataPath+"/users"))
@@ -18,7 +41,7 @@ public class LocalSaveDataManager
     public static LocalSaveData LoadLocalData()
     {
         string path=Application.persistentDataPath+"/users/localsave.json";
-        if(!File.Exists(path)) SavesController.SaveCustomLocalData();
+        if(!File.Exists(path)) SaveCustomLocalData();
         string jsonData=File.ReadAllText(path);
         return JsonConvert.DeserializeObject<LocalSaveData>(jsonData);
     }

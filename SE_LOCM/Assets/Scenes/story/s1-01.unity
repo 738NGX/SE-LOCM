@@ -906,6 +906,7 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -987,6 +988,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0
 --- !u!1 &684197938
 GameObject:
   m_ObjectHideFlags: 0
@@ -1417,7 +1462,6 @@ GameObject:
   - component: {fileID: 792902697}
   - component: {fileID: 792902696}
   - component: {fileID: 792902695}
-  - component: {fileID: 792902694}
   - component: {fileID: 792902701}
   - component: {fileID: 792902692}
   - component: {fileID: 792902716}
@@ -1452,7 +1496,6 @@ GameObject:
   - component: {fileID: 792902749}
   - component: {fileID: 792902748}
   - component: {fileID: 792902747}
-  - component: {fileID: 792902746}
   - component: {fileID: 792902745}
   - component: {fileID: 792902760}
   - component: {fileID: 792902761}
@@ -1479,10 +1522,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  scrollPos: {x: 0, y: 0}
+  scrollPos: {x: 76.30676, y: 193.16136}
   variablesScrollPos: {x: 0, y: 0}
   variablesExpanded: 1
-  blockViewHeight: 400
+  blockViewHeight: 280
   zoom: 1
   scrollViewRect:
     serializedVersion: 2
@@ -1490,10 +1533,8 @@ MonoBehaviour:
     y: -340
     width: 1114
     height: 859
-  selectedBlocks:
-  - {fileID: 792902740}
-  selectedCommands:
-  - {fileID: 792902763}
+  selectedBlocks: []
+  selectedCommands: []
   variables: []
   description: 
   stepPause: 0
@@ -1546,7 +1587,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 67
     y: 70
-    width: 110
+    width: 108
     height: 40
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
@@ -1783,7 +1824,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 355.33334
     y: 86.66667
-    width: 102.66667
+    width: 101
     height: 40
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
@@ -1804,38 +1845,10 @@ MonoBehaviour:
   - {fileID: 792902696}
   - {fileID: 792902716}
   - {fileID: 792902695}
-  - {fileID: 792902694}
   - {fileID: 792902719}
   - {fileID: 792902761}
   - {fileID: 792902727}
   suppressAllAutoSelections: 0
---- !u!114 &792902694
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 792902681}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec422cd568a9c4a31ad7c36d0572b9da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemId: 31
-  indentLevel: 0
-  storyText: "\uFF08\u56FE\u9274\u89E3\u9501\u53CB\u4EBA\uFF1A\u53F6\u7FBD\uFF0C\u548C\u53F6\u7FBD\u76F8\u5173\u7684\u4FE1\u606F\u66F4\u65B0\u4E86\uFF09{wc}\n\uFF08\u89E3\u9501\u5B58\u6863\u70B9\uFF1A\u53F6\u7FBD\u7684\u4E07\u4E8B\u5C4B\uFF09"
-  description: 
-  character: {fileID: 0}
-  portrait: {fileID: 0}
-  voiceOverClip: {fileID: 0}
-  showAlways: 1
-  showCount: 1
-  extendPrevious: 0
-  fadeWhenDone: 1
-  waitForClick: 1
-  stopVoiceover: 1
-  waitForVO: 0
-  setSayDialog: {fileID: 0}
 --- !u!114 &792902695
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -2219,7 +2232,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 216.66666
     y: 124
-    width: 117.333336
+    width: 116
     height: 40
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
@@ -2248,7 +2261,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 217.33334
     y: 66.666664
-    width: 117.333336
+    width: 116
     height: 40
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
@@ -2571,7 +2584,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 510.66663
     y: 104.66666
-    width: 117.333336
+    width: 115
     height: 40
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
@@ -2785,7 +2798,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 653.3333
     y: 108.66666
-    width: 74
+    width: 73
     height: 40
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
@@ -2814,7 +2827,6 @@ MonoBehaviour:
   - {fileID: 792902749}
   - {fileID: 792902748}
   - {fileID: 792902747}
-  - {fileID: 792902746}
   suppressAllAutoSelections: 0
 --- !u!114 &792902741
 MonoBehaviour:
@@ -2948,33 +2960,6 @@ MonoBehaviour:
   move: 0
   shiftIntoPlace: 0
   waitUntilFinished: 0
---- !u!114 &792902746
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 792902681}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec422cd568a9c4a31ad7c36d0572b9da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemId: 66
-  indentLevel: 0
-  storyText: "\uFF08\u5C4B\u5185\u81EA\u7531\u6D3B\u52A8\u65F6\u95F4\uFF09"
-  description: 
-  character: {fileID: 0}
-  portrait: {fileID: 0}
-  voiceOverClip: {fileID: 0}
-  showAlways: 1
-  showCount: 1
-  extendPrevious: 0
-  fadeWhenDone: 1
-  waitForClick: 1
-  stopVoiceover: 1
-  waitForVO: 0
-  setSayDialog: {fileID: 0}
 --- !u!114 &792902747
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -2989,7 +2974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemId: 65
   indentLevel: 0
-  storyText: "\uFF08\u624B\u724C\u201C\u7B97\u7B79\u201D\u3001\u201C\u7B79\u7B97\u201D\u3001\u201C\u7B79\u7B97\u4E58\u6CD5\u201D\u3001\u201C\u7B79\u7B97\u9664\u6CD5\u201D\u52A0\u5165\u5230\u4E86\u80CC\u5305\uFF09"
+  storyText: "\uFF08\u624B\u724C\u201C\u7B97\u7B79\u201D*1\u3001\u201C\u7B79\u7B97\u52A0\u6CD5\u201D*4\u3001\u201C\u7B79\u7B97\u51CF\u6CD5\u201D*4\u3001\u201C\u7B79\u7B97\u4E58\u6CD5\u201D*1\u3001\u201C\u7B79\u7B97\u9664\u6CD5\u201D*1\u52A0\u5165\u5230\u4E86\u80CC\u5305\uFF09"
   description: 
   character: {fileID: 0}
   portrait: {fileID: 0}
@@ -3406,7 +3391,7 @@ MonoBehaviour:
   targetColorOLD: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &792902763
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -3436,7 +3421,7 @@ MonoBehaviour:
   waitUntilFinished: 0
 --- !u!114 &792902764
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
