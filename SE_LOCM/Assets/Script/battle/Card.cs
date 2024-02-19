@@ -78,6 +78,11 @@ public class Card
             };
         }
         else Debug.LogError($"Card ID not found in database:{id}");
+        if(isPlused)
+        {
+            displayInfo.name+="+";
+            displayInfo.effect=displayInfo.plusedEffect;
+        }
     }
 
     public void Play()

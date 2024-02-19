@@ -10,6 +10,7 @@ public class MainTheme : MonoBehaviour
     public SceneFader sf;
     public List<ThemePop> themePops;
     public bool popWindow=false;
+    public Wiki wiki;
     
     public void PopWinodw(int index)
     {

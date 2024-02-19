@@ -43,7 +43,7 @@ public class HandCardsUI : MonoBehaviour
         CardObject.transform.DOPath(path,0.5f,PathType.CatmullRom);
         CardObject.transform.DOScale(0,0.5f);
     }
-    private void CardDisplayInfoUpdate(GameObject obj,Card card)
+    public static void CardDisplayInfoUpdate(GameObject obj,Card card)
     {
         // 为卡牌信息赋值
         Image image=obj.transform.Find("牌面").GetComponent<Image>();
