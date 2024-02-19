@@ -9,6 +9,7 @@ public class CardDisplayInfo
     public string cost;         // 消耗
     public string type;         // 属性
     public string rarity;       // 稀有度
+    public string disposable;   // 一次性
     public string effect;       // 效果
     public string plusedEffect; // 强化效果
     public string quote;        // 原文
@@ -20,9 +21,10 @@ public class CardDisplayInfo
         cost=values[2];
         type=values[3];
         rarity=values[4];
-        effect=values[5];
-        plusedEffect=values[6];
-        quote=values[7].Replace("\\n", "\n");;
+        disposable=values[5];
+        effect=values[6];
+        plusedEffect=values[7];
+        quote=values[8].Replace("\\n", "\n");;
     }
 };
 
@@ -33,47 +35,59 @@ public class Card
     public CardType type;               // 属性
     public CardRarity rarity;           // 稀有度
     public bool isPlused;               // 是否强化
+    public bool disposable;             // 是否一次性
+    public int playTimes;               // 打出次数
     public CardDisplayInfo displayInfo; // UI显示信息
 
     public Card(int id,bool isPlused=false)
     {
         this.id=id;
         this.isPlused=isPlused;
+        playTimes=0;
         if(CardDatabase.data.TryGetValue(id,out var info))
         {
             displayInfo=info;
-            switch(info.cost)
+            cost=info.cost switch
             {
-                case "零": cost=0; break;
-                case "壹": cost=1; break;
-                case "贰": cost=2; break;
-            }
-            switch(info.type)
+                "零" => 0,
+                "壹" => 1,
+                "贰" => 2,
+                _ => 0
+            };
+            type=info.type switch
             {
-                case "攻击": type=CardType.Attack; break;
-                case "锦囊": type=CardType.Spell;  break;
-                case "装备": type=CardType.Equip;  break;
-            }
-            switch(info.rarity)
+                "攻击" => CardType.Attack,
+                "锦囊" => CardType.Spell,
+                "装备" => CardType.Equip,
+                _ => CardType.Attack
+            };
+            rarity=info.rarity switch
             {
-                case "基础": rarity=CardRarity.Base;        break;
-                case "普通": rarity=CardRarity.Ordinary;    break;
-                case "稀有": rarity=CardRarity.Rare;        break;
-                case "史诗": rarity=CardRarity.Epic;        break;
-            }
+                "基础" => CardRarity.Base,
+                "普通" => CardRarity.Ordinary,
+                "稀有" => CardRarity.Rare,
+                "史诗" => CardRarity.Epic,
+                _ => CardRarity.Ordinary
+            };
+            disposable=info.disposable switch
+            {
+                "是" => true,
+                "否" => false,
+                "可变" => !isPlused,
+                _ => false
+            };
         }
         else Debug.LogError($"Card ID not found in database:{id}");
     }
 
-    // 手牌打出时调用
-    public void ExecuteAction()
+    public void Play()
     {
-        // 根据ID映射到具体的函数或逻辑
-        switch (id)
+        playTimes++;
+        if(id==114)
         {
-            default:
-                Debug.LogWarning("No action defined for this card ID: " + id);
-                break;
+            string oldContent=!isPlused ? (9+(playTimes-1)*3).ToString() : (12+(playTimes-1)*4).ToString();
+            string newContent=!isPlused ? (9+playTimes*3).ToString() : (12+playTimes*4).ToString();
+            displayInfo.effect=displayInfo.effect.Replace(oldContent,newContent);
         }
     }
 }

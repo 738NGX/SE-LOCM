@@ -6,32 +6,40 @@ public class Player : MonoBehaviour
 {
     public int hp;              // 体力值(HealthPoints)
     public int sp;              // 法术值(SpellPoints)
-    public int hp_limit;        // 体力值上限
-    public int sp_init;         // 每回合初始法术值
-    public int attack_addon;    // 攻击加成
-    public int defence_addon;   // 防御加成
+    public int hpLimit;         // 体力值上限
+    public int spInit;          // 每回合初始算术值
+    public int ap;              // 攻击力
+    public int dp;              // 防御力
+    public int shield;          // 护盾
 
-    void Start()
+    public void Init(LocalSaveData localSaveData)
     {
-        hp_limit=50;
-        hp=hp_limit;
-        sp_init=3;
+        hpLimit=localSaveData.hpLimit;
+        hp=localSaveData.hp;
+        ap=localSaveData.initAp;
+        dp=localSaveData.initDp;
+        spInit=localSaveData.initSp;
         RecoverSP();
     }
 
     public void AddHP(int val)
     {
         if(val<1) return;
-        if(hp+val>=hp_limit) hp=hp_limit;
+        if(hp+val>=hpLimit) hp=hpLimit;
         else hp+=val;
     }
     public void ReduceHP(int val)
     {
         if(val<1) return;
-        if(hp-val<=0) hp=0;
-        else hp-=val;
+        if(hp+shield-val<=0) hp=0;
+        else if(val>shield)
+        {
+            hp-=val-shield;
+            shield=0;
+        }
+        else shield-=val;
     }
-    public void RecoverSP(){sp=sp_init;}
+    public void RecoverSP(){sp=spInit;}
     public void AddSP(int val)
     {
         if(val<1) return;
