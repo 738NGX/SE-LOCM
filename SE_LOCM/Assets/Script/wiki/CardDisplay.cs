@@ -7,12 +7,9 @@ using TMPro;
 
 public class CardDisplay : MonoBehaviour
 {
-    private int id;
-
     private void Start()
     {
-        id=100;
-        UpdateCardDisplayInfo(id);
+        UpdateCardDisplayInfo(100);
     }
     public void UpdateCardDisplayInfo(int id)
     {

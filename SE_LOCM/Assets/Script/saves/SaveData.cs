@@ -6,8 +6,8 @@ using UnityEditor;
 
 public class LocalSaveDataManager
 {
-    [MenuItem("存档测试/存档")]
-    public static void SaveCustomLocalData()
+    [MenuItem("存档测试/初始存档")]
+    public static void SaveInitLocalData()
     {
         LocalSaveData localSaveData=new()
         {
@@ -24,7 +24,31 @@ public class LocalSaveDataManager
             },
             booksData=new(){},
             currentLevel=0,
-            currentPos=0
+            route=new(){0}
+        };
+        SaveLocalData(localSaveData);
+    }
+    [MenuItem("存档测试/自定义存档")]
+    public static void SaveCustomLocalData()
+    {
+        LocalSaveData localSaveData=new()
+        {
+            hp=70,
+            hpLimit=70,
+            initAp=0,
+            initDp=0,
+            initSp=3,
+            coins=114,
+            cardsData=new(){
+                (101,false),(101,false),(101,false),(101,false),(103,false),
+                (102,false),(102,false),(102,false),(102,false),(104,false),
+                (100,false),(105,false),(106,false),(107,false),(108,false),
+                (109,false),(110,false),(111,false),(112,false),(113,false),
+                (114,false),
+            },
+            booksData=new(){},
+            currentLevel=0,
+            route=new(){0}
         };
         SaveLocalData(localSaveData);
     }
@@ -63,5 +87,5 @@ public class LocalSaveData
 
     // 地图数据
     public int currentLevel;                    // 当前层数
-    public int currentPos;                      // 当前位置
+    public List<int> route;                     // 当层路径
 }
