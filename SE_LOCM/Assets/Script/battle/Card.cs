@@ -2,32 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 [System.Serializable]
 
-public class CardDisplayInfo
-{
-    public int id;
-    public string name;         // 牌名
-    public string cost;         // 消耗
-    public string type;         // 属性
-    public string rarity;       // 稀有度
-    public string disposable;   // 一次性
-    public string effect;       // 效果
-    public string plusedEffect; // 强化效果
-    public string quote;        // 原文
-    public CardDisplayInfo(string rawData)
-    {
-        string[] values=rawData.Split(',');
-        id=int.Parse(values[0]);
-        name=values[1];
-        cost=values[2];
-        type=values[3];
-        rarity=values[4];
-        disposable=values[5];
-        effect=values[6];
-        plusedEffect=values[7];
-        quote=values[8].Replace("\\n", "\n");;
-    }
-};
-
 public class Card
 {
     public int id;
