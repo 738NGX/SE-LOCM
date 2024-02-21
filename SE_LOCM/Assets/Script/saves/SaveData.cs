@@ -4,6 +4,29 @@ using UnityEngine;
 using Newtonsoft.Json;
 using UnityEditor;
 
+public enum LocalSaveStatus{Break,Gaming,Victory,Defeat};
+public class LocalSaveData
+{
+    // 游戏状态
+    public LocalSaveStatus status;
+    
+    // 战斗数据
+    public int hp;          // 体力值
+    public int hpLimit;     // 体力值上限
+    public int initAp;      // 初始攻击力
+    public int initDp;      // 初始防御力
+    public int initSp;      // 初始算术值
+
+    // 资源数据
+    public int coins;                           // 金币
+    public List<(int,bool)> cardsData=new(){};  // 牌组
+    public List<int> booksData;                 // 典籍
+
+    // 地图数据
+    public int currentLevel;                    // 当前层数
+    public List<int> route;                     // 当层路径
+}
+
 public class LocalSaveDataManager
 {
     [MenuItem("存档测试/初始存档")]
@@ -69,23 +92,4 @@ public class LocalSaveDataManager
         string jsonData=File.ReadAllText(path);
         return JsonConvert.DeserializeObject<LocalSaveData>(jsonData);
     }
-}
-
-public class LocalSaveData
-{
-    // 战斗数据
-    public int hp;          // 体力值
-    public int hpLimit;     // 体力值上限
-    public int initAp;      // 初始攻击力
-    public int initDp;      // 初始防御力
-    public int initSp;      // 初始算术值
-
-    // 资源数据
-    public int coins;                           // 金币
-    public List<(int,bool)> cardsData=new(){};  // 牌组
-    public List<int> booksData;                 // 典籍
-
-    // 地图数据
-    public int currentLevel;                    // 当前层数
-    public List<int> route;                     // 当层路径
 }
