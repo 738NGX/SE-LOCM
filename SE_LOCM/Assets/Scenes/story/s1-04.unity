@@ -861,6 +861,7 @@ GameObject:
   - component: {fileID: 413247821}
   - component: {fileID: 413247822}
   - component: {fileID: 413247823}
+  - component: {fileID: 413247824}
   m_Layer: 0
   m_Name: Flowchart
   m_TagString: Untagged
@@ -895,7 +896,7 @@ MonoBehaviour:
   selectedBlocks:
   - {fileID: 413247724}
   selectedCommands:
-  - {fileID: 413247723}
+  - {fileID: 413247824}
   variables: []
   description: 
   stepPause: 0
@@ -3806,8 +3807,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeRect:
     serializedVersion: 2
-    x: 521.4817
-    y: 405.20572
+    x: 522.63104
+    y: 408.654
     width: 162.64359
     height: 40
   tint: {r: 1, g: 1, b: 1, a: 1}
@@ -3845,6 +3846,7 @@ MonoBehaviour:
   - {fileID: 413247726}
   - {fileID: 413247725}
   - {fileID: 413247723}
+  - {fileID: 413247824}
   suppressAllAutoSelections: 0
 --- !u!114 &413247725
 MonoBehaviour:
@@ -6332,6 +6334,23 @@ MonoBehaviour:
   atTime: 0
   loop: 1
   fadeDuration: 1
+--- !u!114 &413247824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413247603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17a200dbd67304446a3019434503338a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemId: 225
+  indentLevel: 0
+  targetObject: {fileID: 1432793402}
+  methodName: Transmission
+  delay: 1
 --- !u!1 &423994308
 GameObject:
   m_ObjectHideFlags: 0
@@ -8034,6 +8053,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1432793402
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1432793403}
+  m_Layer: 0
+  m_Name: Transmission
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1432793403
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1432793402}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.106343985, y: -0.1766921, z: -0.012985341}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1641159337
 GameObject:
   m_ObjectHideFlags: 0
@@ -8898,3 +8948,4 @@ SceneRoots:
   - {fileID: 664421516}
   - {fileID: 1369054557}
   - {fileID: 1071478227}
+  - {fileID: 1432793403}
