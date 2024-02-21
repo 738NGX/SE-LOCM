@@ -7,20 +7,20 @@ using Fungus;
 
 public class SceneLoader : MonoBehaviour
 {
-    LocalSaveData pro = LocalSaveDataManager.LoadLocalData();
+    LocalSaveData save=LocalSaveDataManager.LoadLocalData();
     void Transmission()
-    { 
-        if(pro.status == LocalSaveStatus.Gaming)
-      {
-            SceneManager.LoadScene("xxx");//Ìø×ª¾çÇé
-       }
+    {
+        if(save.status==LocalSaveStatus.Gaming)
+        {
+            SceneManager.LoadScene("xxx");//è·³è½¬å‰§æƒ…
+        }
         else
-      {
-            SceneManager.LoadScene("xxx");//Ìø×ªÍ¼¼ø
-       }
+        {
+            SceneManager.LoadScene("xxx");//è·³è½¬å›¾é‰´
+        }
     }
-   
-    
-    
-    
+
+
+
+
 }

@@ -19,21 +19,65 @@ public class LocalSaveData
 
     // 资源数据
     public int coins;                           // 金币
-    public List<(int,bool)> cardsData=new(){};  // 牌组
+    public List<(int,bool)> cardsData;          // 牌组
     public List<int> booksData;                 // 典籍
+    public List<int> cardsPool;                 // 卡池
 
     // 地图数据
-    public int currentLevel;                    // 当前层数
     public List<int> route;                     // 当层路径
+
+    // 数据导入
+    public void ImportCardsData(List<Card> cards)
+    {
+        foreach(var card in cards)
+        {
+            cardsData.Add((card.id,card.isPlused));
+        }
+    }
+    public void ImportCardsPool(List<Card> cards)
+    {
+        foreach(var card in cards)
+        {
+            if(cardsPool.Contains(card.id)) continue;
+            cardsPool.Add(card.id);
+        }
+    }
+    public void ImportBooksData(List<Book> books)
+    {
+        foreach(var book in books)
+        {
+            booksData.Add(book.id);
+        }
+    }
+    // 数据导出
+    public List<Card> ExportCardsData()
+    {
+        List<Card> result=new();
+        foreach(var data in cardsData) result.Add(new Card(data.Item1,data.Item2));
+        return result;
+    }
+    public List<Card> ExportCardsPool()
+    {
+        List<Card> result=new();
+        foreach(var data in cardsPool) result.Add(new Card(data));
+        return result;
+    }
+    public List<Book> ExportBooksData()
+    {
+        List<Book> result=new();
+        foreach(var data in booksData) result.Add(new Book(data));
+        return result;
+    }
 }
 
-public class LocalSaveDataManager
+public static class LocalSaveDataManager
 {
     [MenuItem("存档测试/初始存档")]
     public static void SaveInitLocalData()
     {
         LocalSaveData localSaveData=new()
         {
+            status=LocalSaveStatus.Break,
             hp=70,
             hpLimit=70,
             initAp=0,
@@ -46,8 +90,8 @@ public class LocalSaveDataManager
                 (100,false)
             },
             booksData=new(){},
-            currentLevel=0,
-            route=new(){0}
+            cardsPool=new(){},
+            route=new(){100}
         };
         SaveLocalData(localSaveData);
     }
@@ -56,6 +100,7 @@ public class LocalSaveDataManager
     {
         LocalSaveData localSaveData=new()
         {
+            status=LocalSaveStatus.Break,
             hp=70,
             hpLimit=70,
             initAp=0,
@@ -70,8 +115,8 @@ public class LocalSaveDataManager
                 (114,false),
             },
             booksData=new(){},
-            currentLevel=0,
-            route=new(){0}
+            cardsPool=new(){100,103,104,105,106,107,108,109,110,111,112,113,114},
+            route=new(){100,101,102,103,105,108,110,114,117,119,120}
         };
         SaveLocalData(localSaveData);
     }

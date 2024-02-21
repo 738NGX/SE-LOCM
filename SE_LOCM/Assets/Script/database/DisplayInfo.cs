@@ -34,6 +34,7 @@ public class CardDisplayInfo : DisplayInfo
 
 public class BookDisplayInfo : DisplayInfo
 {
+    public string rarity;
     public string effect;
     public string introduction;
     public BookDisplayInfo(string rawData)
@@ -41,7 +42,8 @@ public class BookDisplayInfo : DisplayInfo
         string[] values=rawData.Split(',');
         id=int.Parse(values[0]);
         name=values[1];
-        effect=values[2];
-        introduction=values[3];
+        rarity=values[2];
+        effect=values[3];
+        introduction=values[4];
     }
 }

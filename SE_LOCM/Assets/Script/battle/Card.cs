@@ -69,4 +69,5 @@ public class Card
             displayInfo.effect=displayInfo.effect.Replace(oldContent,newContent);
         }
     }
+    public (int,bool) Export(){return (id,isPlused);}
 }
