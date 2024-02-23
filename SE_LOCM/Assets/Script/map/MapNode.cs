@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
+using Fungus;
 
 // 可到达,不可到达,已通过
 public enum MapNodeStauts{Available,Unavailable,Passed};
@@ -32,7 +33,21 @@ public class MapNode : MonoBehaviour
     private void LoadScene(int id)
     {
         if(status!=MapNodeStauts.Available) return;
-        if(MapDatabase.data[id].type==MapNodeType.Enemy)
+        
+        LocalSaveData localSaveData=LocalSaveDataManager.LoadLocalData();
+        localSaveData.route.Add(id);
+        LocalSaveDataManager.SaveLocalData(localSaveData);
+
+        if(MapDatabase.data[id].type==MapNodeType.Story)
+        {
+            if(!MapNodeIdToStorySceneDatabase.data.TryGetValue(id,out var target)) return;
+            sf.FadeOut(target);
+        }
+        else if(MapDatabase.data[id].type==MapNodeType.Box)
+        {
+            sf.FadeOut("Scenes/reward");
+        }
+        else if(MapDatabase.data[id].type==MapNodeType.Enemy)
         {
             sf.FadeOut("Scenes/battle/b1-01");
         }

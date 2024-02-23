@@ -26,6 +26,14 @@ public static class MapDatabase
     }
 }
 
+public static class MapNodeIdToStorySceneDatabase
+{
+    public static Dictionary<int,string> data=new()
+    {
+        {100,"Scenes/story/s1-01"},{101,"Scenes/story/s1-02"},{120,"Scenes/story/s1-04"},
+    };
+}
+
 public class MapNodeData
 {
     public int id;
@@ -71,29 +79,51 @@ public class MapNodeData
         List<Card> rareCards=new();
         List<Card> epicCards=new();
         List<Card> rewardCards=new();
-        foreach(var card in cardsPool)
+
+        foreach (var card in cardsPool)
         {
             switch(card.rarity)
             {
-                case CardRarity.Ordinary:ordinaryCards.Add(card); break;
-                case CardRarity.Rare:rareCards.Add(card); break;
-                case CardRarity.Epic:epicCards.Add(card); break;
+                case CardRarity.Ordinary: ordinaryCards.Add(card); break;
+                case CardRarity.Rare: rareCards.Add(card); break;
+                case CardRarity.Epic: epicCards.Add(card); break;
             }
-        } 
+        }
+
+        int uniqueCardsCount=ordinaryCards.Distinct().Count()+rareCards.Distinct().Count()+epicCards.Distinct().Count();
+        num=System.Math.Min(num,uniqueCardsCount);
+
         for(int i=0;i<num;i++)
         {
-            int seed=Random.Range(0,100);
-            if(epicCards.Count>0 && seed<rewardCardChance[1])
+            Card selectedCard=null;
+            while(selectedCard==null)
             {
-                rewardCards.Add(epicCards[Random.Range(0,epicCards.Count)]);
+                int seed=Random.Range(0,100);
+                if(epicCards.Count>0 && seed<rewardCardChance[1])
+                {
+                    selectedCard=epicCards[Random.Range(0,epicCards.Count)];
+                }
+                else if(rareCards.Count>0 && seed<rewardCardChance[0])
+                {
+                    selectedCard=rareCards[Random.Range(0,rareCards.Count)];
+                }
+                else if(ordinaryCards.Count>0)
+                {
+                    selectedCard=ordinaryCards[Random.Range(0,ordinaryCards.Count)];
+                }
+                if(rewardCards.Contains(selectedCard))
+                {
+                    selectedCard=null;
+                }
             }
-            else if(rareCards.Count>0 && seed<rewardCardChance[0])
+
+            rewardCards.Add(selectedCard);
+
+            switch(selectedCard.rarity)
             {
-                rewardCards.Add(rareCards[Random.Range(0,rareCards.Count)]);
-            }
-            else
-            {
-                rewardCards.Add(ordinaryCards[Random.Range(0,ordinaryCards.Count)]);
+                case CardRarity.Ordinary: ordinaryCards.Remove(selectedCard); break;
+                case CardRarity.Rare: rareCards.Remove(selectedCard); break;
+                case CardRarity.Epic: epicCards.Remove(selectedCard); break;
             }
         }
 
@@ -103,7 +133,7 @@ public class MapNodeData
     {
         if(Random.Range(0,100)<rewardBookChance[1])
         {
-            int seed=Random.Range(10,35);
+            int seed=Random.Range(10,21);
             return achievedBooks.Contains(new Book(seed)) ? null : new Book(seed);
         }
         else if(Random.Range(0,100)<rewardBookChance[0])

@@ -7,7 +7,7 @@ public class Map : MonoBehaviour
     public List<MapNode> mapNodes=new();
     public static LocalSaveData localSaveData;
     public SceneFader sf;
-    void Start()
+    private void Start()
     {
         localSaveData=LocalSaveDataManager.LoadLocalData();
         foreach(Transform child in transform)
@@ -30,5 +30,12 @@ public class Map : MonoBehaviour
                 mapNode.status=MapNodeStauts.Unavailable;
             }
         }
+    }
+    public void BackTheme()
+    {
+        localSaveData=LocalSaveDataManager.LoadLocalData();
+        localSaveData.status=LocalSaveStatus.Break;
+        LocalSaveDataManager.SaveLocalData(localSaveData);
+        sf.FadeOut("Scenes/theme");
     }
 }

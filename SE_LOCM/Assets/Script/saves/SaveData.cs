@@ -26,15 +26,15 @@ public class LocalSaveData
     // 地图数据
     public List<int> route;                     // 当层路径
 
-    // 数据导入
-    public void ImportCardsData(List<Card> cards)
+    // 数据写入
+    public void AddCardsData(List<Card> cards)
     {
         foreach(var card in cards)
         {
             cardsData.Add((card.id,card.isPlused));
         }
     }
-    public void ImportCardsPool(List<Card> cards)
+    public void AddCardsPool(List<Card> cards)
     {
         foreach(var card in cards)
         {
@@ -42,27 +42,36 @@ public class LocalSaveData
             cardsPool.Add(card.id);
         }
     }
-    public void ImportBooksData(List<Book> books)
+    public void AddCardsPool(List<int> cards)
+    {
+        foreach(var card in cards)
+        {
+            if(cardsPool.Contains(card)) continue;
+            cardsPool.Add(card);
+        }
+    }
+    public void AddBooksData(List<Book> books)
     {
         foreach(var book in books)
         {
+            if(booksData.Contains(book.id)) continue;
             booksData.Add(book.id);
         }
     }
     // 数据导出
-    public List<Card> ExportCardsData()
+    public List<Card> ReadCardsData()
     {
         List<Card> result=new();
         foreach(var data in cardsData) result.Add(new Card(data.Item1,data.Item2));
         return result;
     }
-    public List<Card> ExportCardsPool()
+    public List<Card> ReadCardsPool()
     {
         List<Card> result=new();
         foreach(var data in cardsPool) result.Add(new Card(data));
         return result;
     }
-    public List<Book> ExportBooksData()
+    public List<Book> ReadBooksData()
     {
         List<Book> result=new();
         foreach(var data in booksData) result.Add(new Book(data));
@@ -116,7 +125,7 @@ public static class LocalSaveDataManager
             },
             booksData=new(){},
             cardsPool=new(){100,103,104,105,106,107,108,109,110,111,112,113,114},
-            route=new(){100,101,102,103,105,108,110,114,117,119,120}
+            route=new(){100,101,102}
         };
         SaveLocalData(localSaveData);
     }
@@ -128,7 +137,7 @@ public static class LocalSaveDataManager
         }
         string jsonData=JsonConvert.SerializeObject(localSaveData);
         File.WriteAllText(Application.persistentDataPath+"/users/localsave.json",jsonData);
-        Debug.Log("Saveed To"+Application.persistentDataPath+"/users/localsave.json");
+        //Debug.Log("Saveed To: "+Application.persistentDataPath+"/users/localsave.json");
     }
     public static LocalSaveData LoadLocalData()
     {
