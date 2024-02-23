@@ -38,14 +38,17 @@ public class ThemeButton : MonoBehaviour
         {
             switch(id)
             {
-                case 0: mt.StartGameCheck(); break;
+                case 0: mt.StartGame(); break;
                 case 1: mt.sf.FadeOut("Scenes/wiki"); break;
                 case 4: mt.PopWinodw(1); break;
+                case 5: mt.ContinueGame(); break;
+                case 6: mt.StartNewGame(); break;
                 case 7: mt.DisPopWindow(0); break;
                 case 8: mt.DisPopWindow(1); break;
                 case 9: mt.ExitGame(); break;
                 case 10: mt.DisPopWindow(1); break;
                 case 11: mt.wiki.ChangeWikiStatus(WikiStatus.Card); break;
+                case 12: mt.wiki.ChangeWikiStatus(WikiStatus.Book); break;
                 case 15: mt.sf.FadeOut("Scenes/theme"); break;
                 default: break;
             }

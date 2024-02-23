@@ -5,10 +5,11 @@ using DG.Tweening;
 using Fungus;
 
 // 准备阶段、摸牌阶段、出牌阶段、弃牌阶段、敌人阶段、结束阶段
-public enum GameStage{Pre,Draw,Play,Discard,Enemy,End,Victory,Defeat,Null};
+public enum GameStage{Pre,Draw,Play,Discard,Enemy,End,Victory,Defeat,Null,Reward};
 
 public class GameController : MonoBehaviour
 {
+    public SceneFader sf;
     public DrawPile drawPile;           // 摸牌堆
     public HandCards handCards;         // 手牌堆
     public DiscardPile discardPile;     // 弃牌堆
@@ -42,6 +43,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         sc.LoadLocalData();
+        dc.UpdateHPSlider(-1);
         roundCount=1;
         enemyCount=enemies.Count;
 
@@ -53,12 +55,20 @@ public class GameController : MonoBehaviour
     void Update()
     {
         if(gameStage==GameStage.Null||dc.isAnimating) return;  // 系统动画时不进行操作
+        if(gameStage==GameStage.Reward)
+        {
+            sc.SaveLocalData();
+            sf.FadeOut("Scenes/reward");
+            gameStage=GameStage.Null;
+            return;
+        }
         
         // 游戏结束检查
         if(player.hp<=0) gameStage=GameStage.Defeat;
         else if(enemyCount<=0) gameStage=GameStage.Victory;
         
         // 游戏阶段检查
+
         if(gameStage==GameStage.Pre)
         {
             // 敌人产生回合意图
@@ -109,7 +119,7 @@ public class GameController : MonoBehaviour
         {
             PlayAudio(sfxVictory);
             StartCoroutine(dc.AnimatePanelAndText(new(){"战","斗","胜","利"},2f));
-            gameStage=GameStage.Null;
+            gameStage=GameStage.Reward;
         }
         else if(gameStage==GameStage.Defeat)
         {
