@@ -27,6 +27,17 @@ public class LocalSaveData
     public List<int> route;                     // 当层路径
 
     // 数据写入
+    public void AdjustHP(int val)
+    {
+        if(hp+val>=hpLimit) hp=hpLimit;
+        else if(hp+val<=0) hp=0;
+        else hp+=val;
+    }
+    public void AdjustCoins(int val)
+    {
+        if(coins+val<=0) coins=0;
+        else coins+=val;
+    }
     public void AddCardsData(List<Card> cards)
     {
         foreach(var card in cards)

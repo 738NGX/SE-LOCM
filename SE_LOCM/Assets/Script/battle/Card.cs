@@ -23,9 +23,12 @@ public class Card
             displayInfo=info;
             cost=info.cost switch
             {
+                "无" => -1,
                 "零" => 0,
                 "壹" => 1,
                 "贰" => 2,
+                "壹-" => !isPlused ? 1 : 0,
+                "贰-" => !isPlused ? 2 : 1,
                 _ => 0
             };
             type=info.type switch
@@ -33,7 +36,8 @@ public class Card
                 "攻击" => CardType.Attack,
                 "锦囊" => CardType.Spell,
                 "装备" => CardType.Equip,
-                _ => CardType.Attack
+                "谜题" => CardType.Quiz,
+                _ => CardType.Attack,
             };
             rarity=info.rarity switch
             {
@@ -41,21 +45,30 @@ public class Card
                 "普通" => CardRarity.Ordinary,
                 "稀有" => CardRarity.Rare,
                 "史诗" => CardRarity.Epic,
-                _ => CardRarity.Ordinary
+                _ => CardRarity.Ordinary,
             };
             disposable=info.disposable switch
             {
                 "是" => true,
                 "否" => false,
                 "可变" => !isPlused,
-                _ => false
+                _ => false,
             };
         }
         else Debug.LogError($"Card ID not found in database:{id}");
+        displayInfo.cost=cost switch
+        {
+            -1 => "无",
+            0 => "零",
+            1 => "壹",
+            2 => "贰",
+            _ => "零",
+        };
         if(isPlused)
         {
             displayInfo.name+="+";
             displayInfo.effect=displayInfo.plusedEffect;
+            if(displayInfo.cost[^1]=='-') displayInfo.cost=displayInfo.cost[..^1];
         }
     }
 

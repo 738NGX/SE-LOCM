@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
 
-public enum CardType{Attack,Spell,Equip};           // 攻击 锦囊 装备
+public enum CardType{Attack,Spell,Equip,Quiz};           // 攻击 锦囊 装备
 public enum CardRarity{Base,Ordinary,Rare,Epic};         // 基础 普通 稀有 史诗
 public static class CardDatabase
 {
