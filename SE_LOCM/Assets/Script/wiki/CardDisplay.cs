@@ -8,6 +8,7 @@ using TMPro;
 public class CardDisplay : MonoBehaviour
 {
     public int id;
+    public int displayIndex;
     private bool idSet=false;
 
     private void Start()

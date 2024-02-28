@@ -76,6 +76,15 @@ public class LocalSaveData
         foreach(var data in cardsData) result.Add(new Card(data.Item1,data.Item2));
         return result;
     }
+    public List<Card> ReadNotUpdatedCardsData()
+    {
+        List<Card> result=new();
+        foreach(var data in cardsData)
+        {
+            if(!data.Item2) result.Add(new Card(data.Item1,data.Item2));
+        } 
+        return result;
+    }
     public List<Card> ReadCardsPool()
     {
         List<Card> result=new();
