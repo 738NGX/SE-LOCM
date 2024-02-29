@@ -20,7 +20,8 @@ public class Break : MonoBehaviour
     public AudioClip sfxCard;
     public AudioClip sfxEnd;
     private LocalSaveData localSaveData;
-    private string resultString;
+    private string resultString="";
+    private int selectingCardIndex=-1;
     private void Start()
     {
         page.DOMoveY(0,1f).From(-10);
@@ -68,12 +69,11 @@ public class Break : MonoBehaviour
             obj.GetComponent<CardDisplay>().displayIndex=i;
             obj.AddComponent<Button>().onClick.AddListener(() => ChangeSelectingCardIndex(currentIndex));
         }
-
-        resultString="成功升级了一张卡牌";
     }
     public void ChangeSelectingCardIndex(int index)
     {
-        foreach(Transform child in cardSelector)
+        selectingCardIndex=index;
+        foreach(Transform child in cardContent)
         {
             if(!child.TryGetComponent<CardDisplay>(out var card)) continue;
             if(card.displayIndex==index&&child.localScale!=new Vector3(1.1f,1.1f))
@@ -86,6 +86,37 @@ public class Break : MonoBehaviour
             }
             else continue;
         }
+    }
+    public void UpgradeCard()
+    {
+        if(selectingCardIndex==-1) return;
+        
+        int upgradeCardId=0;
+        
+        for(int i=0;i<cardContent.childCount;i++)
+        {
+            if(!cardContent.GetChild(i).gameObject.activeInHierarchy) continue;
+            if(!cardContent.GetChild(i).TryGetComponent<CardDisplay>(out var card)) continue;
+            if(card.displayIndex!=selectingCardIndex) continue;
+            upgradeCardId=card.id;
+            break;
+        }
+
+        List<Card> cards=localSaveData.ReadCardsData();
+        
+        foreach(var card in cards)
+        {
+            if(card.id!=upgradeCardId || card.isPlused) continue;
+            resultString="和论战堂中的各路学者论战,收获颇丰.成功升级了卡牌\""+card.displayInfo.name+"\"!";
+            card.Upgrade();
+            break;
+        }
+
+        selectingCardIndex=-1;
+        localSaveData.ReplaceCardsData(cards);
+        MainTheme.PlayAudio(sfxBook,gameObject);
+        cardSelector.gameObject.SetActive(false);
+        WaitEndBreak();
     }
     private void AdjustCoins()
     {
@@ -133,6 +164,7 @@ public class Break : MonoBehaviour
     }
     private void WaitEndBreak()
     {
+        if(resultString.Length==0) return;
         resultStringUI.DOText(resultString,1f);
         foreach(Transform child in breakContent)
         {

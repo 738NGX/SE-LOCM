@@ -70,9 +70,10 @@ public class CardTemplate : MonoBehaviour
         {
             inHand=false;
             int id=gc.handCards.handCards[index].id;
+            bool isPlused=gc.handCards.handCards[index].isPlused;
             gc.handCards.handCards[index].Play();
             StartCoroutine(RemoveCard());
-            gc.CardExecuteAction(id);
+            gc.CardExecuteAction(id,isPlused);
         }
         else transform.DOMove(originalPosition,0.1f);
         isDragging=false;

@@ -18,17 +18,39 @@ public class Card
         this.id=id;
         this.isPlused=isPlused;
         playTimes=0;
+        ReadCardData(isPlused);
+    }
+    public void Play()
+    {
+        playTimes++;
+        Debug.Log(isPlused);
+        if(id==114)
+        {
+            string oldContent=!isPlused ? (9+(playTimes-1)*3).ToString() : (12+(playTimes-1)*4).ToString();
+            string newContent=!isPlused ? (9+playTimes*3).ToString() : (12+playTimes*4).ToString();
+            displayInfo.effect=displayInfo.effect.Replace(oldContent,newContent);
+        }
+    }
+    public void Upgrade()
+    {
+        if(isPlused) return;
+        isPlused=true;
+        ReadCardData(true);
+    }
+    public (int,bool) Export(){return (id,isPlused);}
+    private void ReadCardData(bool _isPlused)
+    {
         if(CardDatabase.data.TryGetValue(id,out var info))
         {
-            displayInfo=info;
+            displayInfo=info.Copy();
             cost=info.cost switch
             {
                 "无" => -1,
                 "零" => 0,
                 "壹" => 1,
                 "贰" => 2,
-                "壹-" => !isPlused ? 1 : 0,
-                "贰-" => !isPlused ? 2 : 1,
+                "壹-" => !_isPlused ? 1 : 0,
+                "贰-" => !_isPlused ? 2 : 1,
                 _ => 0
             };
             type=info.type switch
@@ -51,7 +73,7 @@ public class Card
             {
                 "是" => true,
                 "否" => false,
-                "可变" => !isPlused,
+                "可变" => !_isPlused,
                 _ => false,
             };
         }
@@ -64,23 +86,11 @@ public class Card
             2 => "贰",
             _ => "零",
         };
-        if(isPlused)
+        if(_isPlused)
         {
             displayInfo.name+="+";
             displayInfo.effect=displayInfo.plusedEffect;
             if(displayInfo.cost[^1]=='-') displayInfo.cost=displayInfo.cost[..^1];
         }
     }
-
-    public void Play()
-    {
-        playTimes++;
-        if(id==114)
-        {
-            string oldContent=!isPlused ? (9+(playTimes-1)*3).ToString() : (12+(playTimes-1)*4).ToString();
-            string newContent=!isPlused ? (9+playTimes*3).ToString() : (12+playTimes*4).ToString();
-            displayInfo.effect=displayInfo.effect.Replace(oldContent,newContent);
-        }
-    }
-    public (int,bool) Export(){return (id,isPlused);}
 }

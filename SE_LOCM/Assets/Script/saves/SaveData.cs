@@ -45,6 +45,11 @@ public class LocalSaveData
             cardsData.Add((card.id,card.isPlused));
         }
     }
+    public void ReplaceCardsData(List<Card> cards)
+    {
+        cardsData.Clear();
+        AddCardsData(cards);
+    }
     public void AddCardsPool(List<Card> cards)
     {
         foreach(var card in cards)

@@ -30,6 +30,10 @@ public class CardDisplayInfo : DisplayInfo
         plusedEffect=values[7];
         quote=values[8].Replace("\\n", "\n");;
     }
+    public CardDisplayInfo Copy()
+    {
+        return new CardDisplayInfo($"{id},{name},{cost},{type},{rarity},{disposable},{effect},{plusedEffect},{quote.Replace("\n", "\\n")}");
+    }
 };
 
 public class BookDisplayInfo : DisplayInfo
@@ -45,5 +49,9 @@ public class BookDisplayInfo : DisplayInfo
         rarity=values[2];
         effect=values[3];
         introduction=values[4];
+    }
+    public BookDisplayInfo Copy()
+    {
+        return new BookDisplayInfo($"{id},{name},{rarity},{effect},{introduction}");
     }
 }
