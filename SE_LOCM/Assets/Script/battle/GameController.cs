@@ -261,6 +261,13 @@ public class GameController : MonoBehaviour
             case 112: Card112ExecuteAction(isPlused); break;
             case 113: Card113ExecuteAction(isPlused); break;
             case 114: Card114ExecuteAction(isPlused); break;
+            case 115: Card115ExecuteAction(isPlused); break;
+            case 116: Card116ExecuteAction(isPlused); break;
+            case 117: Card117ExecuteAction(isPlused); break;
+            case 118: Card118ExecuteAction(isPlused); break;
+            case 119: Card119ExecuteAction(isPlused); break;
+            case 120: Card120ExecuteAction(isPlused); break;
+            case 121: Card121ExecuteAction(isPlused); break;
             default: break;
         }
     }
@@ -326,7 +333,7 @@ public class GameController : MonoBehaviour
     }
     private void Card109ExecuteAction(bool isPlused)
     {
-        // 课分术
+        // 平分术
         StartCoroutine(Card109ExecuteActionCoroutine(isPlused));
     }
     private IEnumerator Card109ExecuteActionCoroutine(bool isPlused)
@@ -342,9 +349,9 @@ public class GameController : MonoBehaviour
         dc.bezierArrow.SetActive(false);
 
         enemies[selectedEnemyIndex].ReduceHP(val);
-            PlayAudio(sfxAttack);
-            dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
-            Camera.main.transform.DOShakePosition(0.5f,0.5f);
+        PlayAudio(sfxAttack);
+        dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
+        Camera.main.transform.DOShakePosition(0.5f,0.5f);
 
         if(enemies[selectedEnemyIndex].intendType==IntendType.Attack)
         {
@@ -356,7 +363,7 @@ public class GameController : MonoBehaviour
     private void Card110ExecuteAction(bool isPlused)
     {
         // 经分术
-        int val=!isPlused ? 24 : 36;
+        int val=!isPlused ? 12 : 18;
         AllAttack(val/enemies.Count);
     }
     private void Card111ExecuteAction(bool isPlused)
@@ -385,5 +392,45 @@ public class GameController : MonoBehaviour
         if(card.id!=114) Debug.LogError("id114 error");
         int val=!isPlused ? 9+(card.playTimes-1)*3 : 9+(card.playTimes-1)*3;
         SelectAttack(val+player.ap);
+    }
+    private void Card115ExecuteAction(bool isPlused)
+    {
+        // 圭田术
+        int val1=!isPlused ? 8 : 10;
+        int val2=!isPlused ? 1 : 2;
+        DrawCards(val2);
+        SelectAttack(val1+player.ap);
+    }
+    private void Card116ExecuteAction(bool isPlused)
+    {
+        // 邪田术
+    }
+    private void Card117ExecuteAction(bool isPlused)
+    {
+        // 箕田术
+        int val=!isPlused ? 1 : 2;
+        player.sp+=val;
+        WaitingDiscards(1);
+    }
+    private void Card118ExecuteAction(bool isPlused)
+    {
+        // 圆田术
+        int val1=!isPlused ? 10 : 15;
+        int val2=!isPlused ? 1 : 2;
+        AddShield(val1);
+    }
+    private void Card119ExecuteAction(bool isPlused)
+    {
+        // 宛田术
+        AddShield(player.shield);
+    }
+    private void Card120ExecuteAction(bool isPlused)
+    {
+        // 弧田术
+    }
+    private void Card121ExecuteAction(bool isPlused)
+    {
+        // 环田术
+        SelectAttack(player.shield+player.ap);
     }
 }
