@@ -27,12 +27,28 @@ public class LocalSaveData
     public List<int> route;                     // 当层路径
 
     // 数据写入
+    public void AdjustHP(int val)
+    {
+        if(hp+val>=hpLimit) hp=hpLimit;
+        else if(hp+val<=0) hp=0;
+        else hp+=val;
+    }
+    public void AdjustCoins(int val)
+    {
+        if(coins+val<=0) coins=0;
+        else coins+=val;
+    }
     public void AddCardsData(List<Card> cards)
     {
         foreach(var card in cards)
         {
             cardsData.Add((card.id,card.isPlused));
         }
+    }
+    public void ReplaceCardsData(List<Card> cards)
+    {
+        cardsData.Clear();
+        AddCardsData(cards);
     }
     public void AddCardsPool(List<Card> cards)
     {
@@ -63,6 +79,15 @@ public class LocalSaveData
     {
         List<Card> result=new();
         foreach(var data in cardsData) result.Add(new Card(data.Item1,data.Item2));
+        return result;
+    }
+    public List<Card> ReadNotUpdatedCardsData()
+    {
+        List<Card> result=new();
+        foreach(var data in cardsData)
+        {
+            if(!data.Item2) result.Add(new Card(data.Item1,data.Item2));
+        } 
         return result;
     }
     public List<Card> ReadCardsPool()

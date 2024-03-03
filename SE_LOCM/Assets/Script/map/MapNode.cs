@@ -35,13 +35,17 @@ public class MapNode : MonoBehaviour
         if(status!=MapNodeStauts.Available) return;
         
         LocalSaveData localSaveData=LocalSaveDataManager.LoadLocalData();
-        localSaveData.route.Add(id);
+        if(!localSaveData.route.Contains(id)) localSaveData.route.Add(id);
         LocalSaveDataManager.SaveLocalData(localSaveData);
 
         if(MapDatabase.data[id].type==MapNodeType.Story)
         {
             if(!MapNodeIdToStorySceneDatabase.data.TryGetValue(id,out var target)) return;
             sf.FadeOut(target);
+        }
+        else if(MapDatabase.data[id].type==MapNodeType.Break)
+        {
+            sf.FadeOut("Scenes/break");
         }
         else if(MapDatabase.data[id].type==MapNodeType.Box)
         {
@@ -52,6 +56,10 @@ public class MapNode : MonoBehaviour
             sf.FadeOut("Scenes/battle/b1-01");
         }
         else if(MapDatabase.data[id].type==MapNodeType.Senior)
+        {
+            sf.FadeOut("Scenes/battle/b1-01");
+        }
+        else if(MapDatabase.data[id].type==MapNodeType.Boss)
         {
             sf.FadeOut("Scenes/battle/b1-01");
         }

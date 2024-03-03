@@ -18,50 +18,12 @@ public class Card
         this.id=id;
         this.isPlused=isPlused;
         playTimes=0;
-        if(CardDatabase.data.TryGetValue(id,out var info))
-        {
-            displayInfo=info;
-            cost=info.cost switch
-            {
-                "零" => 0,
-                "壹" => 1,
-                "贰" => 2,
-                _ => 0
-            };
-            type=info.type switch
-            {
-                "攻击" => CardType.Attack,
-                "锦囊" => CardType.Spell,
-                "装备" => CardType.Equip,
-                _ => CardType.Attack
-            };
-            rarity=info.rarity switch
-            {
-                "基础" => CardRarity.Base,
-                "普通" => CardRarity.Ordinary,
-                "稀有" => CardRarity.Rare,
-                "史诗" => CardRarity.Epic,
-                _ => CardRarity.Ordinary
-            };
-            disposable=info.disposable switch
-            {
-                "是" => true,
-                "否" => false,
-                "可变" => !isPlused,
-                _ => false
-            };
-        }
-        else Debug.LogError($"Card ID not found in database:{id}");
-        if(isPlused)
-        {
-            displayInfo.name+="+";
-            displayInfo.effect=displayInfo.plusedEffect;
-        }
+        ReadCardData(isPlused);
     }
-
     public void Play()
     {
         playTimes++;
+        Debug.Log(isPlused);
         if(id==114)
         {
             string oldContent=!isPlused ? (9+(playTimes-1)*3).ToString() : (12+(playTimes-1)*4).ToString();
@@ -69,5 +31,66 @@ public class Card
             displayInfo.effect=displayInfo.effect.Replace(oldContent,newContent);
         }
     }
+    public void Upgrade()
+    {
+        if(isPlused) return;
+        isPlused=true;
+        ReadCardData(true);
+    }
     public (int,bool) Export(){return (id,isPlused);}
+    private void ReadCardData(bool _isPlused)
+    {
+        if(CardDatabase.data.TryGetValue(id,out var info))
+        {
+            displayInfo=info.Copy();
+            cost=info.cost switch
+            {
+                "无" => -1,
+                "零" => 0,
+                "壹" => 1,
+                "贰" => 2,
+                "壹-" => !_isPlused ? 1 : 0,
+                "贰-" => !_isPlused ? 2 : 1,
+                _ => 0
+            };
+            type=info.type switch
+            {
+                "攻击" => CardType.Attack,
+                "锦囊" => CardType.Spell,
+                "装备" => CardType.Equip,
+                "谜题" => CardType.Quiz,
+                _ => CardType.Attack,
+            };
+            rarity=info.rarity switch
+            {
+                "基础" => CardRarity.Base,
+                "普通" => CardRarity.Ordinary,
+                "稀有" => CardRarity.Rare,
+                "史诗" => CardRarity.Epic,
+                _ => CardRarity.Ordinary,
+            };
+            disposable=info.disposable switch
+            {
+                "是" => true,
+                "否" => false,
+                "可变" => !_isPlused,
+                _ => false,
+            };
+        }
+        else Debug.LogError($"Card ID not found in database:{id}");
+        displayInfo.cost=cost switch
+        {
+            -1 => "无",
+            0 => "零",
+            1 => "壹",
+            2 => "贰",
+            _ => "零",
+        };
+        if(_isPlused)
+        {
+            displayInfo.name+="+";
+            displayInfo.effect=displayInfo.plusedEffect;
+            if(displayInfo.cost[^1]=='-') displayInfo.cost=displayInfo.cost[..^1];
+        }
+    }
 }
