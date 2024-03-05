@@ -2,32 +2,42 @@ using System.Data.Common;
 using UnityEngine;
 using DG.Tweening;
 using System.Collections;
+using Fungus;
+using TMPro;
 
 public enum IntendType{Unknown,Attack,Defence,Recover,Buff,Debuff,Sleep};
 
-public class Enemy : MonoBehaviour
+public class Enemy : Creature
 {
-    public GameController gc;
+    public int id;
     public int index;
-    public IntendType intendType=IntendType.Unknown;   // 回合意图
-    public int intendValue=-1;
-    public int intendTimes=-1;
-    public int hp;                  // 体力值
-    public int ap;                  // 基础攻击力
-    public int dp;                  // 基础防御力
-    public int hp_limit;            // 体力上限
-    public int shield;              // 护盾值
+    public IntendType intendType=IntendType.Unknown;    // 回合意图
+    public int intendValue=-1;                          // 意图数值 
+    public int intendTimes=-1;                          // 意图倍数
     public GameObject selector;
+    public TextMeshProUGUI displayName;
 
     private bool waitSelect=false;
 
+    // 从id构造敌人数据
+    private void Start()
+    {
+        var info=EnemyDatabase.data[id].Copy();
+        hpLimit=info.hpLimit;
+        hp=hpLimit;
+        ap=info.ap;
+        dp=info.dp;
+        displayName.text=info.name;
+        buffContainer.creature=this;
+    }
+    
     // 产生回合意图
     public void Prepare()
     {
         int dice=Random.Range(0,12);
         intendTimes=1;
         // 强制回血
-        if(hp<hp_limit*0.25)
+        if(hp<hpLimit*0.25)
         {
             intendType=IntendType.Recover;
             intendValue=dp;
@@ -41,7 +51,7 @@ public class Enemy : MonoBehaviour
         // 5,6,7,8,9:叠甲或回血
         else if(dice<9)
         {
-            if(hp<hp_limit*0.5||(hp<hp_limit*0.75&&dice<7))
+            if(hp<hpLimit*0.5||(hp<hpLimit*0.75&&dice<7))
             {
                 intendType=IntendType.Recover; 
             }
@@ -87,16 +97,16 @@ public class Enemy : MonoBehaviour
         gc.PlayAudio(gc.sfxDefence);
         shield+=val;
     }
-    public void AddHP(int val)
+    public override void AddHP(int val)
     {
         gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Buff");
         gc.PlayAudio(gc.sfxRecover);
         if(val<1) return;
-        if(hp+val>=hp_limit) hp=hp_limit;
+        if(hp+val>=hpLimit) hp=hpLimit;
         else hp+=val;
         gc.dc.UpdateHPSlider(index);
     }
-    public void ReduceHP(int val)
+    public override void ReduceHP(int val)
     {
         if(val<1) return;
         gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Hurt");
@@ -114,10 +124,6 @@ public class Enemy : MonoBehaviour
         }
         else shield-=val;
         gc.dc.UpdateHPSlider(index);
-    }
-    private void Start()
-    {
-        hp_limit=hp;
     }
     private void OnMouseEnter()
     {

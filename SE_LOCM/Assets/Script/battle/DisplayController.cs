@@ -26,6 +26,8 @@ public class DisplayController : MonoBehaviour
     public List<TextMeshProUGUI> EnemyHPUI;
     public List<Image> EnemyHPSlider;
     public List<TextMeshProUGUI> EnemyShield;
+    public List<TextMeshProUGUI> EnemyAttackAddon;
+    public List<TextMeshProUGUI> EnemyDefenceAddon;
     public List<Image> EnemyIntend;
     public List<TextMeshProUGUI> EnemyIntendVal;
     public GameObject bezierArrow;
@@ -35,7 +37,7 @@ public class DisplayController : MonoBehaviour
     private GameObject panel;
     private readonly float textWidth=100f;
 
-    void Update()
+    private void Update()
     {
         drawPileUI.text=gc.drawPile.drawPile.Count.ToString();
         discardPileUI.text=gc.discardPile.discardPile.Count.ToString();
@@ -47,8 +49,11 @@ public class DisplayController : MonoBehaviour
         playerShield.text=gc.player.shield.ToString();
         for(int i=0;i<gc.enemies.Count;i++)
         {
-            EnemyHPUI[i].text=gc.enemies[i].hp+"/"+gc.enemies[i].hp_limit;
+            EnemyHPUI[i].text=gc.enemies[i].hp+"/"+gc.enemies[i].hpLimit;
             EnemyShield[i].text=gc.enemies[i].shield.ToString();
+            EnemyAttackAddon[i].text=(gc.enemies[i].ap<0 ? "" : "+")+gc.enemies[i].ap;
+            EnemyDefenceAddon[i].text=(gc.enemies[i].dp<0 ? "" : "+")+gc.enemies[i].dp;
+            
             EnemyIntend[i].sprite=gc.enemies[i].intendType switch
             {
                 IntendType.Attack => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_attack.png"),
@@ -68,7 +73,7 @@ public class DisplayController : MonoBehaviour
         {
             DOTween.To(()=>playerHPSlider.fillAmount,x=>playerHPSlider.fillAmount=x,(float)gc.player.hp/gc.player.hpLimit,0.25f);
         }
-        else DOTween.To(()=>EnemyHPSlider[i].fillAmount,x=>EnemyHPSlider[i].fillAmount=x,(float)gc.enemies[i].hp/gc.enemies[i].hp_limit,0.25f);
+        else DOTween.To(()=>EnemyHPSlider[i].fillAmount,x=>EnemyHPSlider[i].fillAmount=x,(float)gc.enemies[i].hp/gc.enemies[i].hpLimit,0.25f);
     }
     public IEnumerator AnimatePanelAndText(List<string> texts,float time=0.5f)
     {

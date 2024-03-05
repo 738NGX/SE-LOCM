@@ -791,13 +791,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e14cf263982e6f4dafe920ca860790d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gc: {fileID: 421140293}
   hp: 0
-  sp: 0
   hpLimit: 0
-  spInit: 0
   ap: 0
   dp: 0
   shield: 0
+  sp: 0
+  spInit: 0
 --- !u!1 &184393396
 GameObject:
   m_ObjectHideFlags: 0
@@ -1481,16 +1482,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gc: {fileID: 421140293}
+  hp: 50
+  hpLimit: 0
+  ap: 8
+  dp: 6
+  shield: 0
+  id: 101
   index: 0
   intendType: 0
   intendValue: -1
   intendTimes: -1
-  hp: 50
-  ap: 8
-  dp: 6
-  hp_limit: 0
-  shield: 0
   selector: {fileID: 730531103}
+  displayName: {fileID: 206931883}
 --- !u!61 &311351552
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4872,7 +4875,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: x1
+  m_text: +0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5475,6 +5478,10 @@ MonoBehaviour:
   - {fileID: 1010069072}
   EnemyShield:
   - {fileID: 801105748}
+  EnemyAttackAddon:
+  - {fileID: 1109351945}
+  EnemyDefenceAddon:
+  - {fileID: 1632455262}
   EnemyIntend:
   - {fileID: 238962674}
   EnemyIntendVal:
@@ -6398,7 +6405,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: x1
+  m_text: +0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

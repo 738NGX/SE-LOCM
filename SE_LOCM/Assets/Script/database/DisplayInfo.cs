@@ -55,3 +55,26 @@ public class BookDisplayInfo : DisplayInfo
         return new BookDisplayInfo($"{id},{name},{rarity},{effect},{introduction}");
     }
 }
+
+public class EnemyInfo : DisplayInfo
+{
+    public int hpLimit;
+    public int ap;
+    public int dp;
+    public int growthSpeed;
+
+    public EnemyInfo(string rawData)
+    {
+        string[] values=rawData.Split(',');
+        id=int.Parse(values[0]);
+        name=values[1];
+        hpLimit=int.Parse(values[2]);
+        ap=int.Parse(values[3]);
+        dp=int.Parse(values[4]);
+        growthSpeed=int.Parse(values[5]);
+    }
+    public EnemyInfo Copy()
+    {
+        return new EnemyInfo($"{id},{name},{hpLimit},{ap},{dp},{growthSpeed}");
+    }
+}

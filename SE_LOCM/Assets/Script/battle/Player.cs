@@ -2,16 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Creature
 {
-    public int hp;              // 体力值(HealthPoints)
     public int sp;              // 法术值(SpellPoints)
-    public int hpLimit;         // 体力值上限
     public int spInit;          // 每回合初始算术值
-    public int ap;              // 攻击力
-    public int dp;              // 防御力
-    public int shield;          // 护盾
 
+    private void Start()
+    {
+        buffContainer.creature=this;
+    }
     public void Init(LocalSaveData localSaveData)
     {
         hpLimit=localSaveData.hpLimit;
@@ -22,13 +21,13 @@ public class Player : MonoBehaviour
         RecoverSP();
     }
 
-    public void AddHP(int val)
+    public override void AddHP(int val)
     {
         if(val<1) return;
         if(hp+val>=hpLimit) hp=hpLimit;
         else hp+=val;
     }
-    public void ReduceHP(int val)
+    public override void ReduceHP(int val)
     {
         if(val<1) return;
         if(hp+shield-val<=0) hp=0;
