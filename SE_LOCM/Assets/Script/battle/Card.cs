@@ -23,7 +23,6 @@ public class Card
     public void Play()
     {
         playTimes++;
-        Debug.Log(isPlused);
         if(id==114)
         {
             string oldContent=!isPlused ? (9+(playTimes-1)*3).ToString() : (12+(playTimes-1)*4).ToString();

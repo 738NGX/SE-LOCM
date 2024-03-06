@@ -68,12 +68,15 @@ public class CardTemplate : MonoBehaviour
         }
         else if(inPlayArea&&gc.handCards.handCards[index].cost<=gc.player.sp)
         {
+            var card=gc.handCards.handCards[index];
+            int executeTimes=gc.player.buffContainer.CallPlayCard(card);
+            
+            if(executeTimes==-1) return;
+            
             inHand=false;
-            int id=gc.handCards.handCards[index].id;
-            bool isPlused=gc.handCards.handCards[index].isPlused;
             gc.handCards.handCards[index].Play();
             StartCoroutine(RemoveCard());
-            gc.CardExecuteAction(id,isPlused);
+            for(int i=0;i<executeTimes;i++) gc.CardExecuteAction(card.id,card.isPlused);
         }
         else transform.DOMove(originalPosition,0.1f);
         isDragging=false;

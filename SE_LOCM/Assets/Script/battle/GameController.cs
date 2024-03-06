@@ -75,7 +75,9 @@ public class GameController : MonoBehaviour
             foreach(Enemy enemy in enemies) enemy.Prepare();
             
             StartCoroutine(dc.AnimatePanelAndText(new(){"玩","家","回","合"}));
-            player.sp=player.spInit;
+            int extraSP=player.buffContainer.ExtraSP;
+            int sp=player.spInit+extraSP<0 ? 0 : player.spInit+extraSP;
+            player.sp=sp;
             
             // 结束准备阶段
             gameStage=GameStage.Draw;
@@ -83,8 +85,10 @@ public class GameController : MonoBehaviour
         else if(gameStage==GameStage.Draw)
         {
             // 默认情况下可以摸5张牌
-            int drawNum=5;
+            int extraCard=player.buffContainer.ExtraCard;
+            int drawNum=5+extraCard<0 ? 0 : 5+extraCard;
             DrawCards(drawNum);
+            
             // 结束摸牌阶段
             gameStage=GameStage.Play;
         }
@@ -104,13 +108,17 @@ public class GameController : MonoBehaviour
         else if(gameStage==GameStage.Enemy)
         {
             StartCoroutine(dc.AnimatePanelAndText(new(){"敌","人","回","合"}));
-            foreach(Enemy enemy in enemies) enemy.Execute();
+            foreach(Enemy enemy in enemies)
+            {
+                if(!enemy.buffContainer.ExistBuff(109)) enemy.shield=0;
+                enemy.Execute();
+            } 
             // 结束敌人阶段
             gameStage=GameStage.End;
         }
         else if(gameStage==GameStage.End)
         {
-            player.shield=0;
+            if(!player.buffContainer.ExistBuff(109)) player.shield=0;
             // 回合数+1
             roundCount++;
             gameStage=GameStage.Pre;
@@ -153,11 +161,11 @@ public class GameController : MonoBehaviour
         StartCoroutine(dc.AnimatePanelAndText(new(){"弃",val.ToString(),"张","牌"},0f));
     }
     // 选择攻击
-    private void SelectAttack(int val,int times=1)
+    private void SelectAttack(int val,int times=1,Buff giveBuff=null)
     {
-        StartCoroutine(SelectAttackCoroutine(val,times));
+        StartCoroutine(SelectAttackCoroutine(player.buffContainer.CallAttack(val),times,giveBuff));
     }
-    private IEnumerator SelectAttackCoroutine(int val,int times)
+    private IEnumerator SelectAttackCoroutine(int val,int times,Buff giveBuff)
     {
         dc.bezierArrow.SetActive(true);
         selectedEnemyIndex=-1;
@@ -174,20 +182,26 @@ public class GameController : MonoBehaviour
             Camera.main.transform.DOShakePosition(0.5f,0.5f);
         }
 
+        if(giveBuff is not null)
+        {
+            enemies[selectedEnemyIndex].AddBuff(giveBuff);
+        }
+
         selectedEnemyIndex=-2;
     }
     // 普遍攻击
-    private void AllAttack(int val)
+    public void AllAttack(int val,Buff giveBuff=null)
     {
-        StartCoroutine(AllAttackCoroutine(val));
+        StartCoroutine(AllAttackCoroutine(player.buffContainer.CallAttack(val),giveBuff));
     }
-    private IEnumerator AllAttackCoroutine(int val)
+    private IEnumerator AllAttackCoroutine(int val,Buff giveBuff)
     {
         PlayAudio(sfxAttack);
         dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
         for(int i=0;i<enemies.Count;i++)
         {
             enemies[i].ReduceHP(val);
+            if(giveBuff is not null) enemies[i].AddBuff(giveBuff);
             dc.UpdateHPSlider(i);
             dc.enemyObjects[i].GetComponent<Animator>().SetTrigger("Hurt");
             PlayAudio(sfxHurt);
@@ -196,7 +210,7 @@ public class GameController : MonoBehaviour
         }
     }
     // 叠盾
-    private void AddShield(int val)
+    public void AddShield(int val)
     {
         StartCoroutine(AddShieldCoroutine(val));
     }
@@ -213,26 +227,44 @@ public class GameController : MonoBehaviour
         shield.transform.DOScale(0,0.1f);
         yield return new WaitForSeconds(0.1f);
     }
-    // 正面buff
-    private IEnumerator UpArrow()
+    // buff
+    public void UpArrow()
+    {
+        StartCoroutine(UpArrowCoroutine());
+    }
+    private IEnumerator UpArrowCoroutine()
     {
         GameObject arrow=Instantiate(dc.upArrow,transform);
         arrow.transform.SetParent(dc.higherCanvas.transform,false);
         arrow.transform.position=new Vector3(500f,650f);
         arrow.SetActive(true);
-        PlayAudio(sfxBuff);
+        arrow.transform.DOScale(0,0.25f).From();
+        yield return new WaitForSeconds(0.25f);
+        arrow.transform.DOScale(0,0.1f);
+        yield return new WaitForSeconds(0.1f);
+    }
+    public void DownArrow()
+    {
+        StartCoroutine(DownArrowCoroutine());
+    }
+    private IEnumerator DownArrowCoroutine()
+    {
+        GameObject arrow=Instantiate(dc.downArrow,transform);
+        arrow.transform.SetParent(dc.higherCanvas.transform,false);
+        arrow.transform.position=new Vector3(500f,650f);
+        arrow.SetActive(true);
         arrow.transform.DOScale(0,0.25f).From();
         yield return new WaitForSeconds(0.25f);
         arrow.transform.DOScale(0,0.1f);
         yield return new WaitForSeconds(0.1f);
     }
     // 攻击力调整
-    private void AttackAddonAdjust(int val)
+    private void AttackPointsAdjust(int val)
     {
         player.ap+=val;
     }
     // 防御力调整
-    private void DefenceAddonAdjust(int val)
+    private void DefencePointsAdjust(int val)
     {
         player.dp+=val;
     }
@@ -275,9 +307,9 @@ public class GameController : MonoBehaviour
     {
         // 算筹
         int val=!isPlused ? 1 : 2;
-        StartCoroutine(UpArrow());
-        AttackAddonAdjust(val);
-        DefenceAddonAdjust(val);
+        UpArrow();
+        AttackPointsAdjust(val);
+        DefencePointsAdjust(val);
     }
     private void Card101ExecuteAction(bool isPlused)
     {
@@ -321,8 +353,9 @@ public class GameController : MonoBehaviour
     private void Card107ExecuteAction(bool isPlused)
     {
         // 约分术
-        int val=!isPlused ? 5 : 7;
-        SelectAttack(val+player.ap);
+        int val1=!isPlused ? 5 : 7;
+        int val2=!isPlused ? 1 : 2;
+        SelectAttack(val1+player.ap,1,new Buff(103,val2));
     }
     private void Card108ExecuteAction(bool isPlused)
     {
@@ -363,8 +396,9 @@ public class GameController : MonoBehaviour
     private void Card110ExecuteAction(bool isPlused)
     {
         // 经分术
-        int val=!isPlused ? 12 : 18;
-        AllAttack(val/enemies.Count);
+        int val1=!isPlused ? 12 : 18;
+        int val2=!isPlused ? 1 : 2;
+        AllAttack(val1/enemies.Count,new Buff(104,val2));
     }
     private void Card111ExecuteAction(bool isPlused)
     {
@@ -418,6 +452,7 @@ public class GameController : MonoBehaviour
         int val1=!isPlused ? 10 : 15;
         int val2=!isPlused ? 1 : 2;
         AddShield(val1);
+        player.AddBuff(new Buff(102,val2));
     }
     private void Card119ExecuteAction(bool isPlused)
     {
@@ -427,6 +462,7 @@ public class GameController : MonoBehaviour
     private void Card120ExecuteAction(bool isPlused)
     {
         // 弧田术
+        player.AddBuff(new Buff(201,1));
     }
     private void Card121ExecuteAction(bool isPlused)
     {

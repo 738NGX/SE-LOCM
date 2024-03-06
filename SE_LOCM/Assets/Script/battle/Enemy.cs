@@ -4,6 +4,7 @@ using DG.Tweening;
 using System.Collections;
 using Fungus;
 using TMPro;
+using Unity.VisualScripting;
 
 public enum IntendType{Unknown,Attack,Defence,Recover,Buff,Debuff,Sleep};
 
@@ -46,7 +47,7 @@ public class Enemy : Creature
         else if(dice<5)
         {
             intendType=IntendType.Attack;
-            intendValue=ap;
+            intendValue=buffContainer.CallAttack(ap);
         }
         // 5,6,7,8,9:叠甲或回血
         else if(dice<9)
@@ -61,17 +62,18 @@ public class Enemy : Creature
         // 10,11:强化
         else
         {
-            intendType=IntendType.Sleep;
-            intendValue=-1;
+            intendType=IntendType.Buff;
+            intendValue=3;
         }
     }
     public void Execute()
     {
         switch(intendType)
         {
-            case IntendType.Attack: StartCoroutine(Attack(intendValue,intendTimes)); break;
+            case IntendType.Attack: StartCoroutine(Attack(buffContainer.CallAttack(intendValue),intendTimes)); break;
             case IntendType.Defence: AddShield(intendValue); break;
             case IntendType.Recover: AddHP(intendValue); break;
+            case IntendType.Buff: AddBuff(new Buff(101,intendValue+1)); break;
             default: break;
         }
         intendType=IntendType.Unknown;
@@ -83,7 +85,6 @@ public class Enemy : Creature
         for(int i=0;i<times;i++)
         {
             gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Attack");
-            gc.PlayAudio(gc.sfxHurt);
             Camera.main.transform.DOShakePosition(0.5f,0.5f);
             gc.player.ReduceHP(val);
             gc.dc.playerObject.GetComponent<Animator>().SetTrigger("Hurt");
@@ -91,7 +92,7 @@ public class Enemy : Creature
             yield return new WaitForSeconds(0.15f);
         }
     }
-    private void AddShield(int val)
+    public override void AddShield(int val)
     {
         gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Buff");
         gc.PlayAudio(gc.sfxDefence);
@@ -100,30 +101,25 @@ public class Enemy : Creature
     public override void AddHP(int val)
     {
         gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Buff");
-        gc.PlayAudio(gc.sfxRecover);
-        if(val<1) return;
-        if(hp+val>=hpLimit) hp=hpLimit;
-        else hp+=val;
+        base.AddHP(val);
         gc.dc.UpdateHPSlider(index);
     }
     public override void ReduceHP(int val)
     {
-        if(val<1) return;
         gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Hurt");
-        gc.PlayAudio(gc.sfxHurt);
-        if(hp+shield-val<=0)
+        base.ReduceHP(val);
+        gc.dc.UpdateHPSlider(index);
+        if(hp==0)
         {
-            hp=0;
             gc.dc.enemyObjects[index].GetComponent<Animator>().SetBool("Die",true);
             gc.enemyCount--;
+            gc.player.AddCoins(buffContainer.StealedCoins);
         }
-        else if(val>shield)
-        {
-            hp-=val-shield;
-            shield=0;
-        }
-        else shield-=val;
-        gc.dc.UpdateHPSlider(index);
+    }
+    public override void AddBuff(Buff buff)
+    {
+        gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Buff");
+        base.AddBuff(buff);
     }
     private void OnMouseEnter()
     {

@@ -33,6 +33,7 @@ public class DisplayController : MonoBehaviour
     public GameObject bezierArrow;
     public GameObject shield;
     public GameObject upArrow;
+    public GameObject downArrow;
     
     private GameObject panel;
     private readonly float textWidth=100f;

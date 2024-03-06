@@ -6,6 +6,7 @@ public class Player : Creature
 {
     public int sp;              // 法术值(SpellPoints)
     public int spInit;          // 每回合初始算术值
+    public int coins;
 
     private void Start()
     {
@@ -18,27 +19,38 @@ public class Player : Creature
         ap=localSaveData.initAp;
         dp=localSaveData.initDp;
         spInit=localSaveData.initSp;
+        coins=localSaveData.coins;
         RecoverSP();
     }
 
     public override void AddHP(int val)
     {
-        if(val<1) return;
-        if(hp+val>=hpLimit) hp=hpLimit;
-        else hp+=val;
+        base.AddHP(val);
+        gc.dc.UpdateHPSlider(-1);
     }
     public override void ReduceHP(int val)
     {
-        if(val<1) return;
-        if(hp+shield-val<=0) hp=0;
-        else if(val>shield)
-        {
-            hp-=val-shield;
-            shield=0;
-        }
-        else shield-=val;
+        base.ReduceHP(val);
+        gc.dc.UpdateHPSlider(-1);
     }
-    public void RecoverSP(){sp=spInit;}
+    public override void AddShield(int val)
+    {
+        gc.AddShield(val);
+    }
+    public override void AddBuff(Buff buff)
+    {
+        base.AddBuff(buff);
+        switch(buff.Style)
+        {
+            case BuffStyle.Positive: gc.UpArrow(); break;
+            case BuffStyle.Negative: gc.DownArrow(); break;
+            default: break;
+        }
+    }
+    public void RecoverSP()
+    {
+        sp=spInit;
+    }
     public void AddSP(int val)
     {
         if(val<1) return;
@@ -49,5 +61,21 @@ public class Player : Creature
         if(val<1) return;
         if(sp-val<=0) sp=0;
         else sp-=val;
+    }
+    public void AddCoins(int val)
+    {
+        if(val<1) return;
+        coins+=val;
+    }
+    public int ReduceCoins(int val)
+    {
+        if(val<1) return 0;
+        if(coins-val<=0)
+        { 
+            int res=coins;
+            coins=0;
+            return res;
+        }
+        else coins-=val; return val;
     }
 }
