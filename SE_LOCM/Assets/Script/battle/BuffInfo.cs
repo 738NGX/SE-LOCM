@@ -11,12 +11,11 @@ public class BuffInfo : MonoBehaviour
     public GameObject page;
     public GameObject buffTemplate;
     public TextMeshProUGUI infoName;
-    private bool active=false;
 
     public void OpenPage(int index)
     {
-        if(active) return;
-        active=true;
+        if(gc.dc.isOpeningPage) return;
+        gc.dc.isOpeningPage=true;
         page.SetActive(true);
         infoName.text=index==-1 ? "侑" : gc.enemies[index].displayName.text;
         List<Buff> buffs=index==-1 ? gc.player.buffContainer.buffs : gc.enemies[index].buffContainer.buffs;
@@ -36,7 +35,7 @@ public class BuffInfo : MonoBehaviour
     }
     public void ClosePage()
     {
-        active=false;
+        gc.dc.isOpeningPage=false;
         foreach(Transform child in transform)
         {
             if(!child.gameObject.activeInHierarchy) continue;

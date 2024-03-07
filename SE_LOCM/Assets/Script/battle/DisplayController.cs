@@ -10,6 +10,7 @@ public class DisplayController : MonoBehaviour
 {
     public GameController gc;
     public bool isAnimating=false;
+    public bool isOpeningPage=false;
     public TMP_FontAsset usingFont;
     public Transform higherCanvas;
     public TextMeshProUGUI drawPileUI;

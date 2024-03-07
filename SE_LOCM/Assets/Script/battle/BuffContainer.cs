@@ -125,12 +125,18 @@ public class BuffContainer
         if(ExistBuff(301,out var buff301)) creature.AddShield(buff301.Level);
         if(ExistBuff(302,out var buff302)) creature.AddShield(buff302.Level);
         
+        List<int> buffToRemove=new();
+
         foreach(var buff in buffs)
         {
             if(buff.Type!=BuffType.Round) continue;
             
             buff.ChangeLevel(buff.Level-1);
-            if(buff.Level==0) RemoveBuff(buff.id);
+            if(buff.Level==0) buffToRemove.Add(buff.id);
+        }
+        foreach(var id in buffToRemove)
+        {
+            RemoveBuff(id);
         }
 
         EffectUpdate();
@@ -152,7 +158,7 @@ public class BuffContainer
             case 114: RemoveBuff(308); break;
             case 115: RemoveBuff(309); break;
             case 116: 
-                creature.gc.player.ReduceHP(creature.hpLimit);
+                creature.gc.player.ReduceHP(creature.hp);
                 creature.ReduceHP(creature.hp);
                 break;
             default: break;

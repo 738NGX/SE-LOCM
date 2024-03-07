@@ -15,7 +15,7 @@ public class CardTemplate : MonoBehaviour
     private bool inPlayArea=false;
     private void OnMouseEnter()
     {
-        if(gc.gameStage==GameStage.Play)
+        if(gc.gameStage==GameStage.Play&&!gc.dc.isOpeningPage)
         {
             transform.SetAsLastSibling();
             //Debug.Log(index);
@@ -36,7 +36,7 @@ public class CardTemplate : MonoBehaviour
     void OnMouseDown()
     {
         // 开始拖动
-        if(gc.gameStage==GameStage.Play) isDragging=true;
+        if(gc.gameStage==GameStage.Play&&!gc.dc.isOpeningPage) isDragging=true;
     }
     void Update()
     {

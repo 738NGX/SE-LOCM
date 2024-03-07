@@ -6,7 +6,7 @@ using Fungus;
 using TMPro;
 using Unity.VisualScripting;
 
-public enum IntendType{Unknown,Attack,Defence,Recover,Buff,Debuff,Sleep};
+public enum IntendType{Unknown,Attack,Defence,Recover,Buff,Debuff,MAttack,HAttack,ADefence,ARecover,ABuff,ADebuff,Sleep};
 
 public class Enemy : Creature
 {
@@ -17,6 +17,7 @@ public class Enemy : Creature
     public int intendTimes=-1;                          // 意图倍数
     public GameObject selector;
     public TextMeshProUGUI displayName;
+
 
     private bool waitSelect=false;
 
