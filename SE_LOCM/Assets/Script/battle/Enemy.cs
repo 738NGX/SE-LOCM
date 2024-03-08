@@ -1,15 +1,15 @@
-using System.Data.Common;
 using UnityEngine;
 using DG.Tweening;
 using System.Collections;
-using Fungus;
 using TMPro;
-using Unity.VisualScripting;
+using System.Collections.Generic;
+using System.Linq;
 
 public enum IntendType{Unknown,Attack,Defence,Recover,Buff,Debuff,MAttack,HAttack,ADefence,ARecover,ABuff,ADebuff,Sleep};
 
 public class Enemy : Creature
 {
+    public bool active=false;
     public int id;
     public int index;
     public IntendType intendType=IntendType.Unknown;    // 回合意图
@@ -17,6 +17,10 @@ public class Enemy : Creature
     public int intendTimes=-1;                          // 意图倍数
     public GameObject selector;
     public TextMeshProUGUI displayName;
+    private EnemyInfo info;
+    private Buff giveBuff=null;
+    private Buff extraGiveBuff=null;
+    private Creature buffReceiver;
 
 
     private bool waitSelect=false;
@@ -24,64 +28,136 @@ public class Enemy : Creature
     // 从id构造敌人数据
     private void Start()
     {
-        var info=EnemyDatabase.data[id].Copy();
+        gameObject.SetActive(false);
+    }
+    public void Init(int id)
+    {
+        active=true;
+        gameObject.SetActive(true);
+
+        info=EnemyDatabase.data[id].Copy();
+        this.id=id;
         hpLimit=info.hpLimit;
         hp=hpLimit;
         ap=info.ap;
         dp=info.dp;
         displayName.text=info.name;
         buffContainer.creature=this;
+        
+        for(int i=0;i<info.initBuffs.Count;i++)
+        {
+            var buff=info.initBuffs[i];
+            if(buff.Style==BuffStyle.Positive)
+            {
+                AddBuff(buff);
+                if(new[]{301,306,307,308,309}.Contains(buff.id)) AddBuff(info.initBuffs[++i]);
+            }
+            else
+            {
+                gc.player.AddBuff(buff);
+                if(new[]{301,306,307,308,309}.Contains(buff.id)) gc.player.AddBuff(info.initBuffs[++i]);
+            }
+        }
     }
     
     // 产生回合意图
     public void Prepare()
     {
-        int dice=Random.Range(0,12);
-        intendTimes=1;
-        // 强制回血
-        if(hp<hpLimit*0.25)
+        if(!active) return;
+        DecideGrowth();
+        intendType=GetIntendType();
+        intendValue=GetIntendValue(intendType);
+    }
+    private void DecideGrowth()
+    {
+        int diceA=Random.Range(0,100),diceD=Random.Range(0,100);
+
+        if(diceA<info.apAddChance) ap+=info.apAddSpeed;
+        if(diceD<info.dpAddChance) dp+=info.dpAddSpeed;
+    }
+    private IntendType GetIntendType()
+    {
+        int dice=Random.Range(0,100);
+        for(int i=0;i<10;i++)
         {
-            intendType=IntendType.Recover;
-            intendValue=dp;
-        }
-        // 0,1,2,3,4:攻击
-        else if(dice<5)
-        {
-            intendType=IntendType.Attack;
-            intendValue=buffContainer.CallAttack(ap);
-        }
-        // 5,6,7,8,9:叠甲或回血
-        else if(dice<9)
-        {
-            if(hp<hpLimit*0.5||(hp<hpLimit*0.75&&dice<7))
+            if(dice>=info.intendChances[i]) continue;
+            
+            IntendType intend=info.intends[i];
+            
+            giveBuff=info.giveBuffs[i];
+            extraGiveBuff=info.extraGiveBuffs[i];
+            
+            if(intend==IntendType.Buff||intend==IntendType.ABuff)
             {
-                intendType=IntendType.Recover; 
+                buffReceiver=this;
             }
-            else intendType=IntendType.Defence;
-            intendValue=dp;
+            else if(intend==IntendType.Debuff||intend==IntendType.ADebuff)
+            {
+                buffReceiver=gc.player;
+            }
+            else buffReceiver=null;
+
+            return intend;
         }
-        // 10,11:强化
-        else
+        return IntendType.Unknown;
+    }
+    private int GetIntendValue(IntendType intend)
+    {
+        int val=intend switch
         {
-            intendType=IntendType.Buff;
-            intendValue=3;
-        }
+            IntendType.Attack=>buffContainer.CallAttack(ap),
+            IntendType.MAttack=>buffContainer.CallAttack((int)(ap-info.ap+0.25f*info.ap)),
+            IntendType.HAttack=>buffContainer.CallAttack((int)(1.5f*ap)),
+            IntendType.Defence=>dp,
+            IntendType.Buff=>giveBuff.Level,
+            IntendType.Debuff=>giveBuff.Level,
+            IntendType.Recover=>info.dp,
+            IntendType.Sleep=>-1,
+            IntendType.ADefence=>buffContainer.CallAttack(ap),
+            IntendType.ABuff=>buffContainer.CallAttack(ap),
+            IntendType.ADebuff=>buffContainer.CallAttack(ap),
+            IntendType.ARecover=>buffContainer.CallAttack(ap),
+            _=>-1
+        };
+        intendTimes=intend==IntendType.MAttack ? info.mAttackTimes : 1;
+        return val;
+    }
+    public bool IsIntendAttack()
+    {
+        return new[]{IntendType.Attack,IntendType.MAttack,IntendType.HAttack,IntendType.ADefence,
+                     IntendType.ABuff,IntendType.ADebuff,IntendType.ARecover}.Contains(intendType);
     }
     public void Execute()
     {
-        switch(intendType)
+        if(!active) return;
+        if(IsIntendAttack())
         {
-            case IntendType.Attack: StartCoroutine(Attack(buffContainer.CallAttack(intendValue),intendTimes)); break;
-            case IntendType.Defence: AddShield(intendValue); break;
-            case IntendType.Recover: AddHP(intendValue); break;
-            case IntendType.Buff: AddBuff(new Buff(101,intendValue+1)); break;
-            default: break;
+            Attack(intendValue,intendTimes);
         }
+        if(new[]{IntendType.Defence,IntendType.ADefence}.Contains(intendType))
+        {
+            AddShield(dp);
+        }
+        if(new[]{IntendType.Recover,IntendType.ARecover}.Contains(intendType))
+        {
+            AddHP(info.dp);
+        }
+        if(buffReceiver!=null)
+        {
+            if(giveBuff is not null) buffReceiver.AddBuff(giveBuff);
+            if(extraGiveBuff is not null) buffReceiver.AddBuff(extraGiveBuff);
+        }
+
         intendType=IntendType.Unknown;
         intendValue=-1;
         intendTimes=1;
     }
-    private IEnumerator Attack(int val,int times)
+    private void Attack(int val,int times=1)
+    {
+        if(!active) return;
+        StartCoroutine(AttackCoroutine(val,times));
+    }
+    private IEnumerator AttackCoroutine(int val,int times)
     {
         for(int i=0;i<times;i++)
         {
@@ -95,35 +171,42 @@ public class Enemy : Creature
     }
     public override void AddShield(int val)
     {
+        if(!active) return;
         gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Buff");
         gc.PlayAudio(gc.sfxDefence);
         shield+=val;
     }
     public override void AddHP(int val)
     {
+        if(!active) return;
         gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Buff");
         base.AddHP(val);
         gc.dc.UpdateHPSlider(index);
     }
     public override void ReduceHP(int val)
     {
+        if(!active) return;
         gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Hurt");
         base.ReduceHP(val);
         gc.dc.UpdateHPSlider(index);
         if(hp==0)
         {
             gc.dc.enemyObjects[index].GetComponent<Animator>().SetBool("Die",true);
+            active=false;
             gc.enemyCount--;
             gc.player.AddCoins(buffContainer.StealedCoins);
+            gameObject.SetActive(false);
         }
     }
     public override void AddBuff(Buff buff)
     {
+        if(!active) return;
         gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Buff");
         base.AddBuff(buff);
     }
     private void OnMouseEnter()
     {
+        if(!active) return;
         if(gc.selectedEnemyIndex==-1&&hp>0)
         {
             waitSelect=true;
@@ -132,6 +215,7 @@ public class Enemy : Creature
     }
     private void OnMouseExit()
     {
+        if(!active) return;
         if(waitSelect)
         {
             selector.SetActive(false);
@@ -140,6 +224,7 @@ public class Enemy : Creature
     }
     private void OnMouseDown()
     {
+        if(!active) return;
         if(waitSelect)
         {
             gc.selectedEnemyIndex=index;

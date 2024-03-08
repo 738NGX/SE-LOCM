@@ -10,6 +10,7 @@ public enum GameStage{Pre,Draw,Play,Discard,Enemy,End,Victory,Defeat,Null,Reward
 public class GameController : MonoBehaviour
 {
     public SceneFader sf;
+    public List<int> enemyIds=new(){};
     public DrawPile drawPile;           // 摸牌堆
     public HandCards handCards;         // 手牌堆
     public DiscardPile discardPile;     // 弃牌堆
@@ -40,19 +41,34 @@ public class GameController : MonoBehaviour
         source.clip=clip;
         source.Play();
     }
-    void Start()
+    private void Start()
     {
+        roundCount=1;
+        
         sc.LoadLocalData();
         dc.UpdateHPSlider(-1);
-        roundCount=1;
-        enemyCount=enemies.Count;
+        
+        EnemyInit();
 
         PlayAudio(sfxStart);
-
         StartCoroutine(dc.AnimatePanelAndText(new(){"战","斗","开","始"},1f));
         gameStage=GameStage.Pre;
     }
-    void Update()
+    private void EnemyInit()
+    {
+        for(int i=0;i<3;i++)
+        {
+            if(enemyIds[i]==0)
+            { 
+                dc.enemyObjects[i].SetActive(false);
+                continue;
+            }
+            
+            enemyCount++;
+            enemies[i].Init(enemyIds[i]);
+        }
+    }
+    private void Update()
     {
         if(gameStage==GameStage.Null||dc.isAnimating) return;  // 系统动画时不进行操作
         if(gameStage==GameStage.Reward)
@@ -334,7 +350,7 @@ public class GameController : MonoBehaviour
     {
         // 筹算除法
         int val=!isPlused ? 12 : 18;
-        AllAttack(val/enemies.Count);
+        AllAttack(val/enemyCount+player.ap);
     }
     private void Card105ExecuteAction(bool isPlused)
     {
@@ -355,7 +371,7 @@ public class GameController : MonoBehaviour
         // 约分术
         int val1=!isPlused ? 5 : 7;
         int val2=!isPlused ? 1 : 2;
-        SelectAttack(val1+player.ap,1,new Buff(103,val2));
+        SelectAttack(val1+player.ap,1,new(103,val2));
     }
     private void Card108ExecuteAction(bool isPlused)
     {
@@ -378,17 +394,18 @@ public class GameController : MonoBehaviour
         selectedEnemyIndex=-1;
 
         yield return new WaitUntil(()=>selectedEnemyIndex!=-1);
-
+        
+        var selectedEnemy=enemies[selectedEnemyIndex];
         dc.bezierArrow.SetActive(false);
 
-        enemies[selectedEnemyIndex].ReduceHP(val);
+        selectedEnemy.ReduceHP(val+player.ap);
         PlayAudio(sfxAttack);
         dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
         Camera.main.transform.DOShakePosition(0.5f,0.5f);
 
-        if(enemies[selectedEnemyIndex].intendType==IntendType.Attack)
+        if(selectedEnemy.IsIntendAttack())
         {
-            AddShield((int)(enemies[selectedEnemyIndex].intendValue*factor)+player.dp);
+            AddShield((int)(selectedEnemy.intendValue*selectedEnemy.intendTimes*factor)+player.dp);
         }
 
         selectedEnemyIndex=-2;
@@ -398,7 +415,7 @@ public class GameController : MonoBehaviour
         // 经分术
         int val1=!isPlused ? 12 : 18;
         int val2=!isPlused ? 1 : 2;
-        AllAttack(val1/enemies.Count,new Buff(104,val2));
+        AllAttack(val1/enemyCount+player.ap,new Buff(104,val2));
     }
     private void Card111ExecuteAction(bool isPlused)
     {
@@ -417,7 +434,7 @@ public class GameController : MonoBehaviour
     {
         // 里田术
         DrawCards(1);
-        if(isPlused||handCards.Top().type==CardType.Spell) AddShield(5);
+        if(isPlused||handCards.Top().type==CardType.Spell) AddShield(5+player.dp);
     }
     private void Card114ExecuteAction(bool isPlused)
     {
@@ -438,6 +455,8 @@ public class GameController : MonoBehaviour
     private void Card116ExecuteAction(bool isPlused)
     {
         // 邪田术
+        int val=!isPlused ? 3 : 5;
+        SelectAttack(0,1,new(106,val));
     }
     private void Card117ExecuteAction(bool isPlused)
     {
@@ -451,8 +470,8 @@ public class GameController : MonoBehaviour
         // 圆田术
         int val1=!isPlused ? 10 : 15;
         int val2=!isPlused ? 1 : 2;
-        AddShield(val1);
-        player.AddBuff(new Buff(102,val2));
+        AddShield(val1+player.dp);
+        player.AddBuff(new(102,val2));
     }
     private void Card119ExecuteAction(bool isPlused)
     {
@@ -462,7 +481,7 @@ public class GameController : MonoBehaviour
     private void Card120ExecuteAction(bool isPlused)
     {
         // 弧田术
-        player.AddBuff(new Buff(201,1));
+        player.AddBuff(new(201,1));
     }
     private void Card121ExecuteAction(bool isPlused)
     {

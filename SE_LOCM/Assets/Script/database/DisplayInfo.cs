@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using System.Linq;
+using Fungus;
 
 public class DisplayInfo
 {
@@ -68,10 +70,10 @@ public class EnemyInfo : DisplayInfo
     public int dpAddChance;
     public int mAttackTimes;
     public List<Buff> initBuffs=new();
-    public List<Buff> giveBuffs=new(10);
-    public List<Buff> extraGiveBuffs=new(10);
-    public List<IntendType> intends;
-    public List<int> intendChances;
+    public List<Buff> giveBuffs=Enumerable.Repeat<Buff>(null,10).ToList();
+    public List<Buff> extraGiveBuffs=Enumerable.Repeat<Buff>(null,10).ToList();
+    public List<IntendType> intends=new();
+    public List<int> intendChances=new();
 
     public EnemyInfo()
     {
@@ -123,12 +125,12 @@ public class EnemyInfo : DisplayInfo
                     _=>IntendType.Unknown
                 };
                 
-                if(type==IntendType.Buff||type==IntendType.Debuff||type==IntendType.ABuff||type==IntendType.ADebuff)
+                if(new[]{IntendType.Buff,IntendType.Debuff,IntendType.ABuff,IntendType.ADebuff}.Contains(type))
                 {
                     var buff=intendBuffsStack.Pop();
                     giveBuffs[(i-14)/2]=buff;
                     
-                    if(new List<int>(){108,112,113,114,115,301,306,307,308,309}.Contains(buff.id))
+                    if(new[]{301,306,307,308,309}.Contains(buff.id))
                     {
                         var extraBuff=intendBuffsStack.Pop();
                         extraGiveBuffs[(i-14)/2]=extraBuff;
@@ -142,24 +144,24 @@ public class EnemyInfo : DisplayInfo
     }
     public EnemyInfo Copy()
     {
-        EnemyInfo copy = new()
+        EnemyInfo copy=new()
         {
-            id = this.id,
-            name = this.name,
-            hpLimit = this.hpLimit,
-            ap = this.ap,
-            dp = this.dp,
-            apAddSpeed = this.apAddSpeed,
-            dpAddSpeed = this.dpAddSpeed,
-            apAddChance = this.apAddChance,
-            dpAddChance = this.dpAddChance,
-            mAttackTimes = this.mAttackTimes,
+            id=id,
+            name=name,
+            hpLimit=hpLimit,
+            ap=ap,
+            dp=dp,
+            apAddSpeed=apAddSpeed,
+            dpAddSpeed=dpAddSpeed,
+            apAddChance=apAddChance,
+            dpAddChance=dpAddChance,
+            mAttackTimes=mAttackTimes,
 
-            initBuffs = new List<Buff>(this.initBuffs.Select(buff => new Buff(buff.id, buff.Level))),
-            giveBuffs = new List<Buff>(this.giveBuffs.Select(buff => buff != null ? new Buff(buff.id, buff.Level) : null)),
-            extraGiveBuffs = new List<Buff>(this.extraGiveBuffs.Select(buff => buff != null ? new Buff(buff.id, buff.Level) : null)),
-            intends = new List<IntendType>(this.intends),
-            intendChances = new List<int>(this.intendChances)
+            initBuffs=new(initBuffs.Select(buff => new Buff(buff.id, buff.Level))),
+            giveBuffs=new(giveBuffs.Select(buff => buff != null ? new Buff(buff.id, buff.Level) : null)),
+            extraGiveBuffs=new List<Buff>(extraGiveBuffs.Select(buff => buff != null ? new Buff(buff.id, buff.Level) : null)),
+            intends=new(intends),
+            intendChances=new(intendChances)
         };
         return copy;
     }

@@ -132,7 +132,7 @@ public class BuffContainer
             if(buff.Type!=BuffType.Round) continue;
             
             buff.ChangeLevel(buff.Level-1);
-            if(buff.Level==0) buffToRemove.Add(buff.id);
+            if(buff.Level<=0) buffToRemove.Add(buff.id);
         }
         foreach(var id in buffToRemove)
         {
