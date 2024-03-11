@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-using Fungus;
+using System.Reflection;
 
 // 准备阶段、摸牌阶段、出牌阶段、弃牌阶段、敌人阶段、结束阶段
 public enum GameStage{Pre,Draw,Play,Discard,Enemy,End,Victory,Defeat,Null,Reward};
-
 public class GameController : MonoBehaviour
 {
     public SceneFader sf;
@@ -34,6 +33,9 @@ public class GameController : MonoBehaviour
     public int enemyCount;              // 存活敌人数量
     public int waitingDiscardCount=0;   // 等待回合内弃牌数量
     public int selectedEnemyIndex=-2;   // 选中敌人序号,-2不选择,-1待选择
+    public RoundPlayedCards roundPlayedCards;
+
+    public Vector3 cameraPosition=new();
     
     public void PlayAudio(AudioClip clip)
     {
@@ -44,11 +46,14 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         roundCount=1;
+        cameraPosition=Camera.main.transform.position;
         
         sc.LoadLocalData();
         dc.UpdateHPSlider(-1);
         
         EnemyInit();
+
+        roundPlayedCards=new(this);
 
         PlayAudio(sfxStart);
         StartCoroutine(dc.AnimatePanelAndText(new(){"战","斗","开","始"},1f));
@@ -61,6 +66,7 @@ public class GameController : MonoBehaviour
             if(enemyIds[i]==0)
             { 
                 dc.enemyObjects[i].SetActive(false);
+                enemies[i].gameObject.SetActive(false);
                 continue;
             }
             
@@ -87,13 +93,45 @@ public class GameController : MonoBehaviour
 
         if(gameStage==GameStage.Pre)
         {
+            Camera.main.transform.position=cameraPosition;
+            
             // 敌人产生回合意图
             foreach(Enemy enemy in enemies) enemy.Prepare();
             
             StartCoroutine(dc.AnimatePanelAndText(new(){"玩","家","回","合"}));
             int extraSP=player.buffContainer.ExtraSP;
-            int sp=player.spInit+extraSP<0 ? 0 : player.spInit+extraSP;
-            player.sp=sp;
+            
+            if(player.ContainsBook(10))
+            {
+                // 周髀算经效果:可以保留剩余的算术值到下一回合。
+                player.sp+=player.spInit+extraSP;
+                player.sp=player.sp<0?0:player.sp;
+            }
+            else
+            {
+                player.sp=player.spInit+extraSP<0 ? 0 : player.spInit+extraSP;
+            }
+            
+            if(roundCount==1)
+            {
+                // 谢察微算经
+                if(player.ContainsBook(21)) AddShield(10);              
+                // 黄帝九章算法细草
+                if(player.ContainsBook(23)) player.AddBuff(new(107,3)); 
+                // 算学源流
+                if(player.ContainsBook(24)) player.sp+=1;               
+                // 数书九章
+                if(player.ContainsBook(25)) DrawCards(2);               
+                // 测圆海镜
+                if(player.ContainsBook(26)) player.AddHP(5); dc.UpdateHPSlider(-1);
+                // 益古演段
+                if(player.ContainsBook(27)) player.ap++;
+                // 算法统宗
+                if(player.ContainsBook(28)) player.dp++;
+            }
+            
+            // 五曹算经效果:第五回合准备阶段结束后，给予50点护盾值。
+            if(roundCount==5 && player.ContainsBook(15)) AllAttack(50);
             
             // 结束准备阶段
             gameStage=GameStage.Draw;
@@ -109,34 +147,51 @@ public class GameController : MonoBehaviour
             gameStage=GameStage.Play;
         }
         else if(gameStage==GameStage.Play)
-        {
+        {  
             // 玩家操作,系统不干预
             return;
         }
         else if(gameStage==GameStage.Discard)
         {
             // 丢弃所有手牌
-            discardPile.AddCardToDiscard(handCards.handCards);
+            discardPile.AddCardsToDiscard(handCards.Cards);
             StartCoroutine(hcui.DisCards());
-            handCards.handCards.Clear();
+            handCards.Cards.Clear();
+            
+            // 五经算术效果:第五回合弃牌阶段结束后，给予所有敌人50点伤害。
+            if(roundCount==5 && player.ContainsBook(15)) AllAttack(50);
+            
+            // 结束弃牌阶段
             gameStage=GameStage.Enemy;
         }
         else if(gameStage==GameStage.Enemy)
         {
             StartCoroutine(dc.AnimatePanelAndText(new(){"敌","人","回","合"}));
+            
+            // 敌人根据意图行动
             foreach(Enemy enemy in enemies)
             {
                 if(!enemy.buffContainer.ExistBuff(109)) enemy.shield=0;
                 enemy.Execute();
-            } 
+            }
+
             // 结束敌人阶段
             gameStage=GameStage.End;
         }
         else if(gameStage==GameStage.End)
         {
-            if(!player.buffContainer.ExistBuff(109)) player.shield=0;
+            // 移除玩家护盾
+            if(!player.buffContainer.ExistBuff(109))
+            {
+                player.shield=!player.ContainsBook(17) ? 0 : player.shield-15;
+                player.shield=player.shield<0 ? 0 : player.shield;
+            }
+            roundPlayedCards.ClearCards();
+            
             // 回合数+1
             roundCount++;
+            
+            // 结束结束阶段
             gameStage=GameStage.Pre;
         }
         else if(gameStage==GameStage.Victory)
@@ -158,21 +213,24 @@ public class GameController : MonoBehaviour
     public void DrawCards(int val)
     {
         // 不够抽的时候从弃牌堆补牌
-        if(drawPile.drawPile.Count<val)
+        if(drawPile.Cards.Count<val)
         {
             hcui.ReturnCards();
-            drawPile.AddCardToDraw(discardPile.discardPile);
-            discardPile.discardPile.Clear();
+            drawPile.AddCards(discardPile.discards);
+            discardPile.discards.Clear();
+            // 张邱建算经:每当弃牌堆返回卡牌给摸牌堆时，算术值+1。
+            if(player.ContainsBook(13)) player.sp++;
         }
-        val=drawPile.drawPile.Count<val ? drawPile.drawPile.Count : val;    // 可能补完牌还不够抽
-        handCards.DrawCard(drawPile.DrawCards(val));
+        val=drawPile.Cards.Count<val ? drawPile.Cards.Count : val;    // 可能补完牌还不够抽
+        if(val==0) return;
+        handCards.AddCards(drawPile.DrawCards(val));
         hcui.DrawCards();
         StartCoroutine(hcui.CardDisplayUpdate());
     }
     // 等待弃牌
     public void WaitingDiscards(int val)
     {
-        if(handCards.handCards.Count<val) return;
+        if(handCards.Cards.Count<val) return;
         waitingDiscardCount+=val;
         StartCoroutine(dc.AnimatePanelAndText(new(){"弃",val.ToString(),"张","牌"},0f));
     }
@@ -195,7 +253,10 @@ public class GameController : MonoBehaviour
             enemies[selectedEnemyIndex].ReduceHP(val);
             PlayAudio(sfxAttack);
             dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
-            Camera.main.transform.DOShakePosition(0.5f,0.5f);
+            Camera.main.transform.DOShakePosition(0.35f,0.5f).OnComplete(() =>
+            {
+                Camera.main.transform.position=cameraPosition;
+            });
         }
 
         if(giveBuff is not null)
@@ -221,7 +282,10 @@ public class GameController : MonoBehaviour
             dc.UpdateHPSlider(i);
             dc.enemyObjects[i].GetComponent<Animator>().SetTrigger("Hurt");
             PlayAudio(sfxHurt);
-            Camera.main.transform.DOShakePosition(0.5f,0.5f);
+            Camera.main.transform.DOShakePosition(0.35f,0.5f).OnComplete(() =>
+            {
+                Camera.main.transform.position=cameraPosition;
+            });
             yield return new WaitForSeconds(0.15f);
         }
     }
@@ -292,31 +356,17 @@ public class GameController : MonoBehaviour
     --------------------------------------**/
     public void CardExecuteAction(int id,bool isPlused=false)
     {
-        switch (id)
+        string methodName=$"Card{id:D3}ExecuteAction";
+        MethodInfo methodInfo=GetType().GetMethod(methodName,BindingFlags.NonPublic|BindingFlags.Instance);
+
+        if(methodInfo!=null)
         {
-            case 100: Card100ExecuteAction(isPlused); break;
-            case 101: Card101ExecuteAction(isPlused); break;
-            case 102: Card102ExecuteAction(isPlused); break;
-            case 103: Card103ExecuteAction(isPlused); break;
-            case 104: Card104ExecuteAction(isPlused); break;
-            case 105: Card105ExecuteAction(isPlused); break;
-            case 106: Card106ExecuteAction(isPlused); break;
-            case 107: Card107ExecuteAction(isPlused); break;
-            case 108: Card108ExecuteAction(isPlused); break;
-            case 109: Card109ExecuteAction(isPlused); break;
-            case 110: Card110ExecuteAction(isPlused); break;
-            case 111: Card111ExecuteAction(isPlused); break;
-            case 112: Card112ExecuteAction(isPlused); break;
-            case 113: Card113ExecuteAction(isPlused); break;
-            case 114: Card114ExecuteAction(isPlused); break;
-            case 115: Card115ExecuteAction(isPlused); break;
-            case 116: Card116ExecuteAction(isPlused); break;
-            case 117: Card117ExecuteAction(isPlused); break;
-            case 118: Card118ExecuteAction(isPlused); break;
-            case 119: Card119ExecuteAction(isPlused); break;
-            case 120: Card120ExecuteAction(isPlused); break;
-            case 121: Card121ExecuteAction(isPlused); break;
-            default: break;
+            methodInfo.Invoke(this,new object[]{isPlused});
+        }
+        else
+        {
+            // 处理方法不存在的情况
+            //Debug.Log("id "+id+" do not have execute action.");
         }
     }
     private void Card100ExecuteAction(bool isPlused)
@@ -439,7 +489,7 @@ public class GameController : MonoBehaviour
     private void Card114ExecuteAction(bool isPlused)
     {
         // 大广田术
-        Card card=discardPile.Top();
+        Card card=discardPile.discards[^1];
         if(card.id!=114) Debug.LogError("id114 error");
         int val=!isPlused ? 9+(card.playTimes-1)*3 : 9+(card.playTimes-1)*3;
         SelectAttack(val+player.ap);

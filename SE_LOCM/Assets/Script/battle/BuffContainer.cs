@@ -45,7 +45,7 @@ public class BuffContainer
     {
         float rate=DefenceRate;
         
-        if(ExistBuff(201,out var buff201))
+        if(ExistBuff(201,out var buff201)&&(int)(rate*val)>creature.shield)
         {
             buff201.DecreaseLevel();
             if(buff201.Level==0) RemoveBuff(201);

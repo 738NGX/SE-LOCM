@@ -25,15 +25,9 @@ public class Enemy : Creature
 
     private bool waitSelect=false;
 
-    // 从id构造敌人数据
-    private void Start()
-    {
-        gameObject.SetActive(false);
-    }
     public void Init(int id)
     {
         active=true;
-        gameObject.SetActive(true);
 
         info=EnemyDatabase.data[id].Copy();
         this.id=id;
@@ -162,7 +156,10 @@ public class Enemy : Creature
         for(int i=0;i<times;i++)
         {
             gc.dc.enemyObjects[index].GetComponent<Animator>().SetTrigger("Attack");
-            Camera.main.transform.DOShakePosition(0.5f,0.5f);
+            Camera.main.transform.DOShakePosition(0.35f,0.5f).OnComplete(() =>
+            {
+                Camera.main.transform.position=gc.cameraPosition;
+            });
             gc.player.ReduceHP(val);
             gc.dc.playerObject.GetComponent<Animator>().SetTrigger("Hurt");
             gc.dc.UpdateHPSlider(-1);
@@ -196,6 +193,12 @@ public class Enemy : Creature
             gc.enemyCount--;
             gc.player.AddCoins(buffContainer.StealedCoins);
             gameObject.SetActive(false);
+            if(gc.player.ContainsBook(11))
+            {
+                // 孙子算经效果:每当有1名敌人死亡，算术值+1，抽一张牌。
+                gc.player.sp+=1;
+                gc.DrawCards(1);
+            }
         }
     }
     public override void AddBuff(Buff buff)

@@ -41,9 +41,9 @@ public class DisplayController : MonoBehaviour
 
     private void Update()
     {
-        drawPileUI.text=gc.drawPile.drawPile.Count.ToString();
-        discardPileUI.text=gc.discardPile.discardPile.Count.ToString();
-        disposablePileUI.text=gc.discardPile.disposablePile.Count.ToString();
+        drawPileUI.text=gc.drawPile.Cards.Count.ToString();
+        discardPileUI.text=gc.discardPile.discards.Count.ToString();
+        disposablePileUI.text=gc.discardPile.disposedCards.Count.ToString();
         HPUI.text=gc.player.hp+"/"+gc.player.hpLimit;
         SPUI.text=gc.player.sp+"/"+gc.player.spInit;
         playerAttackAddon.text=(gc.player.ap<0 ? "" : "+")+gc.player.ap+"\nx"+gc.player.buffContainer.AttackRate;

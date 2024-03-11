@@ -17,10 +17,10 @@ public class CardPileViewer : MonoBehaviour
         gameObject.SetActive(true);
         List<Card> cards=index switch
         {
-            0=>gc.drawPile.drawPile,
-            1=>gc.discardPile.discardPile,
-            2=>gc.discardPile.disposablePile,
-            _=>gc.handCards.handCards,
+            0=>gc.drawPile.Cards,
+            1=>gc.discardPile.discards,
+            2=>gc.discardPile.disposedCards,
+            _=>gc.handCards.Cards,
         };
         title.text=index switch
         {

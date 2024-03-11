@@ -5,7 +5,7 @@ using UnityEngine;
 public class SavesController : MonoBehaviour
 {
     public GameController gc;
-    public static LocalSaveData localSaveData=new();
+    public static LocalSaveData localSaveData;
 
     public void LoadLocalData()
     {

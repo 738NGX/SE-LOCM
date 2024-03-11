@@ -7,6 +7,7 @@ public class Player : Creature
     public int sp;              // 法术值(SpellPoints)
     public int spInit;          // 每回合初始算术值
     public int coins;
+    public List<int> books;
 
     private void Start()
     {
@@ -20,9 +21,9 @@ public class Player : Creature
         dp=localSaveData.initDp;
         spInit=localSaveData.initSp;
         coins=localSaveData.coins;
+        books=localSaveData.booksData;
         RecoverSP();
     }
-
     public override void AddHP(int val)
     {
         base.AddHP(val);
@@ -76,6 +77,11 @@ public class Player : Creature
             coins=0;
             return res;
         }
-        else coins-=val; return val;
+        else coins-=val; 
+        return val;
+    }
+    public bool ContainsBook(int id)
+    {
+        return books.Contains(id);
     }
 }

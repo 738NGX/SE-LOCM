@@ -94,27 +94,27 @@ public class HandCardsUI : MonoBehaviour
             if(!cardTemplateComponent.inHand) continue;
 
             cardTemplateComponent.index=k;
-            CardDisplayInfoUpdate(child.gameObject,hc.handCards[k]);
+            CardDisplayInfoUpdate(child.gameObject,hc.Cards[k]);
 
-            float cardPositionX=cardTemplateComponent.index*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
+            float cardPositionX=cardTemplateComponent.index*(cardWidth-spacing)-(hc.Cards.Count-1)*(cardWidth-spacing)/2;
             child.gameObject.transform.localPosition=new Vector3(cardPositionX,0,0);
             (child.gameObject.transform.position, cardTemplateComponent.originalPosition)=(cardTemplateComponent.originalPosition, child.gameObject.transform.position);
 
             k++;
         }
-        for(int i=currentDisplayCards;i<hc.handCards.Count;i++)
+        for(int i=currentDisplayCards;i<hc.Cards.Count;i++)
         {
             GameObject CardObject=Instantiate(cardTemplate,transform);
             CardTemplate cardTemplateComponent=CardObject.GetComponent<CardTemplate>();
 
             cardTemplateComponent.index=i;
-            CardDisplayInfoUpdate(CardObject,hc.handCards[i]);
+            CardDisplayInfoUpdate(CardObject,hc.Cards[i]);
             CardObject.transform.SetParent(transform,false);
             CardObject.SetActive(true);
 
             cardTemplateComponent.originalScale=new Vector3(1,1);
             
-            float cardPositionX=i*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
+            float cardPositionX=i*(cardWidth-spacing)-(hc.Cards.Count-1)*(cardWidth-spacing)/2;
             CardObject.transform.localPosition=new Vector3(cardPositionX,0,0);
             cardTemplateComponent.originalPosition=CardObject.transform.position;
             CardObject.transform.position=new Vector3(-8f,-4f); 
@@ -131,9 +131,9 @@ public class HandCardsUI : MonoBehaviour
             if(!cardTemplateComponent.inHand) continue;
 
             cardTemplateComponent.index=k;
-            CardDisplayInfoUpdate(child.gameObject,hc.handCards[k]);
+            CardDisplayInfoUpdate(child.gameObject,hc.Cards[k]);
 
-            float cardPositionX=cardTemplateComponent.index*(cardWidth-spacing)-(hc.handCards.Count-1)*(cardWidth-spacing)/2;
+            float cardPositionX=cardTemplateComponent.index*(cardWidth-spacing)-(hc.Cards.Count-1)*(cardWidth-spacing)/2;
             child.gameObject.transform.localPosition=new Vector3(cardPositionX,0,0);
             (child.gameObject.transform.position, cardTemplateComponent.originalPosition)=(cardTemplateComponent.originalPosition, child.gameObject.transform.position);
             child.gameObject.transform.DOMove(cardTemplateComponent.originalPosition,0.1f);

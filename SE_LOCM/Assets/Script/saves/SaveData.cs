@@ -102,6 +102,10 @@ public class LocalSaveData
         foreach(var data in booksData) result.Add(new Book(data));
         return result;
     }
+    public bool ContainsBook(int id)
+    {
+        return booksData.Contains(id);
+    }
 }
 
 public static class LocalSaveDataManager
@@ -160,7 +164,7 @@ public static class LocalSaveDataManager
         {
             Directory.CreateDirectory(Application.persistentDataPath + "/users");
         }
-        string jsonData=JsonConvert.SerializeObject(localSaveData);
+        string jsonData=JsonConvert.SerializeObject(localSaveData,Formatting.Indented);
         File.WriteAllText(Application.persistentDataPath+"/users/localsave.json",jsonData);
         //Debug.Log("Saveed To: "+Application.persistentDataPath+"/users/localsave.json");
     }
