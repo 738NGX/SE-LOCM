@@ -497,7 +497,7 @@ public class GameController : MonoBehaviour
     private void Card115ExecuteAction(bool isPlused)
     {
         // 圭田术
-        int val1=!isPlused ? 8 : 10;
+        int val1=!isPlused ? 8 : 12;
         int val2=!isPlused ? 1 : 2;
         DrawCards(val2);
         SelectAttack(val1+player.ap);
@@ -511,17 +511,17 @@ public class GameController : MonoBehaviour
     private void Card117ExecuteAction(bool isPlused)
     {
         // 箕田术
-        int val=!isPlused ? 1 : 2;
+        int val=!isPlused ? 2 : 3;
         player.sp+=val;
-        WaitingDiscards(1);
+        player.ReduceHP(3);
     }
     private void Card118ExecuteAction(bool isPlused)
     {
         // 圆田术
-        int val1=!isPlused ? 10 : 15;
+        int val1=!isPlused ? 8 : 12;
         int val2=!isPlused ? 1 : 2;
+        DrawCards(val2);
         AddShield(val1+player.dp);
-        player.AddBuff(new(102,val2));
     }
     private void Card119ExecuteAction(bool isPlused)
     {

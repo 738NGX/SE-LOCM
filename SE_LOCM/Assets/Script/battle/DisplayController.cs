@@ -11,6 +11,7 @@ public class DisplayController : MonoBehaviour
     public GameController gc;
     public bool isAnimating=false;
     public bool isOpeningPage=false;
+    public Transform hud;
     public TMP_FontAsset usingFont;
     public Transform higherCanvas;
     public TextMeshProUGUI drawPileUI;
@@ -45,6 +46,9 @@ public class DisplayController : MonoBehaviour
         discardPileUI.text=gc.discardPile.discards.Count.ToString();
         disposablePileUI.text=gc.discardPile.disposedCards.Count.ToString();
         HPUI.text=gc.player.hp+"/"+gc.player.hpLimit;
+        hud.Find("heart").GetComponentInChildren<TextMeshProUGUI>().text=gc.player.hp+"/"+gc.player.hpLimit;
+        hud.Find("coin").GetComponentInChildren<TextMeshProUGUI>().text=gc.player.coins.ToString();
+        hud.Find("round").GetComponentInChildren<TextMeshProUGUI>().text=gc.roundCount.ToString();
         SPUI.text=gc.player.sp+"/"+gc.player.spInit;
         playerAttackAddon.text=(gc.player.ap<0 ? "" : "+")+gc.player.ap+"\nx"+gc.player.buffContainer.AttackRate;
         playerDefenceAddon.text=(gc.player.dp<0 ? "" : "+")+gc.player.dp+"\nx"+gc.player.buffContainer.DefenceRate;

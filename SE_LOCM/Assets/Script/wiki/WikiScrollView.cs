@@ -31,7 +31,7 @@ public class WikiScrollView : MonoBehaviour
             GameObject newItem=Instantiate(itemPrefab,contentPanel);
             newItem.SetActive(true);
             newItem.transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>().text=item.name;
-            if (newItem.TryGetComponent<Button>(out var button))
+            if(newItem.TryGetComponent<Button>(out var button))
             {
                 button.onClick.RemoveAllListeners();
                 switch (item)

@@ -141,6 +141,14 @@ public class BuffContainer
 
         EffectUpdate();
     }
+    public void Clarify()
+    {
+        foreach(var buff in buffs)
+        {
+            if(buff.Style!=BuffStyle.Negative) continue;
+            RemoveBuff(buff.id,false);
+        }
+    }
     private void RemoveBuff(int id,bool execute=true)
     { 
         foreach(var buff in buffs)
