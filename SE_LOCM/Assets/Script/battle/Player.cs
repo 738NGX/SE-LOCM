@@ -22,6 +22,7 @@ public class Player : Creature
         spInit=localSaveData.initSp;
         coins=localSaveData.coins;
         books=localSaveData.booksData;
+
         RecoverSP();
     }
     public override void AddHP(int val)

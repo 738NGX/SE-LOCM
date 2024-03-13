@@ -3,6 +3,7 @@ using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEditor;
+using Unity.VisualScripting;
 
 public enum LocalSaveStatus{Break,Gaming,Victory,Defeat};
 public class LocalSaveData
@@ -23,8 +24,11 @@ public class LocalSaveData
     public List<int> booksData;                 // 典籍
     public List<int> cardsPool;                 // 卡池
 
+    // 友人数据
+    public List<int> friends;                   // 友人状态(<0未解锁,=0可用,>0冷却)
+    
     // 地图数据
-    public List<int> route;                     // 当层路径
+    public List<int> route;                     // 路径
 
     // 数据写入
     public void AdjustHP(int val)
@@ -72,6 +76,14 @@ public class LocalSaveData
         {
             if(booksData.Contains(book.id)) continue;
             booksData.Add(book.id);
+        }
+    }
+    public void FriendsCoolDown()
+    {
+        for(int i=0;i<friends.Count;i++)
+        {
+            if(friends[i]<=0) continue;
+            friends[i]--;
         }
     }
     // 数据导出
@@ -129,6 +141,7 @@ public static class LocalSaveDataManager
             },
             booksData=new(){},
             cardsPool=new(){},
+            friends=new(){-1,-1,-1,-1,-1,-1,-1,-1,-1},
             route=new(){100}
         };
         SaveLocalData(localSaveData);
@@ -154,6 +167,7 @@ public static class LocalSaveDataManager
             },
             booksData=new(){},
             cardsPool=new(){100,103,104,105,106,107,108,109,110,111,112,113,114},
+            friends=new(){0,1,-1,-1,-1,-1,-1,-1,-1},
             route=new(){100,101,102}
         };
         SaveLocalData(localSaveData);

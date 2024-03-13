@@ -26,6 +26,29 @@ public static class MapDatabase
     }
 }
 
+public static class EnemyNodeDatabase
+{
+    private static readonly TextAsset csvData=AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Database/enemynodedb.csv");
+    public static Dictionary<int,EnemyNodeData> data=new(){};
+    static EnemyNodeDatabase()
+    {
+        if (csvData!=null)
+        {
+            string[] dataLines=csvData.text.Split('\n');
+            for(int i=1;i<dataLines.Length;i++)
+            {
+                if(string.IsNullOrWhiteSpace(dataLines[i])) continue;
+                EnemyNodeData entry=new(dataLines[i]);
+                data.Add(entry.id,entry);
+            }
+        }
+        else
+        {
+            Debug.LogError("CSV file not found");
+        }
+    }
+}
+
 public static class MapNodeIdToStorySceneDatabase
 {
     public static Dictionary<int,string> data=new()
@@ -142,5 +165,35 @@ public class MapNodeData
             return achievedBooks.Contains(new Book(seed)) ? null : new Book(seed);
         }
         else return null;
+    }
+}
+
+public class EnemyNodeData
+{
+    public int id;
+    public List<List<int>> EnemyPool{get; private set;}
+
+    public EnemyNodeData(string rawData)
+    {
+        EnemyPool=new();
+        string[] values=rawData.Split(',');
+        id=int.Parse(values[0]);
+
+        for(int i=0;i<int.Parse(values[1]);i++)
+        {
+            List<int> enemyPoolItem=System.Array.ConvertAll(values[2+i].Split(';'),s=>int.Parse(s)).ToList();
+            EnemyPool.Add(enemyPoolItem);
+        }
+    }
+    public EnemyNodeData(int id)
+    {
+        int usingId=EnemyNodeDatabase.data.Keys.Contains(id) ? id : 103;
+        this.id=id;
+        EnemyPool=EnemyNodeDatabase.data[usingId].EnemyPool;
+    }
+    public List<int> GetEnemyIds()
+    {
+        int seed=Random.Range(0,EnemyPool.Count);
+        return EnemyPool[seed];
     }
 }

@@ -16,6 +16,12 @@ public class BuffContainer
 
     public void AddBuff(Buff buff)
     {
+        if(buff.Style==BuffStyle.Negative&&ExistBuff(205,out var buff205))
+        {
+            buff205.DecreaseLevel();
+            if(buff205.Level==0) RemoveBuff(205);
+            return;
+        }
         if(ExistBuff(buff,out var foundBuff))
         {
             foundBuff.IncreaseLevel(buff.Level);
@@ -143,11 +149,20 @@ public class BuffContainer
     }
     public void Clarify()
     {
+        creature.gc.PlayAudio(creature.gc.sfxRecover);
+        List<int> buffToRemove=new();
+
         foreach(var buff in buffs)
         {
             if(buff.Style!=BuffStyle.Negative) continue;
-            RemoveBuff(buff.id,false);
+            buffToRemove.Add(buff.id);
         }
+        foreach(var id in buffToRemove)
+        {
+            RemoveBuff(id);
+        }
+
+        EffectUpdate();
     }
     private void RemoveBuff(int id,bool execute=true)
     { 

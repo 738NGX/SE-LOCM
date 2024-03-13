@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     public DiscardPile discardPile;     // 弃牌堆
     public Player player;               // 玩家
     public List<Enemy> enemies;         // 敌人
+    public List<FriendItem> friends;    // 友人
     public DisplayController dc;        // 显示控制
     public SavesController sc;          // 存档控制
     public HandCardsUI hcui;            // 手牌显示控制
@@ -114,14 +115,18 @@ public class GameController : MonoBehaviour
             
             if(roundCount==1)
             {
+                // 均输章残卷
+                if(player.ContainsBook(4)) player.AddBuff(new(201,1));             
+                // 少广章残卷
+                if(player.ContainsBook(6)) player.AddBuff(new(205,1));
                 // 谢察微算经
-                if(player.ContainsBook(21)) AddShield(10);              
+                if(player.ContainsBook(21)) AddShield(10);
                 // 黄帝九章算法细草
-                if(player.ContainsBook(23)) player.AddBuff(new(107,3)); 
+                if(player.ContainsBook(23)) player.AddBuff(new(109,3));
                 // 算学源流
-                if(player.ContainsBook(24)) player.sp+=1;               
+                if(player.ContainsBook(24)) player.sp+=1;
                 // 数书九章
-                if(player.ContainsBook(25)) DrawCards(2);               
+                if(player.ContainsBook(25)) DrawCards(2);
                 // 测圆海镜
                 if(player.ContainsBook(26)) player.AddHP(5); dc.UpdateHPSlider(-1);
                 // 益古演段
@@ -129,6 +134,8 @@ public class GameController : MonoBehaviour
                 // 算法统宗
                 if(player.ContainsBook(28)) player.dp++;
             }
+            // 衰分章残卷
+            if(roundCount==2 && player.ContainsBook(3)) AddShield(20);
             
             // 五曹算经效果:第五回合准备阶段结束后，给予50点护盾值。
             if(roundCount==5 && player.ContainsBook(15)) AllAttack(50);
@@ -160,6 +167,8 @@ public class GameController : MonoBehaviour
             
             // 五经算术效果:第五回合弃牌阶段结束后，给予所有敌人50点伤害。
             if(roundCount==5 && player.ContainsBook(15)) AllAttack(50);
+            // 商功章残卷
+            if(roundCount==2 && player.ContainsBook(5)) AllAttack(20);
             
             // 结束弃牌阶段
             gameStage=GameStage.Enemy;
