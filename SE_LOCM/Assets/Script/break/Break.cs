@@ -27,6 +27,12 @@ public class Break : MonoBehaviour
         page.DOMoveY(0,1f).From(-10);
 
         localSaveData=LocalSaveDataManager.LoadLocalData();
+
+        if(localSaveData.ContainsBook(16))
+        {
+            // 缉古算经效果:每进入一次客栈页面，牌库中每有5张牌，回复3点体力值。
+            localSaveData.AdjustHP(localSaveData.cardsData.Count/5*3);
+        }
     }
     public void ExecuteBreak(int breakType)
     {
@@ -47,9 +53,10 @@ public class Break : MonoBehaviour
     private void Recover()
     {
         MainTheme.PlayAudio(sfxRecover,gameObject);
-        int val=localSaveData.hpLimit/5;
+        int val=!localSaveData.ContainsBook(30) ? localSaveData.hpLimit/5 : localSaveData.hpLimit/5+15;
+        int oldHP=localSaveData.hp;
         localSaveData.AdjustHP(val);
-        resultString="倒头就睡睡到了天亮,回复了"+val+"点体力值.";
+        resultString="倒头就睡睡到了天亮,回复了"+(localSaveData.hp-oldHP)+"点体力值.";
     }
     private void CallCardUpgrade()
     {

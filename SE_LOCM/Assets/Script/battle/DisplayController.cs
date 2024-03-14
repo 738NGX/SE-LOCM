@@ -10,6 +10,8 @@ public class DisplayController : MonoBehaviour
 {
     public GameController gc;
     public bool isAnimating=false;
+    public bool isOpeningPage=false;
+    public Transform hud;
     public TMP_FontAsset usingFont;
     public Transform higherCanvas;
     public TextMeshProUGUI drawPileUI;
@@ -26,36 +28,51 @@ public class DisplayController : MonoBehaviour
     public List<TextMeshProUGUI> EnemyHPUI;
     public List<Image> EnemyHPSlider;
     public List<TextMeshProUGUI> EnemyShield;
+    public List<TextMeshProUGUI> EnemyAttackAddon;
+    public List<TextMeshProUGUI> EnemyDefenceAddon;
     public List<Image> EnemyIntend;
     public List<TextMeshProUGUI> EnemyIntendVal;
     public GameObject bezierArrow;
     public GameObject shield;
     public GameObject upArrow;
+    public GameObject downArrow;
     
     private GameObject panel;
     private readonly float textWidth=100f;
 
-    void Update()
+    private void Update()
     {
-        drawPileUI.text=gc.drawPile.drawPile.Count.ToString();
-        discardPileUI.text=gc.discardPile.discardPile.Count.ToString();
-        disposablePileUI.text=gc.discardPile.disposablePile.Count.ToString();
+        drawPileUI.text=gc.drawPile.Cards.Count.ToString();
+        discardPileUI.text=gc.discardPile.discards.Count.ToString();
+        disposablePileUI.text=gc.discardPile.disposedCards.Count.ToString();
         HPUI.text=gc.player.hp+"/"+gc.player.hpLimit;
+        hud.Find("heart").GetComponentInChildren<TextMeshProUGUI>().text=gc.player.hp+"/"+gc.player.hpLimit;
+        hud.Find("coin").GetComponentInChildren<TextMeshProUGUI>().text=gc.player.coins.ToString();
+        hud.Find("round").GetComponentInChildren<TextMeshProUGUI>().text=gc.roundCount.ToString();
         SPUI.text=gc.player.sp+"/"+gc.player.spInit;
-        playerAttackAddon.text=(gc.player.ap<0 ? "" : "+")+gc.player.ap;
-        playerDefenceAddon.text=(gc.player.dp<0 ? "" : "+")+gc.player.dp;
+        playerAttackAddon.text=(gc.player.ap<0 ? "" : "+")+gc.player.ap+"\nx"+gc.player.buffContainer.AttackRate;
+        playerDefenceAddon.text=(gc.player.dp<0 ? "" : "+")+gc.player.dp+"\nx"+gc.player.buffContainer.DefenceRate;
         playerShield.text=gc.player.shield.ToString();
         for(int i=0;i<gc.enemies.Count;i++)
         {
-            EnemyHPUI[i].text=gc.enemies[i].hp+"/"+gc.enemies[i].hp_limit;
+            EnemyHPUI[i].text=gc.enemies[i].hp+"/"+gc.enemies[i].hpLimit;
             EnemyShield[i].text=gc.enemies[i].shield.ToString();
+            EnemyAttackAddon[i].text=(gc.enemies[i].ap<0 ? "" : "+")+gc.enemies[i].ap+"\nx"+gc.enemies[i].buffContainer.AttackRate;
+            EnemyDefenceAddon[i].text=(gc.enemies[i].dp<0 ? "" : "+")+gc.enemies[i].dp+"\nx"+gc.enemies[i].buffContainer.DefenceRate;
+            
             EnemyIntend[i].sprite=gc.enemies[i].intendType switch
             {
                 IntendType.Attack => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_attack.png"),
+                IntendType.MAttack => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_attack.png"),
+                IntendType.HAttack => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_attack.png"),
                 IntendType.Defence => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_defence.png"),
                 IntendType.Buff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_buff.png"),
                 IntendType.Debuff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_debuff.png"),
                 IntendType.Recover => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_recover.png"),
+                IntendType.ADefence => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_adefence.png"),
+                IntendType.ABuff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_abuff.png"),
+                IntendType.ADebuff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_adebuff.png"),
+                IntendType.ARecover => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_arecover.png"),
                 IntendType.Sleep => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_sleep.png"),
                 _ => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_unknown.png"),
             };
@@ -68,7 +85,7 @@ public class DisplayController : MonoBehaviour
         {
             DOTween.To(()=>playerHPSlider.fillAmount,x=>playerHPSlider.fillAmount=x,(float)gc.player.hp/gc.player.hpLimit,0.25f);
         }
-        else DOTween.To(()=>EnemyHPSlider[i].fillAmount,x=>EnemyHPSlider[i].fillAmount=x,(float)gc.enemies[i].hp/gc.enemies[i].hp_limit,0.25f);
+        else DOTween.To(()=>EnemyHPSlider[i].fillAmount,x=>EnemyHPSlider[i].fillAmount=x,(float)gc.enemies[i].hp/gc.enemies[i].hpLimit,0.25f);
     }
     public IEnumerator AnimatePanelAndText(List<string> texts,float time=0.5f)
     {
