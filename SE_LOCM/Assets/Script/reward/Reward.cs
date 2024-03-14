@@ -29,6 +29,12 @@ public class Reward : MonoBehaviour
         // 读取存档
         localSaveData=LocalSaveDataManager.LoadLocalData();
 
+        if(localSaveData.ContainsBook(12))
+        {
+            // 海岛算经效果:每进入一次奖励界面获得15银币。
+            localSaveData.coins+=15;
+        }
+
         // 确定当前位置并且解锁新卡池
         MapNodeData currentNode=MapDatabase.data[localSaveData.route[^1]];
         localSaveData.AddCardsPool(currentNode.unlockCardsPool);

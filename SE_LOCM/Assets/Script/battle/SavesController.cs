@@ -5,11 +5,13 @@ using UnityEngine;
 public class SavesController : MonoBehaviour
 {
     public GameController gc;
-    public static LocalSaveData localSaveData=new();
+    public static LocalSaveData localSaveData;
 
     public void LoadLocalData()
     {
         localSaveData=LocalSaveDataManager.LoadLocalData();
+        gc.enemyIds=new EnemyNodeData(localSaveData.route[^1]).GetEnemyIds();
+        
         gc.player.Init(localSaveData);
         gc.drawPile.Init(localSaveData.cardsData);
     }
@@ -17,6 +19,11 @@ public class SavesController : MonoBehaviour
     {
         localSaveData.hp=gc.player.hp;
         localSaveData.hpLimit=gc.player.hpLimit;
+        foreach(var friend in gc.friends)
+        {
+            localSaveData.friends[friend.index]=friend.WaitRound;
+        }
+        localSaveData.FriendsCoolDown();
         LocalSaveDataManager.SaveLocalData(localSaveData);
     }
 }

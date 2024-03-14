@@ -1,30 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class HandCards : MonoBehaviour
+public class HandCards : CardPile
 {
-    public List<Card> handCards=new();
-
     // 向手牌中添加卡牌
-    public void AddCardToHand(Card card)
+    public override void AddCards(List<Card> cards)
     {
-        if(card!=null)
-        {
-            handCards.Add(card);
-        }
-    }
-    public void DrawCard(List<Card> cards)
-    {
-        foreach(var card in cards) AddCardToHand(card);
+        base.AddCards(cards);
     }
     // 从手牌中移除卡牌
-    public void RemoveCard(Card card)
+    public override void RemoveCards(List<Card> cards)
     {
-        handCards.Remove(card);
+        base.RemoveCards(cards);
     }
-    public void RemoveCard(List<Card> cards)
-    {
-        foreach(var card in cards) RemoveCard(card);
-    }
-    public Card Top(){return handCards[^1];}
 }
