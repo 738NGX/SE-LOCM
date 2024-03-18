@@ -15,7 +15,7 @@ public class CardTemplate : MonoBehaviour
     private bool inPlayArea=false;
     private void OnMouseEnter()
     {
-        if(gc.gameStage==GameStage.Play)
+        if(gc.gameStage==GameStage.Play&&!gc.dc.isOpeningPage)
         {
             transform.SetAsLastSibling();
             //Debug.Log(index);
@@ -36,7 +36,7 @@ public class CardTemplate : MonoBehaviour
     void OnMouseDown()
     {
         // 开始拖动
-        if(gc.gameStage==GameStage.Play) isDragging=true;
+        if(gc.gameStage==GameStage.Play&&!gc.dc.isOpeningPage) isDragging=true;
     }
     void Update()
     {
@@ -60,35 +60,53 @@ public class CardTemplate : MonoBehaviour
     }
     void OnMouseUp()
     {
+        if(!isDragging) return;
         if(inPlayArea&&gc.waitingDiscardCount>0)
         {
             inHand=false;
             StartCoroutine(DisCard());
             gc.waitingDiscardCount--;
         }
-        else if(inPlayArea&&gc.handCards.handCards[index].cost<=gc.player.sp)
+        else if(inPlayArea&&gc.handCards.Cards[index].cost<=gc.player.sp)
         {
+            var card=gc.handCards.Cards[index];
+            int executeTimes=gc.player.buffContainer.CallPlayCard(gc.handCards.Cards[index]);
+            
+            if(executeTimes==-1) return;
+            
             inHand=false;
-            int id=gc.handCards.handCards[index].id;
-            bool isPlused=gc.handCards.handCards[index].isPlused;
-            gc.handCards.handCards[index].Play();
+            gc.handCards.Cards[index].Play();
+            gc.roundPlayedCards.AddCard(gc.handCards.Cards[index]);
+            
+            // 夏侯阳算经效果:每打出一张手牌，获得2点护盾值。
+            if(gc.player.ContainsBook(18)) gc.player.shield+=2;
+            
             StartCoroutine(RemoveCard());
-            gc.CardExecuteAction(id,isPlused);
+            
+            for(int i=0;i<executeTimes;i++)
+            {
+                gc.CardExecuteAction(card.id,card.isPlused);
+            } 
         }
         else transform.DOMove(originalPosition,0.1f);
+        if(gc.player.ContainsBook(20)&&gc.handCards.Cards.Count==0)
+        {
+            // 缀术效果:在你的回合，当你没有手牌时，抽一张牌。
+            gc.DrawCards(1);
+        }
         isDragging=false;
     }
     private IEnumerator RemoveCard()
     {
         //Debug.Log(gc.handCards.handCards[index].displayInfo.name);
-        gc.player.ReduceSP(gc.handCards.handCards[index].cost);
-        if(gc.handCards.handCards[index].disposable)
+        gc.player.ReduceSP(gc.handCards.Cards[index].cost);
+        if(gc.handCards.Cards[index].disposable)
         {
-            gc.discardPile.AddCardToDisposable(gc.handCards.handCards[index]);
+            gc.discardPile.AddCardToDisposable(gc.handCards.Cards[index]);
         }
-        else gc.discardPile.AddCardToDiscard(gc.handCards.handCards[index]);
+        else gc.discardPile.AddCardToDiscard(gc.handCards.Cards[index]);
         
-        gc.handCards.RemoveCard(gc.handCards.handCards[index]);
+        gc.handCards.RemoveCard(gc.handCards.Cards[index]);
 
         audioSource.Play();
         transform.DOMove(new Vector3(8f,-4f),0.25f);
@@ -101,9 +119,9 @@ public class CardTemplate : MonoBehaviour
     {
         //Debug.Log(gc.handCards.handCards[index].displayInfo.name);
 
-        gc.discardPile.AddCardToDiscard(gc.handCards.handCards[index]);
+        gc.discardPile.AddCardToDiscard(gc.handCards.Cards[index]);
         
-        gc.handCards.RemoveCard(gc.handCards.handCards[index]);
+        gc.handCards.RemoveCard(gc.handCards.Cards[index]);
 
         audioSource.Play();
         transform.DOMove(new Vector3(8f,-4f),0.25f);

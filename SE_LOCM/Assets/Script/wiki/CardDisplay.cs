@@ -19,10 +19,10 @@ public class CardDisplay : MonoBehaviour
         }
     }
 
-    public void UpdateCardDisplayInfo(int id)
+    public void UpdateCardDisplayInfo(int id,bool isPlused=false)
     {
         this.id=id;
         idSet=true;
-        HandCardsUI.CardDisplayInfoUpdate(gameObject,new Card(id));
+        HandCardsUI.CardDisplayInfoUpdate(gameObject,new Card(id,isPlused));
     }
 }

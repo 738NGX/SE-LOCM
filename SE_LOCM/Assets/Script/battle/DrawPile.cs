@@ -1,43 +1,38 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class DrawPile : MonoBehaviour
+public class DrawPile : CardPile
 {
-    public List<Card> drawPile=new(){};
-
     public void Init(List<(int,bool)> database)
     {
-        foreach(var data in database) drawPile.Add(new Card(data.Item1,data.Item2));
+        foreach(var data in database) AddCard(new Card(data.Item1,data.Item2));
         Shuffle(); // 初始时洗牌
     }
     
-    public void AddCardToDraw(Card card)
+    public override void AddCards(List<Card> cards)
     {
-        drawPile.Add(card);
-    }
-    public void AddCardToDraw(List<Card> cards)
-    {
-        foreach(Card card in cards) AddCardToDraw(card);
+        base.AddCards(cards);
         Shuffle();
     }
 
     // 洗牌方法
-    public void Shuffle()
+    private void Shuffle()
     {
-        for (int i=0;i<drawPile.Count;i++)
+        for (int i=0;i<Cards.Count;i++)
         {
-            Card temp=drawPile[i];
-            int randomIndex=Random.Range(0,drawPile.Count);
-            drawPile[i]=drawPile[randomIndex];
-            drawPile[randomIndex]=temp;
+            Card temp=Cards[i];
+            int randomIndex=Random.Range(0,Cards.Count);
+            Cards[i]=Cards[randomIndex];
+            Cards[randomIndex]=temp;
         }
     }
+
     // 从摸牌堆中摸牌
     private Card DrawCard()
     {
-        if(drawPile.Count<1) return null;
-        Card cardToDraw=drawPile[0];
-        drawPile.RemoveAt(0);
+        if(Cards.Count<1) return null;
+        Card cardToDraw=Cards[0];
+        Cards.RemoveAt(0);
         return cardToDraw;
     }
     public List<Card> DrawCards(int n=1)

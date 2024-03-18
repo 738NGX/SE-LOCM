@@ -53,15 +53,21 @@ public class MapNode : MonoBehaviour
         }
         else if(MapDatabase.data[id].type==MapNodeType.Enemy)
         {
-            sf.FadeOut("Scenes/battle/b1-01");
+            sf.FadeOut("Scenes/battle");
         }
         else if(MapDatabase.data[id].type==MapNodeType.Senior)
         {
-            sf.FadeOut("Scenes/battle/b1-01");
+            sf.FadeOut("Scenes/battle");
         }
         else if(MapDatabase.data[id].type==MapNodeType.Boss)
         {
-            sf.FadeOut("Scenes/battle/b1-01");
+            if(localSaveData.ContainsBook(19))
+            {
+                // 算术书效果:Boss战开始前，回复25点体力值。
+                localSaveData.AdjustHP(25);
+                LocalSaveDataManager.SaveLocalData(localSaveData);
+            }
+            sf.FadeOut("Scenes/battle");
         }
     }
 }

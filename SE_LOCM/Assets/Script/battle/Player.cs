@@ -2,16 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Creature
 {
-    public int hp;              // 体力值(HealthPoints)
     public int sp;              // 法术值(SpellPoints)
-    public int hpLimit;         // 体力值上限
     public int spInit;          // 每回合初始算术值
-    public int ap;              // 攻击力
-    public int dp;              // 防御力
-    public int shield;          // 护盾
+    public int coins;
+    public List<int> books;
 
+    private void Start()
+    {
+        buffContainer.creature=this;
+    }
     public void Init(LocalSaveData localSaveData)
     {
         hpLimit=localSaveData.hpLimit;
@@ -19,27 +20,39 @@ public class Player : MonoBehaviour
         ap=localSaveData.initAp;
         dp=localSaveData.initDp;
         spInit=localSaveData.initSp;
+        coins=localSaveData.coins;
+        books=localSaveData.booksData;
+
         RecoverSP();
     }
-
-    public void AddHP(int val)
+    public override void AddHP(int val)
     {
-        if(val<1) return;
-        if(hp+val>=hpLimit) hp=hpLimit;
-        else hp+=val;
+        base.AddHP(val);
+        gc.dc.UpdateHPSlider(-1);
     }
-    public void ReduceHP(int val)
+    public override void ReduceHP(int val)
     {
-        if(val<1) return;
-        if(hp+shield-val<=0) hp=0;
-        else if(val>shield)
+        base.ReduceHP(val);
+        gc.dc.UpdateHPSlider(-1);
+    }
+    public override void AddShield(int val)
+    {
+        gc.AddShield(val);
+    }
+    public override void AddBuff(Buff buff)
+    {
+        base.AddBuff(buff);
+        switch(buff.Style)
         {
-            hp-=val-shield;
-            shield=0;
+            case BuffStyle.Positive: gc.UpArrow(); break;
+            case BuffStyle.Negative: gc.DownArrow(); break;
+            default: break;
         }
-        else shield-=val;
     }
-    public void RecoverSP(){sp=spInit;}
+    public void RecoverSP()
+    {
+        sp=spInit;
+    }
     public void AddSP(int val)
     {
         if(val<1) return;
@@ -50,5 +63,26 @@ public class Player : MonoBehaviour
         if(val<1) return;
         if(sp-val<=0) sp=0;
         else sp-=val;
+    }
+    public void AddCoins(int val)
+    {
+        if(val<1) return;
+        coins+=val;
+    }
+    public int ReduceCoins(int val)
+    {
+        if(val<1) return 0;
+        if(coins-val<=0)
+        { 
+            int res=coins;
+            coins=0;
+            return res;
+        }
+        else coins-=val; 
+        return val;
+    }
+    public bool ContainsBook(int id)
+    {
+        return books.Contains(id);
     }
 }
