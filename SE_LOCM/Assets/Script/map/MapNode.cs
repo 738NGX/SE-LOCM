@@ -53,11 +53,11 @@ public class MapNode : MonoBehaviour
         }
         else if(MapDatabase.data[id].type==MapNodeType.Enemy)
         {
-            sf.FadeOut("Scenes/battle/b1-01");
+            sf.FadeOut("Scenes/battle");
         }
         else if(MapDatabase.data[id].type==MapNodeType.Senior)
         {
-            sf.FadeOut("Scenes/battle/b1-01");
+            sf.FadeOut("Scenes/battle");
         }
         else if(MapDatabase.data[id].type==MapNodeType.Boss)
         {
@@ -67,7 +67,7 @@ public class MapNode : MonoBehaviour
                 localSaveData.AdjustHP(25);
                 LocalSaveDataManager.SaveLocalData(localSaveData);
             }
-            sf.FadeOut("Scenes/battle/b1-01");
+            sf.FadeOut("Scenes/battle");
         }
     }
 }
