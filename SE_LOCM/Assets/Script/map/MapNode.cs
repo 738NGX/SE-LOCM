@@ -35,31 +35,34 @@ public class MapNode : MonoBehaviour
         if(status!=MapNodeStauts.Available) return;
         
         LocalSaveData localSaveData=LocalSaveDataManager.LoadLocalData();
+        
         if(!localSaveData.route.Contains(id)) localSaveData.route.Add(id);
         LocalSaveDataManager.SaveLocalData(localSaveData);
 
-        if(MapDatabase.data[id].type==MapNodeType.Story)
+        var type=MapDatabase.data[id].type;
+
+        if(type==MapNodeType.Story)
         {
             if(!MapNodeIdToStorySceneDatabase.data.TryGetValue(id,out var target)) return;
             sf.FadeOut(target);
         }
-        else if(MapDatabase.data[id].type==MapNodeType.Break)
+        else if(type==MapNodeType.Unknown)
+        {
+            sf.FadeOut("Scenes/unknown");
+        }
+        else if(type==MapNodeType.Break)
         {
             sf.FadeOut("Scenes/break");
         }
-        else if(MapDatabase.data[id].type==MapNodeType.Box)
+        else if(type==MapNodeType.Box)
         {
             sf.FadeOut("Scenes/reward");
         }
-        else if(MapDatabase.data[id].type==MapNodeType.Enemy)
+        else if(type==MapNodeType.Enemy||type==MapNodeType.Senior)
         {
             sf.FadeOut("Scenes/battle");
         }
-        else if(MapDatabase.data[id].type==MapNodeType.Senior)
-        {
-            sf.FadeOut("Scenes/battle");
-        }
-        else if(MapDatabase.data[id].type==MapNodeType.Boss)
+        else if(type==MapNodeType.Boss)
         {
             if(localSaveData.ContainsBook(19))
             {

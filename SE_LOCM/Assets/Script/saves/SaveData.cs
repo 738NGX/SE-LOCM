@@ -30,6 +30,8 @@ public class LocalSaveData
     // 地图数据
     public List<int> route;                     // 路径
 
+    public int Level{get{return route.Count==0 ? 1 : route[^1]/100;}}
+
     // 数据写入
     public void AdjustHP(int val)
     {
