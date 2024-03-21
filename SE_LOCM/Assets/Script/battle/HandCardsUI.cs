@@ -11,7 +11,7 @@ public class HandCardsUI : MonoBehaviour
     public GameObject cardTemplateLite; // 手牌模板(没有附加类型和碰撞箱)
     public HandCards hc;                // 手牌堆
     readonly float cardWidth=300f;      // 手牌宽度
-    readonly float spacing=75f;         // 手牌堆叠尺寸
+    readonly float spacing=120f;         // 手牌堆叠尺寸
     public Rect playArea;
 
     /*

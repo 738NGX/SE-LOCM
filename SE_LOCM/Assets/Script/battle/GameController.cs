@@ -231,6 +231,9 @@ public class GameController : MonoBehaviour
             if(player.ContainsBook(13)) player.sp++;
         }
         val=drawPile.Cards.Count<val ? drawPile.Cards.Count : val;    // 可能补完牌还不够抽
+        
+        
+        
         if(val==0) return;
         handCards.AddCards(drawPile.DrawCards(val));
         hcui.DrawCards();
@@ -546,5 +549,44 @@ public class GameController : MonoBehaviour
     {
         // 环田术
         SelectAttack(player.shield+player.ap);
+    }
+    private void Card200ExecuteAction(bool isPlused)
+    {
+        
+    }
+    private void Card201ExecuteAction(bool isPlused)
+    {
+        if(!isPlused)
+        {
+            handCards.AddExtraCards(new(){new Card(202),new Card(202),new Card(203)});
+        }
+        else
+        {
+            handCards.AddExtraCards(new(){new Card(202),new Card(203),new Card(204),new Card(205)});
+        }
+    }
+    private void Card202ExecuteAction(bool isPlused)
+    {
+        // 珠算加法
+        int val=!isPlused ? 4 : 6;
+        SelectAttack(val+player.ap);
+    }
+    private void Card203ExecuteAction(bool isPlused)
+    {
+        // 珠算减法
+        int val=!isPlused ? 4 : 6;
+        AddShield(val+player.dp);
+    }
+    private void Card204ExecuteAction(bool isPlused)
+    {
+        // 珠算乘法
+        int val=!isPlused ? 2 : 3;
+        SelectAttack(3+player.ap,val);
+    }
+    private void Card205ExecuteAction(bool isPlused)
+    {
+        // 珠算除法
+        int val=!isPlused ? 8 : 12;
+        AllAttack(val/enemyCount+player.ap);
     }
 }

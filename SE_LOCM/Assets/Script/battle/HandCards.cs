@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class HandCards : CardPile
 {
+    public GameController gc;
     // 向手牌中添加卡牌
     public override void AddCards(List<Card> cards)
     {
@@ -12,5 +13,10 @@ public class HandCards : CardPile
     public override void RemoveCards(List<Card> cards)
     {
         base.RemoveCards(cards);
+    }
+    public void AddExtraCards(List<Card> cards)
+    {
+        gc.drawPile.AddCards(cards);
+        gc.DrawCards(cards.Count);
     }
 }
