@@ -19,4 +19,12 @@ public class HandCards : CardPile
         gc.drawPile.AddCards(cards);
         gc.DrawCards(cards.Count);
     }
+    public int DisposeNonAttackCards()
+    {
+        gc.hcui.DisposeNonAttackCards();
+        var list=cardList.DisposeNonAttackCards();
+        gc.discardPile.AddCardsToDisposable(list);
+
+        return list.Count;
+    }
 }
