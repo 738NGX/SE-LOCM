@@ -24,7 +24,6 @@ public class HandCards : CardPile
         gc.hcui.DisposeNonAttackCards();
         var list=cardList.DisposeNonAttackCards();
         gc.discardPile.AddCardsToDisposable(list);
-
         return list.Count;
     }
 }

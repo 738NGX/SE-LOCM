@@ -140,6 +140,7 @@ public class HandCardsUI : MonoBehaviour
         }
 
         RemoveCard();
+        StartCoroutine(CardDisplayUpdate());
     }
     public void RemoveCard()
     {
@@ -170,6 +171,7 @@ public class HandCardsUI : MonoBehaviour
             if (!child.TryGetComponent<CardTemplate>(out var cardTemplateComponent)) continue;
             if (!cardTemplateComponent.inHand) continue;
             CardDisplayInfoUpdate(child.gameObject, hc.Cards[k]);
+            cardTemplateComponent.transform.DOMove(cardTemplateComponent.originalPosition,0.1f);
             k++;
         }
     }

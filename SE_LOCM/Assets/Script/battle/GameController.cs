@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using System.Reflection;
+using Unity.Mathematics;
+using System;
 
 // 准备阶段、摸牌阶段、出牌阶段、弃牌阶段、敌人阶段、结束阶段
 public enum GameStage { Pre, Draw, Play, Discard, Enemy, End, Victory, Defeat, Null, Reward };
@@ -112,6 +114,7 @@ public class GameController : MonoBehaviour
             {
                 player.sp = player.spInit + extraSP < 0 ? 0 : player.spInit + extraSP;
             }
+            player.sp = player.sp < 0 ? 0 : player.sp;
 
             if (roundCount == 1)
             {
@@ -230,9 +233,9 @@ public class GameController : MonoBehaviour
             // 张邱建算经:每当弃牌堆返回卡牌给摸牌堆时，算术值+1。
             if (player.ContainsBook(13)) player.sp++;
         }
-        
+
         // 可能补完牌还不够抽
-        val = drawPile.Count < val ? drawPile.Count : val;    
+        val = drawPile.Count < val ? drawPile.Count : val;
 
         // 可能过抽
         int overflow = val + handCards.Count > 10 ? val + handCards.Count - 10 : 0;
@@ -251,11 +254,11 @@ public class GameController : MonoBehaviour
         StartCoroutine(dc.AnimatePanelAndText(new() { "弃", val.ToString(), "张", "牌" }, 0f));
     }
     // 选择攻击
-    private void SelectAttack(int val, int times = 1, Buff giveBuff = null)
+    private void SelectAttack(int val, int times = 1, List<Buff> giveBuffs = null, Action<Enemy> onEnemySelected = null)
     {
-        StartCoroutine(SelectAttackCoroutine(player.buffContainer.CallAttack(val), times, giveBuff));
+        StartCoroutine(SelectAttackCoroutine(val, times, giveBuffs, onEnemySelected));
     }
-    private IEnumerator SelectAttackCoroutine(int val, int times, Buff giveBuff)
+    private IEnumerator SelectAttackCoroutine(int val, int times, List<Buff> giveBuffs, Action<Enemy> onEnemySelected)
     {
         dc.bezierArrow.SetActive(true);
         selectedEnemyIndex = -1;
@@ -263,10 +266,11 @@ public class GameController : MonoBehaviour
         yield return new WaitUntil(() => selectedEnemyIndex != -1);
 
         dc.bezierArrow.SetActive(false);
+        Enemy selectedEnemy = enemies[selectedEnemyIndex]; // 获取选中的敌人
 
         for (int i = 0; i < times; i++)
         {
-            enemies[selectedEnemyIndex].ReduceHP(val);
+            selectedEnemy.ReduceHP(val); // 使用 selectedEnemy 替代之前的索引访问
             PlayAudio(sfxAttack);
             dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
             Camera.main.transform.DOShakePosition(0.35f, 0.5f).OnComplete(() =>
@@ -275,10 +279,13 @@ public class GameController : MonoBehaviour
             });
         }
 
-        if (giveBuff is not null)
+        if (giveBuffs is not null)
         {
-            enemies[selectedEnemyIndex].AddBuff(giveBuff);
+            foreach (var buff in giveBuffs)
+                selectedEnemy.AddBuff(buff); // 使用 selectedEnemy 替代之前的索引访问
         }
+
+        onEnemySelected?.Invoke(selectedEnemy); // 触发回调，传递选中的敌人
 
         selectedEnemyIndex = -2;
     }
@@ -437,7 +444,7 @@ public class GameController : MonoBehaviour
         // 约分术
         int val1 = !isPlused ? 5 : 7;
         int val2 = !isPlused ? 1 : 2;
-        SelectAttack(val1 + player.ap, 1, new(103, val2));
+        SelectAttack(val1 + player.ap, 1, new() { new(103, val2) });
     }
     private void Card108ExecuteAction(bool isPlused)
     {
@@ -449,32 +456,15 @@ public class GameController : MonoBehaviour
     private void Card109ExecuteAction(bool isPlused)
     {
         // 平分术
-        StartCoroutine(Card109ExecuteActionCoroutine(isPlused));
-    }
-    private IEnumerator Card109ExecuteActionCoroutine(bool isPlused)
-    {
         int val = !isPlused ? 8 : 12;
         float factor = !isPlused ? 1 : 1.5f;
-
-        dc.bezierArrow.SetActive(true);
-        selectedEnemyIndex = -1;
-
-        yield return new WaitUntil(() => selectedEnemyIndex != -1);
-
-        var selectedEnemy = enemies[selectedEnemyIndex];
-        dc.bezierArrow.SetActive(false);
-
-        selectedEnemy.ReduceHP(val + player.ap);
-        PlayAudio(sfxAttack);
-        dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
-        Camera.main.transform.DOShakePosition(0.5f, 0.5f);
-
-        if (selectedEnemy.IsIntendAttack())
+        SelectAttack(val, 1, null, (selectedEnemy) =>
         {
-            AddShield((int)(selectedEnemy.intendValue * selectedEnemy.intendTimes * factor) + player.dp);
-        }
-
-        selectedEnemyIndex = -2;
+            if (selectedEnemy.IsIntendAttack())
+            {
+                AddShield((int)(selectedEnemy.intendValue * selectedEnemy.intendTimes * factor) + player.dp);
+            }
+        });
     }
     private void Card110ExecuteAction(bool isPlused)
     {
@@ -522,7 +512,7 @@ public class GameController : MonoBehaviour
     {
         // 邪田术
         int val = !isPlused ? 3 : 5;
-        SelectAttack(0, 1, new(106, val));
+        SelectAttack(0, 1, new() { new(106, val) });
     }
     private void Card117ExecuteAction(bool isPlused)
     {
@@ -556,7 +546,8 @@ public class GameController : MonoBehaviour
     }
     private void Card200ExecuteAction(bool isPlused)
     {
-
+        int val = !isPlused ? 4 : 6;
+        player.AddBuff(new(314, val));
     }
     private void Card201ExecuteAction(bool isPlused)
     {
@@ -574,29 +565,30 @@ public class GameController : MonoBehaviour
     {
         // 珠算加法
         int val = !isPlused ? 4 : 6;
-        SelectAttack(val + player.ap);
+        SelectAttack(val + player.ap + player.buffContainer.GetLevel(314));
     }
     private void Card203ExecuteAction(bool isPlused)
     {
         // 珠算减法
         int val = !isPlused ? 4 : 6;
-        AddShield(val + player.dp);
+        AddShield(val + player.dp + player.buffContainer.GetLevel(314));
     }
     private void Card204ExecuteAction(bool isPlused)
     {
         // 珠算乘法
         int val = !isPlused ? 2 : 3;
-        SelectAttack(3 + player.ap, val);
+        SelectAttack(3 + player.ap + player.buffContainer.GetLevel(314), val);
     }
     private void Card205ExecuteAction(bool isPlused)
     {
         // 珠算除法
         int val = !isPlused ? 8 : 12;
-        AllAttack(val / enemyCount + player.ap);
+        AllAttack(val / enemyCount + player.ap + player.buffContainer.GetLevel(314));
     }
     private void Card206ExecuteAction(bool isPlused)
     {
-        
+        int val = !isPlused ? 1 : 2;
+        player.AddBuff(new(315, val));
     }
     private void Card207ExecuteAction(bool isPlused)
     {
@@ -695,15 +687,266 @@ public class GameController : MonoBehaviour
     private void Card228ExecuteAction(bool isPlused)
     {
         // 经率术
-        int count=handCards.DisposeNonAttackCards();
+        int count = handCards.DisposeNonAttackCards();
+        handCards.DisposeNonAttackCards();
         int val = !isPlused ? 3 : 5;
-        SelectAttack((3 + player.ap)*count);
+        SelectAttack((3 + player.ap) * count);
     }
     private void Card229ExecuteAction(bool isPlused)
     {
         // 经术术
-        int count=handCards.DisposeNonAttackCards();
+        int count = handCards.DisposeNonAttackCards();
+        handCards.DisposeNonAttackCards();
         int val = !isPlused ? 3 : 5;
-        AddShield((val + player.dp)*count);
+        AddShield((val + player.dp) * count);
+    }
+    private void Card300ExecuteAction(bool isPlused)
+    {
+        // 龟算
+        int val = !isPlused ? 1 : 2;
+        player.AddBuff(new(312, val));
+    }
+    private void Card301ExecuteAction(bool isPlused)
+    {
+        // 衰分术
+        int val1 = !isPlused ? 12 : 25;
+        int val2 = !isPlused ? 3 : 2;
+        player.ReduceHP(val2);
+        SelectAttack(val1 + player.ap);
+    }
+    private void Card302ExecuteAction(bool isPlused)
+    {
+        // 返衰术
+        int val = !isPlused ? 7 : 10;
+        WaitingDiscards(1);
+        player.AddHP(val);
+    }
+    private void Card400ExecuteAction(bool isPlused)
+    {
+        // 少广
+        if (player.buffContainer.GetLevel(316) >= 9) return;
+        player.AddBuff(new(316, 1));
+    }
+    private void Card401ExecuteAction(bool isPlused)
+    {
+        // 开方术
+        SelectAttack((int)Math.Pow(2, player.buffContainer.GetLevel(316) + 1) + player.ap);
+    }
+    private void Card402ExecuteAction(bool isPlused)
+    {
+        // 开圆术
+        AddShield((int)Math.Pow(2, player.buffContainer.GetLevel(316) + 1) + player.dp);
+    }
+    private void Card403ExecuteAction(bool isPlused)
+    {
+        // 开立方术
+        SelectAttack((int)Math.Pow(3, player.buffContainer.GetLevel(316) + 1) + player.ap);
+    }
+    private void Card404ExecuteAction(bool isPlused)
+    {
+        // 开立圆术
+        AddShield((int)Math.Pow(3, player.buffContainer.GetLevel(316) + 1) + player.dp);
+    }
+    private void Card500ExecuteAction(bool isPlused)
+    {
+        // 穿地术
+        int val = !isPlused ? 3 : 5;
+        SelectAttack(15 + player.ap * val);
+    }
+    private void Card501ExecuteAction(bool isPlused)
+    {
+        // 为壤术
+        int val = !isPlused ? 3 : 5;
+        AddShield(15 + player.dp * val);
+    }
+    private void Card502ExecuteAction(bool isPlused)
+    {
+        // 为坚术
+        int val = !isPlused ? 5 : 8;
+        AddShield(val + player.dp);
+        player.AddBuff(new(109, 1));
+    }
+    private void Card503ExecuteAction(bool isPlused)
+    {
+        // 为墟术
+        int val = !isPlused ? 4 : 6;
+        SelectAttack(val + player.ap);
+        discardPile.discards.Add(new(503, isPlused));
+    }
+    private void Card504ExecuteAction(bool isPlused)
+    {
+        // 积尺术
+        int val = !isPlused ? 1 : 2;
+        SelectAttack(15 + player.ap, 1, new() { new(103, val), new(104, val) });
+    }
+    private void Card505ExecuteAction(bool isPlused)
+    {
+        // 用徒术
+        int val = !isPlused ? 30 : 40;
+        AddShield(val + player.dp);
+    }
+    private void Card506ExecuteAction(bool isPlused)
+    {
+        // 袤尺术
+        int val = !isPlused ? 50 : 60;
+        if (drawPile.Count == 0) AllAttack(val + player.ap);
+    }
+    private void Card507ExecuteAction(bool isPlused)
+    {
+        // 方堡壔术
+        SelectAttack(handCards.Count + player.ap);
+    }
+    private void Card508ExecuteAction(bool isPlused)
+    {
+        // 圆堡壔术
+        AddShield(handCards.Count + player.dp);
+    }
+    private void Card509ExecuteAction(bool isPlused)
+    {
+        // 方亭术
+        SelectAttack(discardPile.discards.Count + player.ap);
+    }
+    private void Card510ExecuteAction(bool isPlused)
+    {
+        // 圆亭术
+        AddShield(discardPile.discards.Count + player.dp);
+    }
+    private void Card511ExecuteAction(bool isPlused)
+    {
+        // 方锥术
+        SelectAttack(drawPile.Count + player.ap);
+    }
+    private void Card512ExecuteAction(bool isPlused)
+    {
+        // 圆锥术
+        AddShield(drawPile.Count + player.dp);
+    }
+    private void Card513ExecuteAction(bool isPlused)
+    {
+        // 堑堵术
+        int val = !isPlused ? 50 : 60;
+        if (discardPile.discards.Count == 0) AddShield(val + player.ap);
+    }
+    private void Card514ExecuteAction(bool isPlused)
+    {
+        // 阳马术
+        int val = !isPlused ? 8 : 10;
+        SelectAttack(handCards.Count + player.ap, 1, null, (selectedEnemy) =>
+        {
+            if (selectedEnemy.buffContainer.GetLevel(104) > 0)
+            {
+                player.sp++;
+                DrawCards(1);
+            }
+        });
+    }
+    private void Card515ExecuteAction(bool isPlused)
+    {
+        // 鳖臑术
+        int val = !isPlused ? 10 : 15;
+        if (player.shield == 0) AddShield(val + player.dp);
+    }
+    private void Card516ExecuteAction(bool isPlused)
+    {
+        // 羡除术
+        int val = !isPlused ? 8 : 10;
+        SelectAttack(handCards.Count + player.ap, 1, null, (selectedEnemy) =>
+        {
+            if (selectedEnemy.buffContainer.GetLevel(104) > 0)
+            {
+                player.sp++;
+                DrawCards(1);
+            }
+        });
+    }
+    private void Card517ExecuteAction(bool isPlused)
+    {
+        // 刍甍术
+        int val = !isPlused ? 8 : 10;
+        SelectAttack(val + player.ap);
+        player.AddBuff(new(308, 1));
+        player.AddBuff(new(114, 2));
+    }
+    private void Card518ExecuteAction(bool isPlused)
+    {
+        // 刍童术
+        int val = !isPlused ? 8 : 10;
+        AddShield(val + player.dp);
+        player.AddBuff(new(308, 1));
+        player.AddBuff(new(114, 2));
+    }
+    private void Card519ExecuteAction(bool isPlused)
+    {
+        // 曲池术
+        int val = !isPlused ? 1 : 2;
+        SelectAttack(0, 1, null, (selectedEnemy) =>
+        {
+            if (selectedEnemy.IsIntendAttack())
+            {
+                player.ap += val;
+            }
+        });
+    }
+    private void Card520ExecuteAction(bool isPlused)
+    {
+        // 盘池术
+        int val1 = !isPlused ? 4 : 6;
+        int val2 = !isPlused ? 1 : 2;
+        SelectAttack(val1 + player.ap, 1, null, (selectedEnemy) =>
+        {
+            if (selectedEnemy.IsIntendAttack())
+            {
+                selectedEnemy.AddBuff(new(103, val2));
+            }
+        });
+    }
+    private void Card521ExecuteAction(bool isPlused)
+    {
+        // 冥谷术
+        player.sp *= 2;
+    }
+    private void Card522ExecuteAction(bool isPlused)
+    {
+        // 委粟术
+        DrawCards(10-handCards.Count);
+    }
+    private void Card600ExecuteAction(bool isPlused)
+    {
+        // 均输术
+        int val = !isPlused ? 3 : 5;
+        player.AddBuff(new(313, 1));
+        player.ap += val;
+    }
+    private void Card700ExecuteAction(bool isPlused)
+    {
+        // 盈不足术
+        int val = !isPlused ? 10 : 15;
+        SelectAttack(val);
+        player.AddBuff(new(401, 1));
+    }
+    private void Card701ExecuteAction(bool isPlused)
+    {
+        // 两盈两不足术
+        int val = !isPlused ? 10 : 15;
+        SelectAttack(val);
+        player.AddBuff(new(400, 1));
+    }
+    private void Card800ExecuteAction(bool isPlused)
+    {
+        // 方程术
+        player.sp+=2;
+        DrawCards(2);
+        player.AddBuff(new(118,1));
+    }
+    private void Card801ExecuteAction(bool isPlused)
+    {
+        // 正负术
+        player.buffContainer.Clarify();
+    }
+    private void Card900ExecuteAction(bool isPlused)
+    {
+        // 勾股
+        int val = !isPlused ? 1 : 2;
+        player.AddBuff(new(303, val));
     }
 }
