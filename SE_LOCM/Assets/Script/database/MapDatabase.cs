@@ -64,7 +64,8 @@ public class MapNodeData
     public List<int> nextNodes;                                 // 下一节点
     public List<int> unlockCardsPool;                           // 解锁卡池
     private readonly int[] coinsRange=new int[2];               // 银币奖励范围
-    public int rewardCardsNum{get;}                             // 卡牌奖励次数
+    public int RewardCardsNum{get;}                             // 卡牌奖励次数
+    public int Level{get{return id/100;}}
     private readonly int[] rewardCardChance=new int[2];         // 卡牌奖励概率(%)
     private readonly int[] rewardBookChance=new int[2];         // 典籍奖励概率(%)
 
@@ -88,13 +89,12 @@ public class MapNodeData
         unlockCardsPool=values[3].Split(';').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s=>int.Parse(s.Trim())).ToList();
         coinsRange[0]=int.Parse(values[4]);
         coinsRange[1]=int.Parse(values[5]);
-        rewardCardsNum=int.Parse(values[6]);
+        RewardCardsNum=int.Parse(values[6]);
         rewardCardChance[0]=int.Parse(values[7]);
         rewardCardChance[1]=int.Parse(values[8]);
         rewardBookChance[0]=int.Parse(values[9]);
         rewardBookChance[1]=int.Parse(values[10]);
     }
-    public int Level(){return id/100;}
     public int RewardCoins(){return Random.Range(coinsRange[0],coinsRange[1]+1);}
     public List<Card> RewardCards(List<Card> cardsPool,int num=3)
     {

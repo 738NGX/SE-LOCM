@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Map : MonoBehaviour
 {
     public List<MapNode> mapNodes=new();
     public static LocalSaveData localSaveData;
+    public TextMeshProUGUI hpui;
+    public TextMeshProUGUI coinui;
     public SceneFader sf;
     private void Start()
     {
@@ -30,6 +34,11 @@ public class Map : MonoBehaviour
                 mapNode.status=MapNodeStauts.Unavailable;
             }
         }
+    }
+    private void Update()
+    {
+        hpui.text=localSaveData.hp+"/"+localSaveData.hpLimit;
+        coinui.text=localSaveData.coins.ToString();
     }
     public void BackTheme()
     {

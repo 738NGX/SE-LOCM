@@ -166,3 +166,19 @@ public class EnemyInfo : DisplayInfo
         return copy;
     }
 }
+
+public class ProblemInfo : DisplayInfo
+{
+    public string TrueAnswer{get; private set;}
+    public string FalseAnswer{get; private set;}
+
+    public ProblemInfo(string rawData)
+    {
+        string[] values=rawData.Split(',');
+        
+        id=int.Parse(values[0]);
+        name=values[1];
+        TrueAnswer=values[2];
+        FalseAnswer=values[3];
+    }
+}
