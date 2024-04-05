@@ -9,7 +9,7 @@ public class CardDisplay : MonoBehaviour
 {
     public int id;
     public int displayIndex;
-    private bool idSet=false;
+    private bool idSet = false;
 
     private void Start()
     {
@@ -19,10 +19,10 @@ public class CardDisplay : MonoBehaviour
         }
     }
 
-    public void UpdateCardDisplayInfo(int id,bool isPlused=false)
+    public void UpdateCardDisplayInfo(int id, bool isPlused = false)
     {
-        this.id=id;
-        idSet=true;
-        HandCardsUI.CardDisplayInfoUpdate(gameObject,new Card(id,isPlused));
+        this.id = id;
+        idSet = true;
+        HandCardsUI.CardDisplayInfoUpdate(gameObject, new Card(id, isPlused));
     }
 }

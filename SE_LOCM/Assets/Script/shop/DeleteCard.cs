@@ -1,18 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine.UI;
 
-public class DeleteCard : MonoBehaviour
+public class DeleteCard : ShopItem
 {
-    // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        base.Start();
+        id = 7;
+        Price = 50 / countRate;
+        gameObject.GetComponent<Button>().onClick.AddListener(() => shop.Purchase(7));
     }
 }
