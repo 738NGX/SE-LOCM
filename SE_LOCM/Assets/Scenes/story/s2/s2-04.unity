@@ -201,7 +201,6 @@ GameObject:
   - component: {fileID: 135876563}
   - component: {fileID: 135876562}
   - component: {fileID: 135876561}
-  - component: {fileID: 135876581}
   - component: {fileID: 135876580}
   - component: {fileID: 135876579}
   - component: {fileID: 135876578}
@@ -211,6 +210,7 @@ GameObject:
   - component: {fileID: 135876584}
   - component: {fileID: 135876583}
   - component: {fileID: 135876582}
+  - component: {fileID: 135876588}
   m_Layer: 0
   m_Name: Flowchart
   m_TagString: Untagged
@@ -634,7 +634,7 @@ MonoBehaviour:
   - {fileID: 135876582}
   - {fileID: 135876586}
   - {fileID: 135876578}
-  - {fileID: 135876581}
+  - {fileID: 135876588}
   suppressAllAutoSelections: 0
 --- !u!114 &135876576
 MonoBehaviour:
@@ -663,7 +663,7 @@ MonoBehaviour:
   selectedBlocks:
   - {fileID: 135876575}
   selectedCommands:
-  - {fileID: 135876586}
+  - {fileID: 135876588}
   variables: []
   description: 
   stepPause: 0
@@ -740,37 +740,9 @@ MonoBehaviour:
   atTime: 0
   loop: 1
   fadeDuration: 0
---- !u!114 &135876581
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 135876559}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 688e35811870d403f9e2b1ab2a699d98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemId: 172
-  indentLevel: 0
-  description: 
-  targetObject: {fileID: 326095305}
-  targetComponentAssemblyName: StorySceneLoader, Assembly-CSharp, Version=0.0.0.0,
-    Culture=neutral, PublicKeyToken=null
-  targetComponentFullname: UnityEngine.Component[]
-  targetComponentText: StorySceneLoader
-  targetMethod: Transmission
-  targetMethodText: 'Transmission (): Void'
-  methodParameters: []
-  saveReturnValue: 0
-  returnValueVariableKey: 
-  returnValueType: System.Void
-  showInherited: 0
-  callMode: 0
 --- !u!114 &135876582
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -800,7 +772,7 @@ MonoBehaviour:
   waitUntilFinished: 0
 --- !u!114 &135876583
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -827,7 +799,7 @@ MonoBehaviour:
   setSayDialog: {fileID: 0}
 --- !u!114 &135876584
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -857,7 +829,7 @@ MonoBehaviour:
   waitUntilFinished: 0
 --- !u!114 &135876585
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -884,7 +856,7 @@ MonoBehaviour:
   setSayDialog: {fileID: 0}
 --- !u!114 &135876586
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -911,7 +883,7 @@ MonoBehaviour:
   setSayDialog: {fileID: 0}
 --- !u!114 &135876587
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -933,6 +905,25 @@ MonoBehaviour:
   waitUntilFinished: 1
   durationOLD: 0
   targetColorOLD: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &135876588
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 135876559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00d03ae0919f04264b018681ed534177, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemId: 182
+  indentLevel: 0
+  _sceneName:
+    stringRef: {fileID: 0}
+    stringVal: s2-05
+  loadingImage: {fileID: 0}
+  sceneNameOLD: 
 --- !u!1 &148790861
 GameObject:
   m_ObjectHideFlags: 0
@@ -3101,6 +3092,6 @@ SceneRoots:
   - {fileID: 535201382}
   - {fileID: 1396250667}
   - {fileID: 2086618887}
-  - {fileID: 564251688}
   - {fileID: 135876577}
   - {fileID: 1563473464}
+  - {fileID: 564251688}

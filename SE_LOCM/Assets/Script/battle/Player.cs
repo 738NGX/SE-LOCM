@@ -23,7 +23,7 @@ public class Player : Creature
         coins=localSaveData.coins;
         books=localSaveData.booksData;
 
-        RecoverSP();
+        RecoverSp();
     }
     public override void AddHP(int val)
     {
@@ -49,16 +49,16 @@ public class Player : Creature
             default: break;
         }
     }
-    public void RecoverSP()
+    public void RecoverSp()
     {
         sp=spInit;
     }
-    public void AddSP(int val)
+    public void AddSp(int val)
     {
         if(val<1) return;
         sp+=val;
     }
-    public void ReduceSP(int val)
+    public void ReduceSp(int val)
     {
         if(val<1) return;
         if(sp-val<=0) sp=0;

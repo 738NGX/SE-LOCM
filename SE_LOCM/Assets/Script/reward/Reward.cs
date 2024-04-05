@@ -41,7 +41,7 @@ public class Reward : MonoBehaviour
         
         // 生成奖励
         rewardCoins=currentNode.RewardCoins();
-        for(int i=0;i<currentNode.rewardCardsNum;i++)
+        for(int i=0;i<currentNode.RewardCardsNum;i++)
         {
             rewardCards.Push(currentNode.RewardCards(localSaveData.ReadCardsPool()));
         }
@@ -53,7 +53,7 @@ public class Reward : MonoBehaviour
             coinRewardButton.gameObject.SetActive(true);
             coinRewardButton.transform.GetComponentInChildren<TextMeshProUGUI>().text="银币+"+rewardCoins;
         }
-        for(int i=0;i<currentNode.rewardCardsNum;i++)
+        for(int i=0;i<currentNode.RewardCardsNum;i++)
         {
             GameObject obj=Instantiate(cardRewardButton.gameObject,transform);
             obj.SetActive(true);

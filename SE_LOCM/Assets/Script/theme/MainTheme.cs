@@ -59,7 +59,7 @@ public class MainTheme : MonoBehaviour
         string nextScene=localSaveData.route[^1] switch 
         {
             100=>"Scenes/story/s1-02",
-            _=>"Scenes/map/m"+MapDatabase.data[localSaveData.route[^1]].Level(),
+            _=>"Scenes/map/m"+localSaveData.Level,
         };
         bool needResaving=true;
         switch(localSaveData.route[^1])

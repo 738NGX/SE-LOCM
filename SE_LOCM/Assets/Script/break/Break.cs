@@ -60,11 +60,17 @@ public class Break : MonoBehaviour
     }
     private void CallCardUpgrade()
     {
-        MainTheme.PlayAudio(sfxCard,gameObject);
-        cardSelector.gameObject.SetActive(true);
-
         List<Card> notUpdatedCards=localSaveData.ReadNotUpdatedCardsData();
 
+        if(notUpdatedCards.Count==0)
+        {
+            resultString="没有可以升级的卡牌";
+            return;
+        }
+
+        MainTheme.PlayAudio(sfxCard,gameObject);
+        cardSelector.gameObject.SetActive(true);
+        
         for(int i=0;i<notUpdatedCards.Count;i++)
         {
             int currentIndex=i;

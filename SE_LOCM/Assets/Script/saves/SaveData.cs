@@ -30,6 +30,8 @@ public class LocalSaveData
     // 地图数据
     public List<int> route;                     // 路径
 
+    public int Level{get{return route.Count==0 ? 1 : route[^1]/100;}}
+
     // 数据写入
     public void AdjustHP(int val)
     {
@@ -47,6 +49,13 @@ public class LocalSaveData
         foreach(var card in cards)
         {
             cardsData.Add((card.id,card.isPlused));
+        }
+    }
+    public void RemoveCardsData(List<Card> cards)
+    {
+        foreach(var card in cards)
+        {
+            cardsData.Remove((card.id,card.isPlused));
         }
     }
     public void ReplaceCardsData(List<Card> cards)
