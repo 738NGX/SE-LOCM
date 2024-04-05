@@ -51,6 +51,13 @@ public class LocalSaveData
             cardsData.Add((card.id,card.isPlused));
         }
     }
+    public void RemoveCardsData(List<Card> cards)
+    {
+        foreach(var card in cards)
+        {
+            cardsData.Remove((card.id,card.isPlused));
+        }
+    }
     public void ReplaceCardsData(List<Card> cards)
     {
         cardsData.Clear();

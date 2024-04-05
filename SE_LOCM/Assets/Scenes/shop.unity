@@ -867,6 +867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  isPlused: 0
   displayIndex: 0
 --- !u!114 &202407135
 MonoBehaviour:
@@ -1708,6 +1709,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  isPlused: 0
   displayIndex: 0
 --- !u!114 &311591562
 MonoBehaviour:
@@ -1808,9 +1810,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Break, Assembly-CSharp
-        m_MethodName: UpgradeCard
+      - m_Target: {fileID: 964221413}
+        m_TargetAssemblyTypeName: Shop, Assembly-CSharp
+        m_MethodName: DeleteCard
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2183,7 +2185,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u8BF7\u9009\u62E9\u4E00\u5F20\u5361\u724C\u5347\u7EA7"
+  m_text: "\u8BF7\u9009\u62E9\u4E00\u5F20\u5361\u724C\u56DE\u6536"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3b161208620763d48803d3a9cad9fc91, type: 2}
   m_sharedMaterial: {fileID: 6086598807018762395, guid: 3b161208620763d48803d3a9cad9fc91, type: 2}
@@ -4685,6 +4687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47f529bf3b3dcd54d8334b0518b61167, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sf: {fileID: 943454801}
   cards:
   - {fileID: 1462909944}
   - {fileID: 1858690613}
@@ -4697,7 +4700,9 @@ MonoBehaviour:
   coins: {fileID: 2088292501}
   textbox: {fileID: 1470168354}
   sfxGold: {fileID: 8300000, guid: 768af08c5695c9446b7a235ab5b8a7f7, type: 3}
-  sf: {fileID: 943454801}
+  cardSelector: {fileID: 1525427727}
+  cardDisplay: {fileID: 1391199768}
+  cardContent: {fileID: 538596150}
 --- !u!1 &969642574
 GameObject:
   m_ObjectHideFlags: 0
@@ -5051,7 +5056,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5220\u9664\u5361\u724C"
+  m_text: "\u56DE\u6536\u5361\u724C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3b161208620763d48803d3a9cad9fc91, type: 2}
   m_sharedMaterial: {fileID: 6086598807018762395, guid: 3b161208620763d48803d3a9cad9fc91, type: 2}
@@ -7310,6 +7315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  isPlused: 0
   displayIndex: 0
 --- !u!1 &1416293636
 GameObject:
@@ -8114,6 +8120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  isPlused: 0
   displayIndex: 0
 --- !u!114 &1462909944
 MonoBehaviour:
@@ -8784,6 +8791,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  isPlused: 0
   displayIndex: 0
 --- !u!114 &1544920202
 MonoBehaviour:
@@ -9277,7 +9285,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5178\u7C4D\u62BD\u5956"
+  m_text: "\u5178\u7C4D\u62BD\u9009"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3b161208620763d48803d3a9cad9fc91, type: 2}
   m_sharedMaterial: {fileID: 6086598807018762395, guid: 3b161208620763d48803d3a9cad9fc91, type: 2}
@@ -10429,6 +10437,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  isPlused: 0
   displayIndex: 0
 --- !u!114 &1858690613
 MonoBehaviour:
@@ -11265,6 +11274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  isPlused: 0
   displayIndex: 0
 --- !u!114 &2142539682
 MonoBehaviour:

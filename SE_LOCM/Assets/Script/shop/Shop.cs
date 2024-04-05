@@ -6,14 +6,18 @@ using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
-    public LocalSaveData localSaveData;
+    public SceneFader sf;
     public List<CardInShop> cards;
     public DeleteCard deleteCard;
     public RandomBook randomBook;
     public TextMeshProUGUI coins;
     public Text textbox;
     public AudioClip sfxGold;
-    public SceneFader sf;
+    public Transform cardSelector;
+    public CardDisplay cardDisplay;
+    public Transform cardContent;
+    private int selectingCardIndex=-1;
+    private LocalSaveData localSaveData;
 
     private void Start()
     {
@@ -65,7 +69,11 @@ public class Shop : MonoBehaviour
             textbox.DOText($"成功购买了卡牌{card.displayInfo.name}的说.", 0.1f);
             localSaveData.AddCardsData(new() { card });
         }
-        if (item is RandomBook bookitem)
+        else if(item is DeleteCard deleteCarditem)
+        {
+            CallCardDelete();
+        }
+        else if (item is RandomBook bookitem)
         {
             var book = bookitem.GetBook(localSaveData.ReadBooksData());
             if (book is not null)
@@ -100,6 +108,70 @@ public class Shop : MonoBehaviour
         }
 
         return selected;
+    }
+    private void CallCardDelete()
+    {
+        List<Card> waitDeleteCards=localSaveData.ReadCardsData();
+
+        if(waitDeleteCards.Count==0)
+        {
+            textbox.DOText("你没有可以回收的卡牌的说.",0.1f);
+            return;
+        }
+        cardSelector.gameObject.SetActive(true);
+        
+        for(int i=0;i<waitDeleteCards.Count;i++)
+        {
+            int currentIndex=i;
+            Card card=waitDeleteCards[i];
+            
+            GameObject obj=Instantiate(cardDisplay.gameObject,cardContent);
+            obj.SetActive(true);
+            obj.GetComponent<CardDisplay>().UpdateCardDisplayInfo(card.id);
+            obj.GetComponent<CardDisplay>().displayIndex=i;
+            obj.AddComponent<Button>().onClick.AddListener(() => ChangeSelectingCardIndex(currentIndex));
+        }
+    }
+    public void ChangeSelectingCardIndex(int index)
+    {
+        selectingCardIndex=index;
+        foreach(Transform child in cardContent)
+        {
+            if(!child.TryGetComponent<CardDisplay>(out var card)) continue;
+            if(card.displayIndex==index&&child.localScale!=new Vector3(1.1f,1.1f))
+            {
+                child.DOScale(new Vector3(1.1f,1.1f),0.1f);
+            }
+            else if(card.displayIndex!=index&&child.localScale==new Vector3(1.1f,1.1f))
+            {
+                child.DOScale(new Vector3(1f,1f),0.1f);
+            }
+            else continue;
+        }
+    }
+    public void DeleteCard()
+    {
+        if(selectingCardIndex==-1) return;
+        
+        int deleteCardId=0;
+        bool deleteCardIsPlused=false;
+        
+        for(int i=0;i<cardContent.childCount;i++)
+        {
+            if(!cardContent.GetChild(i).gameObject.activeInHierarchy) continue;
+            if(!cardContent.GetChild(i).TryGetComponent<CardDisplay>(out var card)) continue;
+            if(card.displayIndex!=selectingCardIndex) continue;
+            deleteCardId=card.id;
+            deleteCardIsPlused=card.isPlused;
+            break;
+        }
+
+        selectingCardIndex=-1;
+        localSaveData.RemoveCardsData(new(){new(deleteCardId,deleteCardIsPlused)});
+        cardSelector.gameObject.SetActive(false);
+
+        string cardname=new Card(deleteCardId,deleteCardIsPlused).displayInfo.name;
+        textbox.DOText($"成功回收了卡牌{cardname}的说!",0.1f);
     }
     public void EndShop()
     {

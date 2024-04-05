@@ -8,6 +8,7 @@ using TMPro;
 public class CardDisplay : MonoBehaviour
 {
     public int id;
+    public bool isPlused;
     public int displayIndex;
     private bool idSet = false;
 
@@ -22,6 +23,7 @@ public class CardDisplay : MonoBehaviour
     public void UpdateCardDisplayInfo(int id, bool isPlused = false)
     {
         this.id = id;
+        this.isPlused = isPlused;
         idSet = true;
         HandCardsUI.CardDisplayInfoUpdate(gameObject, new Card(id, isPlused));
     }
