@@ -112,7 +112,7 @@ public class HandCardsUI : MonoBehaviour
             CardObject.transform.SetParent(transform, false);
             CardObject.SetActive(true);
 
-            cardTemplateComponent.originalScale = new Vector3(1, 1);
+            cardTemplateComponent.originalScale = new Vector3(0.9f, 0.9f);
 
             float cardPositionX = i * (cardWidth - spacing) - (hc.Cards.Count - 1) * (cardWidth - spacing) / 2;
             CardObject.transform.localPosition = new Vector3(cardPositionX, 0, 0);
