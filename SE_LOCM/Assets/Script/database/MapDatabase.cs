@@ -53,7 +53,20 @@ public static class MapNodeIdToStorySceneDatabase
 {
     public static Dictionary<int,string> data=new()
     {
-        {100,"Scenes/story/s1-01"},{101,"Scenes/story/s1-02"},{120,"Scenes/story/s1-04"},
+        {100,"Scenes/story/s1/s1-01"},{101,"Scenes/story/s1/s1-02"},
+        {120,"Scenes/story/s1/s1-04"},{132,"Scenes/story/s1/s1-06"},{200,"Scenes/story/s2/s2-01"},
+        {201,"Scenes/story/s2/s2-02"},{209,"Scenes/story/s2/s2-03"},{220,"Scenes/story/s2/s2-04"},
+        {228,"Scenes/story/s2/s2-05"},{300,"Scenes/story/s3/s3-01"},{301,"Scenes/story/s3/s3-02"},
+        {320,"Scenes/story/s3/s3-03"},{332,"Scenes/story/s3/s3-04"},{400,"Scenes/story/s4/s4-01"},
+        {404,"Scenes/story/s4/s4-02"},{415,"Scenes/story/s4/s4-03"},{423,"Scenes/story/s4/s4-04"},
+        {430,"Scenes/story/s4/s4-05"},{500,"Scenes/story/s5/s5-01"},{501,"Scenes/story/s5/s5-02"},
+        {509,"Scenes/story/s5/s5-03"},{524,"Scenes/story/s5/s5-04"},{529,"Scenes/story/s5/s5-05"},
+        {600,"Scenes/story/s6/s6-01"},{606,"Scenes/story/s6/s6-02"},{623,"Scenes/story/s6/s6-03"},
+        {632,"Scenes/story/s6/s6-04"},{700,"Scenes/story/s7/s7-01"},{702,"Scenes/story/s7/s7-02"},
+        {714,"Scenes/story/s7/s7-03"},{730,"Scenes/story/s7/s7-04"},{800,"Scenes/story/s8/s8-01"},
+        {805,"Scenes/story/s8/s8-02"},{820,"Scenes/story/s8/s8-03"},{830,"Scenes/story/s8/s8-04"},
+        {900,"Scenes/story/s9/s9-01"},{902,"Scenes/story/s9/s9-02"},{916,"Scenes/story/s9/s9-03"},
+        {920,"Scenes/story/s9/s9-04"},{932,"Scenes/story/s9/s9-05"},
     };
 }
 
