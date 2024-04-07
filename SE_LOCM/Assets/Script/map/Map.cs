@@ -22,10 +22,18 @@ public class Map : MonoBehaviour
         foreach(var mapNode in mapNodes)
         {
             mapNode.id+=100*(level-1);
-            //mapNode.transform.Find("标签").GetComponent<Image>().sprite=MapDatabase.data[mapNode.id].type switch
-            //{
-                
-            //};
+            mapNode.transform.Find("标签").GetComponent<Image>().sprite=MapDatabase.data[mapNode.id].type switch
+            {
+                MapNodeType.Story=>Resources.Load<Sprite>("UI/map/story"),
+                MapNodeType.Boss=>Resources.Load<Sprite>("UI/map/boss"),
+                MapNodeType.Box=>Resources.Load<Sprite>("UI/map/box"),
+                MapNodeType.Break=>Resources.Load<Sprite>("UI/map/rest"),
+                MapNodeType.Enemy=>Resources.Load<Sprite>("UI/map/enemy"),
+                MapNodeType.Senior=>Resources.Load<Sprite>("UI/map/senior_enemy"),
+                MapNodeType.Shop=>Resources.Load<Sprite>("UI/map/shop"),
+                MapNodeType.Unknown=>Resources.Load<Sprite>("UI/map/unknown"),
+                _=>Resources.Load<Sprite>("UI/map/unknown"),
+            };
             mapNode.sf=sf;
             if(localSaveData.route.Contains(mapNode.id))
             {

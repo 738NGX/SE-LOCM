@@ -58,6 +58,10 @@ public class MapNode : MonoBehaviour
         {
             sf.FadeOut("Scenes/reward");
         }
+        else if(type==MapNodeType.Shop)
+        {
+            sf.FadeOut("Scenes/shop");
+        }
         else if(type==MapNodeType.Enemy||type==MapNodeType.Senior)
         {
             sf.FadeOut("Scenes/battle");
