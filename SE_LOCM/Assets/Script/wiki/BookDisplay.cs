@@ -17,7 +17,7 @@ public class BookDisplay : MonoBehaviour
     }
     public void UpdateBookDisplayInfo(int id)
     {
-        image.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/books/"+id.ToString("D3")+".png");
+        image.sprite=Resources.Load<Sprite>("UI/books/"+id.ToString("D3"));
         bookName.text=BookDatabase.data[id].name;
         effect.text=BookDatabase.data[id].effect;
         introduction.text=BookDatabase.data[id].introduction;

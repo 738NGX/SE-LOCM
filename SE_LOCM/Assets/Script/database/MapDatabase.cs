@@ -5,7 +5,7 @@ using System.Linq;
 
 public static class MapDatabase
 {
-    private static readonly TextAsset csvData=AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Database/mapdb.csv");
+    private static readonly TextAsset csvData=Resources.Load<TextAsset>("Database/mapdb");
     public static Dictionary<int,MapNodeData> data=new(){};
     static MapDatabase()
     {
@@ -28,7 +28,7 @@ public static class MapDatabase
 
 public static class EnemyNodeDatabase
 {
-    private static readonly TextAsset csvData=AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Database/enemynodedb.csv");
+    private static readonly TextAsset csvData=Resources.Load<TextAsset>("Database/enemynodedb");
     public static Dictionary<int,EnemyNodeData> data=new(){};
     static EnemyNodeDatabase()
     {

@@ -5,7 +5,7 @@ using UnityEditor;
 public enum BookRarity{Ordinary,Rare,Epic};
 public static class BookDatabase
 {
-    private static readonly TextAsset csvData=AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Database/bookdb.csv");
+    private static readonly TextAsset csvData=Resources.Load<TextAsset>("Database/bookdb");
     public static Dictionary<int,BookDisplayInfo> data=new(){};
     static BookDatabase()
     {

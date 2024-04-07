@@ -62,7 +62,7 @@ public class Reward : MonoBehaviour
         {
             bookRewardButton.gameObject.SetActive(true);
             bookRewardButton.transform.GetComponentInChildren<TextMeshProUGUI>().text=BookDatabase.data[rewardBook.id].name;
-            bookRewardButton.transform.Find("Image").GetComponent<Image>().sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/books/"+rewardBook.id.ToString("D3")+".png");
+            bookRewardButton.transform.Find("Image").GetComponent<Image>().sprite=Resources.Load<Sprite>("UI/books/"+rewardBook.id.ToString("D3"));
         }
         // 产生继续冒险按钮
         GameObject newContinue=Instantiate(continueButton.gameObject,transform);

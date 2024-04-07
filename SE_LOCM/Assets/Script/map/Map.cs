@@ -14,12 +14,18 @@ public class Map : MonoBehaviour
     private void Start()
     {
         localSaveData=LocalSaveDataManager.LoadLocalData();
+        int level=localSaveData.Level;
         foreach(Transform child in transform)
         {
             mapNodes.Add(child.GetComponent<MapNode>());
         }
         foreach(var mapNode in mapNodes)
         {
+            mapNode.id+=100*(level-1);
+            //mapNode.transform.Find("标签").GetComponent<Image>().sprite=MapDatabase.data[mapNode.id].type switch
+            //{
+                
+            //};
             mapNode.sf=sf;
             if(localSaveData.route.Contains(mapNode.id))
             {
