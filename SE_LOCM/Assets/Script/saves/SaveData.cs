@@ -150,7 +150,7 @@ public static class LocalSaveDataManager
             },
             booksData=new(){},
             cardsPool=new(){},
-            friends=new(){-1,-1,-1,-1,-1,-1,-1,-1,-1},
+            friends=new(){0,-1,-1,-1,-1,-1,-1,-1,-1},
             route=new(){100}
         };
         SaveLocalData(localSaveData);

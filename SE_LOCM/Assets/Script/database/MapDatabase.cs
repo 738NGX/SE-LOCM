@@ -53,8 +53,8 @@ public static class MapNodeIdToStorySceneDatabase
 {
     public static Dictionary<int, string> data = new()
     {
-        {100,"Scenes/story/s1/s1-01"},{101,"Scenes/story/s1/s1-02"},
-        {120,"Scenes/story/s1/s1-04"},{132,"Scenes/story/s1/s1-06"},{200,"Scenes/story/s2/s2-01"},
+        {100,"Scenes/story/s1/s1-01"},{101,"Scenes/story/s1/s1-02"},{102,"Scenes/story/s1/s1-03"},
+        {120,"Scenes/story/s1/s1-04"},{132,"Scenes/story/s1/s1-05"},{200,"Scenes/story/s2/s2-01"},
         {201,"Scenes/story/s2/s2-02"},{209,"Scenes/story/s2/s2-03"},{220,"Scenes/story/s2/s2-04"},
         {228,"Scenes/story/s2/s2-05"},{300,"Scenes/story/s3/s3-01"},{301,"Scenes/story/s3/s3-02"},
         {320,"Scenes/story/s3/s3-03"},{332,"Scenes/story/s3/s3-04"},{400,"Scenes/story/s4/s4-01"},

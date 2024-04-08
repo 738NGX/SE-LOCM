@@ -147,18 +147,35 @@ public class Reward : MonoBehaviour
             case 1:
                 localSaveData.hpLimit += 10;
                 localSaveData.hp += 10;
+                localSaveData.friends[1]=0;
                 break;
             case 2:
                 localSaveData.initSp++;
+                localSaveData.friends[2]=0;
+                break;
+            case 3:
+                localSaveData.friends[3]=0;
+                break;
+            case 4:
+                localSaveData.friends[4]=0;
+                break;
+            case 5:
+                localSaveData.friends[5]=0;
+                break;
+            case 6:
+                localSaveData.friends[6]=0;
                 break;
             case 7:
+                localSaveData.friends[7]=0;
                 localSaveData.hpLimit += 20;
                 localSaveData.hp += 20;
                 break;
             case 8:
+                localSaveData.friends[8]=0;
                 localSaveData.initSp += 2;
                 break;
-            case 9: break;
+            case 9: 
+                break;
             default: break;
         }
     }

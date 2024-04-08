@@ -7,7 +7,7 @@ using Unity.Mathematics;
 using System;
 
 // 准备阶段、摸牌阶段、出牌阶段、弃牌阶段、敌人阶段、结束阶段
-public enum GameStage { Pre, Draw, Play, Discard, Enemy, End, Victory, Defeat, Null, Reward };
+public enum GameStage { Pre, Draw, Play, Discard, Enemy, End, Victory, Defeat, Null, Reward, Quit };
 public class GameController : MonoBehaviour
 {
     public SceneFader sf;
@@ -118,9 +118,17 @@ public class GameController : MonoBehaviour
                 933 => "Scenes/story/s9/s9-06",
                 _ => "Scenes/reward",
             };
-            if(nextScene!="Scenes/reward") player.hp=player.hpLimit;
+            if (nextScene != "Scenes/reward") player.hp = player.hpLimit;
             sc.SaveLocalData();
             sf.FadeOut(nextScene);
+            gameStage = GameStage.Null;
+            return;
+        }
+        if (gameStage == GameStage.Quit)
+        {
+            sc.localSaveData.status = LocalSaveStatus.Defeat;
+            sc.SaveLocalData();
+            sf.FadeOut("Scenes/theme");
             gameStage = GameStage.Null;
             return;
         }

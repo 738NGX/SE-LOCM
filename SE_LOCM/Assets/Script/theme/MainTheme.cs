@@ -28,13 +28,21 @@ public class MainTheme : MonoBehaviour
     public void StartGame()
     {
         string path = Application.persistentDataPath + "/users/localsave.json";
-        if (File.Exists(path)) PopWinodw(0);
+        if (File.Exists(path))
+        {
+            var localSaveData = LocalSaveDataManager.LoadLocalData();
+            if (localSaveData.status == LocalSaveStatus.Gaming || localSaveData.status == LocalSaveStatus.Break)
+            {
+                PopWinodw(0);
+            }
+            else StartNewGame();
+        }
         else StartNewGame();
     }
     public void StartNewGame()
     {
         LocalSaveDataManager.SaveInitLocalData();
-        LocalSaveData localSaveData = LocalSaveDataManager.LoadLocalData();
+        var localSaveData = LocalSaveDataManager.LoadLocalData();
         localSaveData.status = LocalSaveStatus.Gaming;
         LocalSaveDataManager.SaveLocalData(localSaveData);
         sf.FadeOut("Scenes/story/s0-00");
@@ -59,6 +67,7 @@ public class MainTheme : MonoBehaviour
         string nextScene = localSaveData.route[^1] switch
         {
             100 => "Scenes/story/s1/s1-02",
+            101 => "Scenes/story/s1/s1-03",
             133 => "Scenes/story/s2/s2-01",
             231 => "Scenes/story/s3/s3-01",
             335 => "Scenes/story/s4/s4-01",
@@ -74,6 +83,7 @@ public class MainTheme : MonoBehaviour
         switch (localSaveData.route[^1])
         {
             case 100: localSaveData.route.Add(101); break;
+            case 101: localSaveData.route.Add(102); break;
             case 133: localSaveData.route.Add(200); break;
             case 231: localSaveData.route.Add(300); break;
             case 335: localSaveData.route.Add(400); break;
@@ -82,6 +92,7 @@ public class MainTheme : MonoBehaviour
             case 633: localSaveData.route.Add(700); break;
             case 732: localSaveData.route.Add(800); break;
             case 833: localSaveData.route.Add(900); break;
+            case 933: localSaveData.status=LocalSaveStatus.Victory; break;
             default: needResaving = false; break;
         }
         if (needResaving) LocalSaveDataManager.SaveLocalData(localSaveData);
