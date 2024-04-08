@@ -4,7 +4,7 @@ using UnityEditor;
 
 public static class BuffDatabase
 {
-    private static readonly TextAsset csvData=AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Database/buffdb.csv");
+    private static readonly TextAsset csvData=Resources.Load<TextAsset>("Database/buffdb");
     public static Dictionary<int,Buff> data=new(){};
     static BuffDatabase()
     {

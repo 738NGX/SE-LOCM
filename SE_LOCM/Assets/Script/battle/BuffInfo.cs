@@ -27,9 +27,9 @@ public class BuffInfo : MonoBehaviour
             obj.transform.Find("状态说明").GetComponent<TextMeshProUGUI>().text=buff.Effect;
             obj.transform.Find("Image").GetComponent<Image>().sprite=buff.Style switch
             {
-                BuffStyle.Positive=>AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_buff.png"),
-                BuffStyle.Negative=>AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_debuff.png"),
-                _=>AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_sleep.png"),
+                BuffStyle.Positive=>Resources.Load<Sprite>("UI/battle/intend_buff"),
+                BuffStyle.Negative=>Resources.Load<Sprite>("UI/battle/intend_debuff"),
+                _=>Resources.Load<Sprite>("UI/battle/intend_sleep"),
             };
         }
     }

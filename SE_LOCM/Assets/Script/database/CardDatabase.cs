@@ -6,7 +6,7 @@ public enum CardType{Attack,Spell,Equip,Quiz};           // 攻击 锦囊 装备
 public enum CardRarity{Base,Ordinary,Rare,Epic};         // 基础 普通 稀有 史诗
 public static class CardDatabase
 {
-    private static readonly TextAsset csvData=AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Database/carddb.csv");
+    private static readonly TextAsset csvData=Resources.Load<TextAsset>("Database/carddb");
     public static Dictionary<int,CardDisplayInfo> data=new(){};
     static CardDatabase()
     {

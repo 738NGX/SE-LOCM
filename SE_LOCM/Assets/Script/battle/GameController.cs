@@ -83,7 +83,20 @@ public class GameController : MonoBehaviour
         if (gameStage == GameStage.Reward)
         {
             sc.SaveLocalData();
-            sf.FadeOut("Scenes/reward");
+            var nextScene = sc.localSaveData.route[^1] switch
+            {
+                133 => "Scenes/story/s1/s1-07",
+                231 => "Scenes/story/s2/s2-06",
+                335 => "Scenes/story/s3/s3-05",
+                431 => "Scenes/story/s4/s4-06",
+                532 => "Scenes/story/s5/s5-06",
+                633 => "Scenes/story/s6/s6-05",
+                732 => "Scenes/story/s7/s7-05",
+                833 => "Scenes/story/s8/s8-05",
+                933 => "Scenes/story/s9/s9-06",
+                _ => "Scenes/reward",
+            };
+            sf.FadeOut(nextScene);
             gameStage = GameStage.Null;
             return;
         }
@@ -908,7 +921,7 @@ public class GameController : MonoBehaviour
     private void Card522ExecuteAction(bool isPlused)
     {
         // 委粟术
-        DrawCards(10-handCards.Count);
+        DrawCards(10 - handCards.Count);
     }
     private void Card600ExecuteAction(bool isPlused)
     {
@@ -934,9 +947,9 @@ public class GameController : MonoBehaviour
     private void Card800ExecuteAction(bool isPlused)
     {
         // 方程术
-        player.sp+=2;
+        player.sp += 2;
         DrawCards(2);
-        player.AddBuff(new(118,1));
+        player.AddBuff(new(118, 1));
     }
     private void Card801ExecuteAction(bool isPlused)
     {

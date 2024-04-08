@@ -28,7 +28,7 @@ public class MapNode : MonoBehaviour
             MapNodeStauts.Passed=>"passed",
             _=>"unavailable"
         };
-        gameObject.GetComponent<Image>().sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/map/"+statusStr+".png");
+        gameObject.GetComponent<Image>().sprite=Resources.Load<Sprite>("UI/map/"+statusStr);
     }
     private void LoadScene(int id)
     {
@@ -57,6 +57,10 @@ public class MapNode : MonoBehaviour
         else if(type==MapNodeType.Box)
         {
             sf.FadeOut("Scenes/reward");
+        }
+        else if(type==MapNodeType.Shop)
+        {
+            sf.FadeOut("Scenes/shop");
         }
         else if(type==MapNodeType.Enemy||type==MapNodeType.Senior)
         {
