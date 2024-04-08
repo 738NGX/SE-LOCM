@@ -205,7 +205,6 @@ GameObject:
   - component: {fileID: 135876579}
   - component: {fileID: 135876578}
   - component: {fileID: 135876587}
-  - component: {fileID: 135876586}
   - component: {fileID: 135876585}
   - component: {fileID: 135876584}
   - component: {fileID: 135876583}
@@ -632,7 +631,6 @@ MonoBehaviour:
   - {fileID: 135876583}
   - {fileID: 135876585}
   - {fileID: 135876582}
-  - {fileID: 135876586}
   - {fileID: 135876578}
   - {fileID: 135876588}
   suppressAllAutoSelections: 0
@@ -854,33 +852,6 @@ MonoBehaviour:
   stopVoiceover: 1
   waitForVO: 0
   setSayDialog: {fileID: 0}
---- !u!114 &135876586
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 135876559}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec422cd568a9c4a31ad7c36d0572b9da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemId: 177
-  indentLevel: 0
-  storyText: "\uFF08\u5730\u56FE\u4E2D\u201C\u8D2A\u72FC\u5BAB\u201D\u5F00\u653E\uFF09"
-  description: 
-  character: {fileID: 0}
-  portrait: {fileID: 0}
-  voiceOverClip: {fileID: 0}
-  showAlways: 1
-  showCount: 1
-  extendPrevious: 0
-  fadeWhenDone: 1
-  waitForClick: 1
-  stopVoiceover: 1
-  waitForVO: 0
-  setSayDialog: {fileID: 0}
 --- !u!114 &135876587
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -907,23 +878,32 @@ MonoBehaviour:
   targetColorOLD: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &135876588
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 135876559}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00d03ae0919f04264b018681ed534177, type: 3}
+  m_Script: {fileID: 11500000, guid: 688e35811870d403f9e2b1ab2a699d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemId: 182
+  itemId: 227
   indentLevel: 0
-  _sceneName:
-    stringRef: {fileID: 0}
-    stringVal: s2-05
-  loadingImage: {fileID: 0}
-  sceneNameOLD: 
+  description: 
+  targetObject: {fileID: 326095305}
+  targetComponentAssemblyName: StorySceneLoader, Assembly-CSharp, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
+  targetComponentFullname: UnityEngine.Component[]
+  targetComponentText: StorySceneLoader
+  targetMethod: Transmission
+  targetMethodText: 'Transmission (): Void'
+  methodParameters: []
+  saveReturnValue: 0
+  returnValueVariableKey: 
+  returnValueType: System.Void
+  showInherited: 0
+  callMode: 0
 --- !u!1 &148790861
 GameObject:
   m_ObjectHideFlags: 0
