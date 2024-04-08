@@ -76,13 +76,35 @@ public class GameController : MonoBehaviour
             enemyCount++;
             enemies[i].Init(enemyIds[i]);
         }
+        if (new List<int>() { 133, 231, 335, 431, 532, 633, 732, 833, 933 }.Contains(sc.localSaveData.route[^1]))
+        {
+            enemyCount++;
+            enemies[3].Init(sc.localSaveData.route[^1] / 100 * 100 + 10);
+            dc.enemyObjects[3].GetComponent<SpriteRenderer>().sprite = (sc.localSaveData.route[^1] / 100) switch
+            {
+                1 => Resources.Load<Sprite>("UI/battle/傲慢"),
+                2 => Resources.Load<Sprite>("UI/battle/暴食"),
+                3 => Resources.Load<Sprite>("UI/battle/嫉妒"),
+                4 => Resources.Load<Sprite>("UI/battle/懒惰"),
+                5 => Resources.Load<Sprite>("UI/battle/暴怒"),
+                6 => Resources.Load<Sprite>("UI/battle/贪婪"),
+                7 => Resources.Load<Sprite>("UI/battle/色欲"),
+                8 => Resources.Load<Sprite>("UI/battle/毁灭"),
+                9 => Resources.Load<Sprite>("UI/battle/生命"),
+                _ => Resources.Load<Sprite>("UI/battle/生命"),
+            };
+        }
+        else
+        {
+            dc.enemyObjects[3].SetActive(false);
+            enemies[3].gameObject.SetActive(false);
+        }
     }
     private void Update()
     {
         if (gameStage == GameStage.Null || dc.isAnimating) return;  // 系统动画时不进行操作
         if (gameStage == GameStage.Reward)
         {
-            sc.SaveLocalData();
             var nextScene = sc.localSaveData.route[^1] switch
             {
                 133 => "Scenes/story/s1/s1-07",
@@ -96,6 +118,8 @@ public class GameController : MonoBehaviour
                 933 => "Scenes/story/s9/s9-06",
                 _ => "Scenes/reward",
             };
+            if(nextScene!="Scenes/reward") player.hp=player.hpLimit;
+            sc.SaveLocalData();
             sf.FadeOut(nextScene);
             gameStage = GameStage.Null;
             return;
@@ -311,8 +335,9 @@ public class GameController : MonoBehaviour
     {
         PlayAudio(sfxAttack);
         dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
-        for (int i = 0; i < enemies.Count; i++)
+        for (int i = 0; i < 4; i++)
         {
+            if (!enemies[i].gameObject.activeInHierarchy) continue;
             enemies[i].ReduceHP(val);
             if (giveBuff is not null) enemies[i].AddBuff(giveBuff);
             dc.UpdateHPSlider(i);

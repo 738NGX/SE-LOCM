@@ -9,6 +9,7 @@ using UnityEditor;
 public class DisplayController : MonoBehaviour
 {
     public GameController gc;
+    public Image bg;
     public bool isAnimating=false;
     public bool isOpeningPage=false;
     public Transform hud;
