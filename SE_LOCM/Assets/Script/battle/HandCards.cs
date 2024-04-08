@@ -16,8 +16,19 @@ public class HandCards : CardPile
     }
     public void AddExtraCards(List<Card> cards)
     {
-        gc.drawPile.AddCards(cards);
-        gc.DrawCards(cards.Count);
+        int overflow = cards.Count + Count - 10;
+
+        List<Card> overflowCards = new();
+        if (overflow > 0)
+        {
+            overflowCards = cards.GetRange(cards.Count - overflow, overflow);
+            cards.RemoveRange(cards.Count - overflow, overflow);
+            gc.discardPile.AddCardsToDiscard(overflowCards);
+        }
+        AddCards(cards);
+
+        gc.hcui.DrawCards();
+        StartCoroutine(gc.hcui.CardDisplayUpdate());
     }
     public int DisposeNonAttackCards()
     {

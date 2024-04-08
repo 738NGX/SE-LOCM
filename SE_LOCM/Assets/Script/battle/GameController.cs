@@ -262,7 +262,7 @@ public class GameController : MonoBehaviour
             dc.playerObject.GetComponent<Animator>().SetBool("Die", true);
             PlayAudio(sfxDefeat);
             StartCoroutine(dc.AnimatePanelAndText(new() { "战", "斗", "失", "败" }, 2f));
-            gameStage = GameStage.Null;
+            gameStage = GameStage.Quit;
         }
     }
 
