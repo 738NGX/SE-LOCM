@@ -2124,8 +2124,10 @@ MonoBehaviour:
   buttons: {fileID: 675560474}
   cardwiki: {fileID: 1998204326}
   bookwiki: {fileID: 415731176}
+  storywiki: {fileID: 1936287349}
   cardDisplay: {fileID: 1502260575}
   bookDisplay: {fileID: 1290645612}
+  characterDisplay: {fileID: 1426791545}
 --- !u!1 &313187722
 GameObject:
   m_ObjectHideFlags: 0
@@ -2724,9 +2726,9 @@ GameObject:
   - component: {fileID: 440064407}
   - component: {fileID: 440064410}
   - component: {fileID: 440064409}
-  - component: {fileID: 440064408}
+  - component: {fileID: 440064411}
   m_Layer: 5
-  m_Name: BookSelectorContent
+  m_Name: CharacterSelectorContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2752,25 +2754,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0.000049249295}
   m_SizeDelta: {x: 0, y: 3000}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &440064408
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 440064406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5afce2933b05bb4e8a344b1df5e53c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 448440529}
-  contentPanel: {fileID: 440064407}
-  contentTransform: {fileID: 440064407}
-  wiki: {fileID: 299360164}
-  itemHeight: 100
-  spacing: 10
-  itemCount: 0
 --- !u!114 &440064409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2811,6 +2794,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 0
+--- !u!114 &440064411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440064406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 538a53a0c2fb621478f2b35ea404ad50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemPrefab: {fileID: 448440529}
+  contentPanel: {fileID: 440064407}
+  contentTransform: {fileID: 440064407}
+  wiki: {fileID: 299360164}
+  itemHeight: 100
+  spacing: 10
+  itemCount: 0
 --- !u!1 &448440529
 GameObject:
   m_ObjectHideFlags: 0
@@ -2824,7 +2826,7 @@ GameObject:
   - component: {fileID: 448440532}
   - component: {fileID: 448440531}
   m_Layer: 5
-  m_Name: "\u5178\u7C4D\u540D"
+  m_Name: "\u89D2\u8272\u540D"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3745,7 +3747,7 @@ GameObject:
   - component: {fileID: 545483622}
   - component: {fileID: 545483621}
   m_Layer: 5
-  m_Name: "\u5178\u7C4D\u540D"
+  m_Name: "\u5267\u60C5\u540D"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9415,7 +9417,7 @@ GameObject:
   - component: {fileID: 1426791541}
   - component: {fileID: 1426791544}
   - component: {fileID: 1426791543}
-  - component: {fileID: 1426791542}
+  - component: {fileID: 1426791545}
   m_Layer: 5
   m_Name: "\u4EBA\u7269\u6A21\u677F"
   m_TagString: Untagged
@@ -9445,22 +9447,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -250}
   m_SizeDelta: {x: 600, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1426791542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1426791540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7acf56e44f42fbb448b7aa7bd9d1d0ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  image: {fileID: 761502581}
-  bookName: {fileID: 2084554979}
-  effect: {fileID: 1846775208}
-  introduction: {fileID: 0}
 --- !u!114 &1426791543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9499,6 +9485,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1426791540}
   m_CullTransparentMesh: 1
+--- !u!114 &1426791545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426791540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 410a23329808cee4d84e164af326a8c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  image: {fileID: 761502581}
+  charName: {fileID: 2084554979}
+  introduction: {fileID: 1846775208}
 --- !u!1 &1466421961
 GameObject:
   m_ObjectHideFlags: 0
@@ -12623,7 +12624,7 @@ GameObject:
   - component: {fileID: 1846775208}
   - component: {fileID: 1846775207}
   m_Layer: 5
-  m_Name: "\u5178\u7C4D\u6548\u679Ctext"
+  m_Name: "\u89D2\u8272\u4ECB\u7ECDtext"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12682,7 +12683,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u901A\u5173\u4E3B\u7EBF\u5267\u60C5\u524D\u4E5D\u7AE0\u51E0\u8D77\u4E5D\u7AE0\u6B8B\u5377\u540E\u81EA\u52A8\u5408\u6210\u3002\u53EF\u4EE5\u5728\u6700\u7EC8\u7AE0\u7684\u6218\u6597\u4E2D\u4F7F\u7528\u3002"
+  m_text: "\u5728\u201C\u4E5D\u7AE0\u201D\u7ECF\u8425\u4E07\u4E8B\u5C4B\uFF08\u5360\u535C\u5E97\uFF09\u7684\u5C11\u5973\u3002\u6027\u683C\u56FA\u6267\uFF0C\u6027\u60C5\u53E4\u602A\uFF0C\u4F46\u5FC3\u5730\u5F88\u5584\u826F\uFF0C\u4E0D\u592A\u4F1A\u62D2\u7EDD\u4ED6\u4EBA\u7684\u8BF7\u6C42\u3002\n\u52A9\u6218\u6280\u80FD\uFF1A[\u5360\u535C]\u83B7\u5F971\u70B9\u7B97\u672F\u503C;\u62BD3\u5F20\u724C."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 48da7a1f4760613429b19da49ff400c4, type: 2}
   m_sharedMaterial: {fileID: 8383673731431754723, guid: 48da7a1f4760613429b19da49ff400c4, type: 2}
@@ -14435,9 +14436,9 @@ GameObject:
   - component: {fileID: 2072478779}
   - component: {fileID: 2072478782}
   - component: {fileID: 2072478781}
-  - component: {fileID: 2072478780}
+  - component: {fileID: 2072478783}
   m_Layer: 5
-  m_Name: BookSelectorContent
+  m_Name: StorySelectorContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14463,25 +14464,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0.000049249295}
   m_SizeDelta: {x: 0, y: 3000}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &2072478780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2072478778}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5afce2933b05bb4e8a344b1df5e53c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 545483619}
-  contentPanel: {fileID: 2072478779}
-  contentTransform: {fileID: 2072478779}
-  wiki: {fileID: 299360164}
-  itemHeight: 100
-  spacing: 10
-  itemCount: 0
 --- !u!114 &2072478781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14522,6 +14504,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 0
+--- !u!114 &2072478783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2072478778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4879cd2e4bf47f04a82f16e0d45a68c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemPrefab: {fileID: 545483619}
+  contentPanel: {fileID: 2072478779}
+  contentTransform: {fileID: 2072478779}
+  wiki: {fileID: 299360164}
+  itemHeight: 100
+  spacing: 10
+  itemCount: 0
 --- !u!1 &2084554977
 GameObject:
   m_ObjectHideFlags: 0
@@ -14534,7 +14535,7 @@ GameObject:
   - component: {fileID: 2084554980}
   - component: {fileID: 2084554979}
   m_Layer: 5
-  m_Name: "\u5178\u7C4D\u540D"
+  m_Name: "\u89D2\u8272\u540D\u5B57"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14579,7 +14580,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u4E5D\u7AE0\u7B97\u672F"
+  m_text: "\u53F6\u7FBD"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cda5dd51ddcfed542aa947c755b1567e, type: 2}
   m_sharedMaterial: {fileID: 6086598807018762395, guid: cda5dd51ddcfed542aa947c755b1567e, type: 2}

@@ -42,6 +42,9 @@ public class WikiScrollView : MonoBehaviour
                     case BookDisplayInfo bookInfo:
                         button.onClick.AddListener(() => wiki.UpdateBookDisplayInfo(bookInfo.id));
                         break;
+                    case CharacterInfo charInfo:
+                        button.onClick.AddListener(() => wiki.UpdateCharacterDisplayInfo(charInfo.id));
+                        break;
                     default:
                         throw new InvalidOperationException("Unsupported DisplayInfo type");
                 }

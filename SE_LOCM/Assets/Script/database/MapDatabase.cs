@@ -51,8 +51,30 @@ public static class EnemyNodeDatabase
 
 public static class MapNodeIdToStorySceneDatabase
 {
-    public static Dictionary<int, string> data = new()
+    public static Dictionary<int, string> nameData = new()
     {
+        {000,"序幕"},
+        {100,"第一章第一幕"},{101,"第一章第二幕"},{102,"第一章第三幕"},
+        {120,"第一章第四幕"},{132,"第一章第五幕"},{200,"第二章第一幕"},
+        {201,"第二章第二幕"},{209,"第二章第三幕"},{220,"第二章第四幕"},
+        {228,"第二章第五幕"},{300,"第三章第一幕"},{301,"第三章第二幕"},
+        {320,"第三章第三幕"},{332,"第三章第四幕"},{400,"第四章第一幕"},
+        {404,"第四章第二幕"},{415,"第四章第三幕"},{423,"第四章第四幕"},
+        {430,"第四章第五幕"},{500,"第五章第一幕"},{501,"第五章第二幕"},
+        {509,"第五章第三幕"},{524,"第五章第四幕"},{529,"第五章第五幕"},
+        {600,"第六章第一幕"},{606,"第六章第二幕"},{623,"第六章第三幕"},
+        {632,"第六章第四幕"},{700,"第七章第一幕"},{702,"第七章第二幕"},
+        {714,"第七章第三幕"},{730,"第七章第四幕"},{800,"第八章第一幕"},
+        {805,"第八章第二幕"},{820,"第八章第三幕"},{830,"第八章第四幕"},
+        {900,"第九章第一幕"},{902,"第九章第二幕"},{916,"第九章第三幕"},
+        {920,"第九章第四幕"},{932,"第九章第五幕"},
+        {199,"第一章终幕"},{299,"第二章终幕"},{399,"第三章终幕"},
+        {499,"第四章终幕"},{599,"第五章终幕"},{699,"第六章终幕"},
+        {799,"第七章终幕"},{899,"第八章终幕"},{999,"第九章终幕"},
+    };
+    public static Dictionary<int, string> pathData = new()
+    {
+        {000,"Scenes/story/s0-00"},
         {100,"Scenes/story/s1/s1-01"},{101,"Scenes/story/s1/s1-02"},{102,"Scenes/story/s1/s1-03"},
         {120,"Scenes/story/s1/s1-04"},{132,"Scenes/story/s1/s1-05"},{200,"Scenes/story/s2/s2-01"},
         {201,"Scenes/story/s2/s2-02"},{209,"Scenes/story/s2/s2-03"},{220,"Scenes/story/s2/s2-04"},
@@ -67,6 +89,9 @@ public static class MapNodeIdToStorySceneDatabase
         {805,"Scenes/story/s8/s8-02"},{820,"Scenes/story/s8/s8-03"},{830,"Scenes/story/s8/s8-04"},
         {900,"Scenes/story/s9/s9-01"},{902,"Scenes/story/s9/s9-02"},{916,"Scenes/story/s9/s9-03"},
         {920,"Scenes/story/s9/s9-04"},{932,"Scenes/story/s9/s9-05"},
+        {199,"Scenes/story/s1/s1-06"},{299,"Scenes/story/s2/s2-06"},{399,"Scenes/story/s3/s3-05"},
+        {499,"Scenes/story/s4/s4-06"},{599,"Scenes/story/s5/s5-06"},{699,"Scenes/story/s6/s6-05"},
+        {799,"Scenes/story/s7/s7-05"},{899,"Scenes/story/s8/s8-05"},{999,"Scenes/story/s9/s9-06"},
     };
 }
 

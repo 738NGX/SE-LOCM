@@ -49,6 +49,7 @@ public class ThemeButton : MonoBehaviour
                 case 10: mt.DisPopWindow(1); break;
                 case 11: mt.wiki.ChangeWikiStatus(WikiStatus.Card); break;
                 case 12: mt.wiki.ChangeWikiStatus(WikiStatus.Book); break;
+                case 13: mt.wiki.ChangeWikiStatus(WikiStatus.Story); break;
                 case 15: mt.sf.FadeOut("Scenes/theme"); break;
                 default: break;
             }

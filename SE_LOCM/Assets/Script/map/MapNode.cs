@@ -43,7 +43,7 @@ public class MapNode : MonoBehaviour
 
         if(type==MapNodeType.Story)
         {
-            if(!MapNodeIdToStorySceneDatabase.data.TryGetValue(id,out var target)) return;
+            if(!MapNodeIdToStorySceneDatabase.pathData.TryGetValue(id,out var target)) return;
             sf.FadeOut(target);
         }
         else if(type==MapNodeType.Unknown)
