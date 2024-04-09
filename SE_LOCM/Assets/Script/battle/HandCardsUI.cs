@@ -12,18 +12,24 @@ public class HandCardsUI : MonoBehaviour
     public HandCards hc;                // 手牌堆
     readonly float cardWidth = 300f;      // 手牌宽度
     readonly float spacing = 120f;         // 手牌堆叠尺寸
-    public Rect playArea;
+    public Rect PlayArea { get; private set; }
 
     /*
-    void OnGUI() 
+    void OnGUI()
     {
         // 测试playarea
-        Rect guiRect = new Rect(playArea.x, Screen.height - playArea.y - playArea.height, playArea.width, playArea.height);
+        Debug.Log(Screen.height);
+        Rect guiRect = new(0, 0, Screen.width, Screen.height * 0.7f);
         GUI.color = new Color(0, 0, 0, 0.5f);
         GUI.DrawTexture(guiRect, Texture2D.whiteTexture);
         GUI.color = Color.white;
     }
     */
+
+    private void Start()
+    {
+        PlayArea = new(0, 0, Screen.width, Screen.height * 0.7f);
+    }
 
     public void ReturnCards()
     {
@@ -171,7 +177,7 @@ public class HandCardsUI : MonoBehaviour
             if (!child.TryGetComponent<CardTemplate>(out var cardTemplateComponent)) continue;
             if (!cardTemplateComponent.inHand) continue;
             CardDisplayInfoUpdate(child.gameObject, hc.Cards[k]);
-            cardTemplateComponent.transform.DOMove(cardTemplateComponent.originalPosition,0.1f);
+            cardTemplateComponent.transform.DOMove(cardTemplateComponent.originalPosition, 0.1f);
             k++;
         }
     }

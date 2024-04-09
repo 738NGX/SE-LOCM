@@ -367,7 +367,7 @@ public class GameController : MonoBehaviour
     {
         GameObject shield = Instantiate(dc.shield, transform);
         shield.transform.SetParent(dc.higherCanvas.transform, false);
-        shield.transform.position = new Vector3(500f, 650f);
+        //shield.transform.position = new Vector3(500f, 650f);
         shield.SetActive(true);
         PlayAudio(sfxDefence);
         shield.transform.DOScale(0, 0.25f).From();
@@ -385,7 +385,7 @@ public class GameController : MonoBehaviour
     {
         GameObject arrow = Instantiate(dc.upArrow, transform);
         arrow.transform.SetParent(dc.higherCanvas.transform, false);
-        arrow.transform.position = new Vector3(500f, 650f);
+        //arrow.transform.position = new Vector3(500f, 650f);
         arrow.SetActive(true);
         arrow.transform.DOScale(0, 0.25f).From();
         yield return new WaitForSeconds(0.25f);
@@ -400,7 +400,7 @@ public class GameController : MonoBehaviour
     {
         GameObject arrow = Instantiate(dc.downArrow, transform);
         arrow.transform.SetParent(dc.higherCanvas.transform, false);
-        arrow.transform.position = new Vector3(500f, 650f);
+        //arrow.transform.position = new Vector3(500f, 650f);
         arrow.SetActive(true);
         arrow.transform.DOScale(0, 0.25f).From();
         yield return new WaitForSeconds(0.25f);

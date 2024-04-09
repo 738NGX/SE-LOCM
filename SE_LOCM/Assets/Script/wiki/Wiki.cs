@@ -18,9 +18,9 @@ public class Wiki : MonoBehaviour
     private void Start()
     {
         cardwiki.gameObject.SetActive(true);
-        cardwiki.position=new Vector3(0,-10);
+        cardwiki.position=new Vector3(0,-12);
         bookwiki.gameObject.SetActive(true);
-        bookwiki.position=new Vector3(0,-10);
+        bookwiki.position=new Vector3(0,-12);
     }
 
     public void ChangeWikiStatus(WikiStatus wikiStatus)
@@ -28,8 +28,8 @@ public class Wiki : MonoBehaviour
         switch(this.wikiStatus)
         {
             case WikiStatus.Menu: buttons.DOMove(new Vector3(buttons.position.x+5,buttons.position.y),1f); break;
-            case WikiStatus.Card: cardwiki.DOMove(new Vector3(0,-10),1f); break;
-            case WikiStatus.Book: bookwiki.DOMove(new Vector3(0,-10),1f); break;
+            case WikiStatus.Card: cardwiki.DOMove(new Vector3(0,-12),1f); break;
+            case WikiStatus.Book: bookwiki.DOMove(new Vector3(0,-12),1f); break;
         }
         this.wikiStatus=wikiStatus;
         switch(wikiStatus)

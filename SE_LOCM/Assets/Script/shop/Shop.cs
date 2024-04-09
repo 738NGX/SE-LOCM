@@ -127,7 +127,7 @@ public class Shop : MonoBehaviour
             
             GameObject obj=Instantiate(cardDisplay.gameObject,cardContent);
             obj.SetActive(true);
-            obj.GetComponent<CardDisplay>().UpdateCardDisplayInfo(card.id);
+            obj.GetComponent<CardDisplay>().UpdateCardDisplayInfo(card.id,card.isPlused);
             obj.GetComponent<CardDisplay>().displayIndex=i;
             obj.AddComponent<Button>().onClick.AddListener(() => ChangeSelectingCardIndex(currentIndex));
         }
