@@ -47,12 +47,12 @@ public class CardTemplate : MonoBehaviour
             Vector3 mousePosition = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.WorldToScreenPoint(transform.position).z));
             transform.position = mousePosition;
             Vector2 screenPosition = mainCamera.WorldToScreenPoint(mousePosition);
-            if (!inPlayArea && gc.hcui.playArea.Contains(screenPosition))
+            if (!inPlayArea && gc.hcui.PlayArea.Contains(screenPosition))
             {
                 inPlayArea = true;
                 transform.DOScale(originalScale * 0.5f, 0.1f);
             }
-            if (inPlayArea && !gc.hcui.playArea.Contains(screenPosition))
+            if (inPlayArea && !gc.hcui.PlayArea.Contains(screenPosition))
             {
                 inPlayArea = false;
                 transform.DOScale(originalScale * 1.1f, 0.1f);

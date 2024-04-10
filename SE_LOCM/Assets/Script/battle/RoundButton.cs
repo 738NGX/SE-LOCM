@@ -11,27 +11,27 @@ public class RoundButton : MonoBehaviour
     private bool waitClick;
     private void Start()
     {
-        originalScale=transform.localScale;
+        originalScale = transform.localScale;
     }
     private void OnMouseEnter()
     {
-        transform.DOScale(originalScale*1.1f,0.1f);
+        transform.DOScale(originalScale * 1.1f, 0.1f);
     }
     private void OnMouseExit()
     {
-        if(waitClick) waitClick=false;
-        transform.DOScale(originalScale,0.1f);
+        if (waitClick) waitClick = false;
+        transform.DOScale(originalScale, 0.1f);
     }
     private void OnMouseDown()
     {
-        waitClick=true;
+        waitClick = true;
     }
     private void OnMouseUp()
     {
-        if(waitClick&&gc.gameStage==GameStage.Play)
+        if (waitClick && !gc.dc.isOpeningPage && gc.gameStage == GameStage.Play)
         {
-            gc.gameStage=GameStage.Discard;
-            waitClick=false;
+            gc.gameStage = GameStage.Discard;
+            waitClick = false;
         }
     }
 }

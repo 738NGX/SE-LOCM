@@ -17,7 +17,7 @@ public class StorySceneLoader : MonoBehaviour
     {
         if(localSaveData.status==LocalSaveStatus.Gaming)
         {
-            sf.FadeOut("Scenes/story/s1-01");
+            sf.FadeOut("Scenes/story/s1/s1-01");
         }
         else
         {

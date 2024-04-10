@@ -12,6 +12,7 @@ public class SceneFader : MonoBehaviour
     private void Start()
     {
         FadeIn();
+        //Camera.main.orthographicSize = Camera.main.orthographicSize * 1920 / 1080 * Screen.height / Screen.width;
     }
 
     public void FadeIn()

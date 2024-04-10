@@ -131,7 +131,7 @@ public class LocalSaveData
 
 public static class LocalSaveDataManager
 {
-    [MenuItem("存档测试/初始存档")]
+    //[MenuItem("存档测试/初始存档")]
     public static void SaveInitLocalData()
     {
         LocalSaveData localSaveData=new()
@@ -150,34 +150,8 @@ public static class LocalSaveDataManager
             },
             booksData=new(){},
             cardsPool=new(){},
-            friends=new(){-1,-1,-1,-1,-1,-1,-1,-1,-1},
+            friends=new(){0,-1,-1,-1,-1,-1,-1,-1,-1},
             route=new(){100}
-        };
-        SaveLocalData(localSaveData);
-    }
-    [MenuItem("存档测试/自定义存档")]
-    public static void SaveCustomLocalData()
-    {
-        LocalSaveData localSaveData=new()
-        {
-            status=LocalSaveStatus.Break,
-            hp=70,
-            hpLimit=70,
-            initAp=0,
-            initDp=0,
-            initSp=3,
-            coins=114,
-            cardsData=new(){
-                (101,false),(101,false),(101,false),(101,false),(103,false),
-                (102,false),(102,false),(102,false),(102,false),(104,false),
-                (100,false),(105,false),(106,false),(107,false),(108,false),
-                (109,false),(110,false),(111,false),(112,false),(113,false),
-                (114,false),
-            },
-            booksData=new(){},
-            cardsPool=new(){100,103,104,105,106,107,108,109,110,111,112,113,114},
-            friends=new(){0,1,-1,-1,-1,-1,-1,-1,-1},
-            route=new(){100,101,102}
         };
         SaveLocalData(localSaveData);
     }
@@ -194,7 +168,7 @@ public static class LocalSaveDataManager
     public static LocalSaveData LoadLocalData()
     {
         string path=Application.persistentDataPath+"/users/localsave.json";
-        if(!File.Exists(path)) SaveCustomLocalData();
+        if(!File.Exists(path)) SaveInitLocalData();
         string jsonData=File.ReadAllText(path);
         return JsonConvert.DeserializeObject<LocalSaveData>(jsonData);
     }

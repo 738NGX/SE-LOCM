@@ -4,7 +4,7 @@ using UnityEditor;
 
 public static class ProblemDatabase
 {
-    private static readonly TextAsset csvData=AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Database/problemdb.csv");
+    private static readonly TextAsset csvData=Resources.Load<TextAsset>("Database/problemdb");
     public static Dictionary<int,ProblemInfo> data=new(){};
     static ProblemDatabase()
     {

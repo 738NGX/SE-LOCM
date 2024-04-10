@@ -7,7 +7,7 @@ using Unity.Mathematics;
 using System;
 
 // 准备阶段、摸牌阶段、出牌阶段、弃牌阶段、敌人阶段、结束阶段
-public enum GameStage { Pre, Draw, Play, Discard, Enemy, End, Victory, Defeat, Null, Reward };
+public enum GameStage { Pre, Draw, Play, Discard, Enemy, End, Victory, Defeat, Null, Reward, Quit };
 public class GameController : MonoBehaviour
 {
     public SceneFader sf;
@@ -76,14 +76,59 @@ public class GameController : MonoBehaviour
             enemyCount++;
             enemies[i].Init(enemyIds[i]);
         }
+        if (new List<int>() { 133, 231, 335, 431, 532, 633, 732, 833, 933 }.Contains(sc.localSaveData.route[^1]))
+        {
+            enemyCount++;
+            enemies[3].Init(sc.localSaveData.route[^1] / 100 * 100 + 10);
+            dc.enemyObjects[3].GetComponent<SpriteRenderer>().sprite = (sc.localSaveData.route[^1] / 100) switch
+            {
+                1 => Resources.Load<Sprite>("UI/battle/傲慢"),
+                2 => Resources.Load<Sprite>("UI/battle/暴食"),
+                3 => Resources.Load<Sprite>("UI/battle/嫉妒"),
+                4 => Resources.Load<Sprite>("UI/battle/懒惰"),
+                5 => Resources.Load<Sprite>("UI/battle/暴怒"),
+                6 => Resources.Load<Sprite>("UI/battle/贪婪"),
+                7 => Resources.Load<Sprite>("UI/battle/色欲"),
+                8 => Resources.Load<Sprite>("UI/battle/毁灭"),
+                9 => Resources.Load<Sprite>("UI/battle/生命"),
+                _ => Resources.Load<Sprite>("UI/battle/生命"),
+            };
+        }
+        else
+        {
+            dc.enemyObjects[3].SetActive(false);
+            enemies[3].gameObject.SetActive(false);
+        }
     }
     private void Update()
     {
         if (gameStage == GameStage.Null || dc.isAnimating) return;  // 系统动画时不进行操作
         if (gameStage == GameStage.Reward)
         {
+            var nextScene = sc.localSaveData.route[^1] switch
+            {
+                133 => "Scenes/story/s1/s1-07",
+                231 => "Scenes/story/s2/s2-06",
+                335 => "Scenes/story/s3/s3-05",
+                431 => "Scenes/story/s4/s4-06",
+                532 => "Scenes/story/s5/s5-06",
+                633 => "Scenes/story/s6/s6-05",
+                732 => "Scenes/story/s7/s7-05",
+                833 => "Scenes/story/s8/s8-05",
+                933 => "Scenes/story/s9/s9-06",
+                _ => "Scenes/reward",
+            };
+            if (nextScene != "Scenes/reward") player.hp = player.hpLimit;
             sc.SaveLocalData();
-            sf.FadeOut("Scenes/reward");
+            sf.FadeOut(nextScene);
+            gameStage = GameStage.Null;
+            return;
+        }
+        if (gameStage == GameStage.Quit)
+        {
+            sc.localSaveData.status = LocalSaveStatus.Defeat;
+            sc.SaveLocalData();
+            sf.FadeOut("Scenes/theme");
             gameStage = GameStage.Null;
             return;
         }
@@ -217,7 +262,7 @@ public class GameController : MonoBehaviour
             dc.playerObject.GetComponent<Animator>().SetBool("Die", true);
             PlayAudio(sfxDefeat);
             StartCoroutine(dc.AnimatePanelAndText(new() { "战", "斗", "失", "败" }, 2f));
-            gameStage = GameStage.Null;
+            gameStage = GameStage.Quit;
         }
     }
 
@@ -298,8 +343,9 @@ public class GameController : MonoBehaviour
     {
         PlayAudio(sfxAttack);
         dc.playerObject.GetComponent<Animator>().SetTrigger("Attack");
-        for (int i = 0; i < enemies.Count; i++)
+        for (int i = 0; i < 4; i++)
         {
+            if (!enemies[i].gameObject.activeInHierarchy) continue;
             enemies[i].ReduceHP(val);
             if (giveBuff is not null) enemies[i].AddBuff(giveBuff);
             dc.UpdateHPSlider(i);
@@ -321,7 +367,7 @@ public class GameController : MonoBehaviour
     {
         GameObject shield = Instantiate(dc.shield, transform);
         shield.transform.SetParent(dc.higherCanvas.transform, false);
-        shield.transform.position = new Vector3(500f, 650f);
+        //shield.transform.position = new Vector3(500f, 650f);
         shield.SetActive(true);
         PlayAudio(sfxDefence);
         shield.transform.DOScale(0, 0.25f).From();
@@ -339,7 +385,7 @@ public class GameController : MonoBehaviour
     {
         GameObject arrow = Instantiate(dc.upArrow, transform);
         arrow.transform.SetParent(dc.higherCanvas.transform, false);
-        arrow.transform.position = new Vector3(500f, 650f);
+        //arrow.transform.position = new Vector3(500f, 650f);
         arrow.SetActive(true);
         arrow.transform.DOScale(0, 0.25f).From();
         yield return new WaitForSeconds(0.25f);
@@ -354,7 +400,7 @@ public class GameController : MonoBehaviour
     {
         GameObject arrow = Instantiate(dc.downArrow, transform);
         arrow.transform.SetParent(dc.higherCanvas.transform, false);
-        arrow.transform.position = new Vector3(500f, 650f);
+        //arrow.transform.position = new Vector3(500f, 650f);
         arrow.SetActive(true);
         arrow.transform.DOScale(0, 0.25f).From();
         yield return new WaitForSeconds(0.25f);
@@ -908,7 +954,7 @@ public class GameController : MonoBehaviour
     private void Card522ExecuteAction(bool isPlused)
     {
         // 委粟术
-        DrawCards(10-handCards.Count);
+        DrawCards(10 - handCards.Count);
     }
     private void Card600ExecuteAction(bool isPlused)
     {
@@ -934,9 +980,9 @@ public class GameController : MonoBehaviour
     private void Card800ExecuteAction(bool isPlused)
     {
         // 方程术
-        player.sp+=2;
+        player.sp += 2;
         DrawCards(2);
-        player.AddBuff(new(118,1));
+        player.AddBuff(new(118, 1));
     }
     private void Card801ExecuteAction(bool isPlused)
     {

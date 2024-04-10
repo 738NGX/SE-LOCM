@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using UnityEngine;
 
 public class SavesController : MonoBehaviour
 {
     public GameController gc;
-    public static LocalSaveData localSaveData;
+    public LocalSaveData localSaveData;
 
     public void LoadLocalData()
     {
         localSaveData=LocalSaveDataManager.LoadLocalData();
-        gc.enemyIds=new EnemyNodeData(localSaveData.route[^1]).GetEnemyIds();
+        var node=new EnemyNodeData(localSaveData.route[^1]);
+        gc.enemyIds=node.GetEnemyIds();
+        gc.dc.bg.sprite=Resources.Load<Sprite>(node.Background);
         
         gc.player.Init(localSaveData);
         gc.drawPile.Init(localSaveData.cardsData);

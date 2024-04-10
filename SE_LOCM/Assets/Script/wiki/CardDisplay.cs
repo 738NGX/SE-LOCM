@@ -27,4 +27,9 @@ public class CardDisplay : MonoBehaviour
         idSet = true;
         HandCardsUI.CardDisplayInfoUpdate(gameObject, new Card(id, isPlused));
     }
+
+    public void UpgradeExchange()
+    {
+        UpdateCardDisplayInfo(id,!isPlused);
+    }
 }

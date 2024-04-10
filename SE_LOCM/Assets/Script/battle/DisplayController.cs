@@ -9,6 +9,7 @@ using UnityEditor;
 public class DisplayController : MonoBehaviour
 {
     public GameController gc;
+    public Image bg;
     public bool isAnimating=false;
     public bool isOpeningPage=false;
     public Transform hud;
@@ -62,19 +63,19 @@ public class DisplayController : MonoBehaviour
             
             EnemyIntend[i].sprite=gc.enemies[i].intendType switch
             {
-                IntendType.Attack => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_attack.png"),
-                IntendType.MAttack => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_attack.png"),
-                IntendType.HAttack => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_attack.png"),
-                IntendType.Defence => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_defence.png"),
-                IntendType.Buff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_buff.png"),
-                IntendType.Debuff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_debuff.png"),
-                IntendType.Recover => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_recover.png"),
-                IntendType.ADefence => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_adefence.png"),
-                IntendType.ABuff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_abuff.png"),
-                IntendType.ADebuff => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_adebuff.png"),
-                IntendType.ARecover => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_arecover.png"),
-                IntendType.Sleep => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_sleep.png"),
-                _ => AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/intend_unknown.png"),
+                IntendType.Attack => Resources.Load<Sprite>("UI/battle/intend_attack"),
+                IntendType.MAttack => Resources.Load<Sprite>("UI/battle/intend_attack"),
+                IntendType.HAttack => Resources.Load<Sprite>("UI/battle/intend_attack"),
+                IntendType.Defence => Resources.Load<Sprite>("UI/battle/intend_defence"),
+                IntendType.Buff => Resources.Load<Sprite>("UI/battle/intend_buff"),
+                IntendType.Debuff => Resources.Load<Sprite>("UI/battle/intend_debuff"),
+                IntendType.Recover => Resources.Load<Sprite>("UI/battle/intend_recover"),
+                IntendType.ADefence => Resources.Load<Sprite>("UI/battle/intend_adefence"),
+                IntendType.ABuff => Resources.Load<Sprite>("UI/battle/intend_abuff"),
+                IntendType.ADebuff => Resources.Load<Sprite>("UI/battle/intend_adebuff"),
+                IntendType.ARecover => Resources.Load<Sprite>("UI/battle/intend_arecover"),
+                IntendType.Sleep => Resources.Load<Sprite>("UI/battle/intend_sleep"),
+                _ => Resources.Load<Sprite>("UI/battle/intend_unknown"),
             };
             EnemyIntendVal[i].text=gc.enemies[i].intendValue<0?"":gc.enemies[i].intendValue.ToString()+(gc.enemies[i].intendTimes<2?"":"x"+gc.enemies[i].intendTimes);
         }

@@ -12,18 +12,24 @@ public class HandCardsUI : MonoBehaviour
     public HandCards hc;                // 手牌堆
     readonly float cardWidth = 300f;      // 手牌宽度
     readonly float spacing = 120f;         // 手牌堆叠尺寸
-    public Rect playArea;
+    public Rect PlayArea { get; private set; }
 
     /*
-    void OnGUI() 
+    void OnGUI()
     {
         // 测试playarea
-        Rect guiRect = new Rect(playArea.x, Screen.height - playArea.y - playArea.height, playArea.width, playArea.height);
+        Debug.Log(Screen.height);
+        Rect guiRect = new(0, 0, Screen.width, Screen.height * 0.7f);
         GUI.color = new Color(0, 0, 0, 0.5f);
         GUI.DrawTexture(guiRect, Texture2D.whiteTexture);
         GUI.color = Color.white;
     }
     */
+
+    private void Start()
+    {
+        PlayArea = new(0, 0, Screen.width, Screen.height * 0.7f);
+    }
 
     public void ReturnCards()
     {
@@ -49,15 +55,15 @@ public class HandCardsUI : MonoBehaviour
         Image image = obj.transform.Find("牌面").GetComponent<Image>();
         if (card.type == CardType.Attack)
         {
-            image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_attack.png");
+            image.sprite = Resources.Load<Sprite>("UI/battle/card_attack");
         }
         else if (card.type == CardType.Spell)
         {
-            image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_spell.png");
+            image.sprite = Resources.Load<Sprite>("UI/battle/card_spell");
         }
         else
         {
-            image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI/battle/card_equip.png");
+            image.sprite = Resources.Load<Sprite>("UI/battle/card_equip");
         }
         TextMeshProUGUI cardName = obj.transform.Find("牌名").GetComponent<TextMeshProUGUI>();
         cardName.text = card.displayInfo.name;
@@ -112,7 +118,7 @@ public class HandCardsUI : MonoBehaviour
             CardObject.transform.SetParent(transform, false);
             CardObject.SetActive(true);
 
-            cardTemplateComponent.originalScale = new Vector3(1, 1);
+            cardTemplateComponent.originalScale = new Vector3(0.9f, 0.9f);
 
             float cardPositionX = i * (cardWidth - spacing) - (hc.Cards.Count - 1) * (cardWidth - spacing) / 2;
             CardObject.transform.localPosition = new Vector3(cardPositionX, 0, 0);
@@ -171,7 +177,7 @@ public class HandCardsUI : MonoBehaviour
             if (!child.TryGetComponent<CardTemplate>(out var cardTemplateComponent)) continue;
             if (!cardTemplateComponent.inHand) continue;
             CardDisplayInfoUpdate(child.gameObject, hc.Cards[k]);
-            cardTemplateComponent.transform.DOMove(cardTemplateComponent.originalPosition,0.1f);
+            cardTemplateComponent.transform.DOMove(cardTemplateComponent.originalPosition, 0.1f);
             k++;
         }
     }
