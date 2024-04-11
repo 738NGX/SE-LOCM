@@ -19,7 +19,7 @@
 
 #### 2.1.1 功能概述
 
-本作品所实现的主要系统功能包括：地图系统、剧情系统、战斗系统、奖励系统、存档系统和典籍系统。系统框架如下图所示：
+本作品所实现的主要系统功能包括：地图系统、剧情系统、战斗系统、奖励系统、存档系统和图鉴系统。系统框架如下图所示：
 
 ![](./assets/功能概述.png)
 
@@ -154,7 +154,7 @@
 
 #### 2.3.3 开源平台及第三方工具
 
-本作品中主要使用的开源平台及第三方工具均为Unity插件/第三方库，来源为Github或Unity官方插件商店，均为免费资源。具体如下：
+本作品中主要使用的开源平台及第三方工具均为Unity插件/第三方库，来源为Github或Unity官方插件商铺，均为免费资源。具体如下：
 
 - [Demigiant/dotween(github.com)](https://github.com/Demigiant/dotween)：界面动画视效插件；
 - [snozbot/fungus(github.com)](https://github.com/snozbot/fungus)：剧情交互插件；
@@ -181,9 +181,418 @@
 
 
 
-### 3.4 程序系统设计与编程（参考非媒体类的系统结构设计与数据库结构设计）
+### 3.4 程序系统设计与编程
 
+#### 3.4.1 功能模块设计
 
+在多媒体系统整体设计章节提到本作品所实现的主要系统功能包括地图系统、剧情系统、战斗系统、奖励系统、存档系统和图鉴系统。接下来将逐个对系统的各个功能模块设计进行介绍：
+
+##### 地图系统、剧情系统、奖励系统与存档系统
+
+```mermaid
+classDiagram
+MonoBehaviour<|--SceneFader
+MonoBehaviour<|--StorySceneLoader
+MonoBehaviour<|--SkipStory
+MonoBehaviour<|--Map
+MonoBehaviour<|--MapNode
+MonoBehaviour<|--Reward
+MonoBehaviour<|--RewardItem
+MonoBehaviour<|--Problem
+MonoBehaviour<|--Break
+MonoBehaviour<|--Shop
+MonoBehaviour<|--ShopItem
+LocalSaveData<|..LocalSaveDataManager
+LocalSaveData<|..Map
+LocalSaveData<|..StorySceneLoader
+LocalSaveData<|..Problem
+LocalSaveData<|..Break
+LocalSaveData<|..Reward
+LocalSaveData<|..Shop
+StorySceneLoader<|..SkipStory
+SceneFader<|..Map
+SceneFader<|..MapNode
+SceneFader<|..StorySceneLoader
+SceneFader<|..Problem
+SceneFader<|..Break
+SceneFader<|..Reward
+SceneFader<|..Shop
+Map*--MapNode
+Reward<|..RewardItem
+Shop<|..ShopItem
+ShopItem<|--CardInShop
+ShopItem<|--DeleteCard
+ShopItem<|--RandomBook
+namespace 存档系统{ 
+    class LocalSaveData{
+        +LocalSaveStatus status
+        +int hp
+        +int hpLimit
+        +int initAp
+        +int initDp
+        +int initSp
+        +int coins
+        +List cardsData
+        +List<int> booksData
+        +List<int> cardsPool
+        +List<int> friends
+        +List<int> route
+        +int Level
+        +FriendsCoolDown()
+    }
+    class LocalSaveDataManager{
+        <<staic>>
+        +SaveInitLocalData()
+        +SaveLocalData()
+        +LoadLocalData()
+    }
+}
+class SceneFader{
+    +Image fadeImage
+    +float fadeDuration
+    +FadeIn()
+    +FadeOut()
+}
+namespace 剧情系统{
+    class StorySceneLoader{
+        +Prologue()
+        +Transmission()
+    }
+    class SkipStory{
+        -Button skipButton
+        +TryStopFungusMusic()
+    }
+}
+namespace 地图系统{
+    class Map{
+        +BackTheme()
+    }
+    class MapNode{
+        +int id
+        +MapNodeStauts status
+        -LoadScene()
+    }
+}
+namespace 奖励系统{
+    class Reward{
+        +RewardCoins()
+        +WaitRewardCard()
+        +ChangeSelectingRewardCard()
+        +RewardCard()
+        +SkipRewardCard()
+        +RewardBook()
+        +Continue()
+    }
+    class RewardItem{
+        +RewardType type
+        +AudioClip sfx
+        +RewardClicked()
+    }
+    class Problem{
+        +ProblemInfo UsingProblem
+        -List<int> problemIds
+        -List<int> seeds
+        +CallTrueAnswer()
+        +CallFalseAnswer()
+        +CallEndProblem()
+        -GetProblemDataId(int digit)
+    }
+    class Break{
+        +ExecuteBreak()
+        -Recover()
+        -CallCardUpgrade()
+        +ChangeSelectingCardIndex()
+        +UpgradeCard()
+        -AdjustCoins()
+        -TryGetRewardBook()
+        -AddAttack()
+        -AddDefence()
+        -WaitEndBreak()
+        +EndBreak()
+    }
+    class Shop{
+        +Purchase()
+        -GetItemById()
+        -ProcessPurchase()
+        -GetCardGoodsFromPool()
+        -CallCardDelete()
+        +ChangeSelectingCardIndex()
+        +DeleteCard()
+        +EndShop()
+    }
+    class ShopItem{
+        +int id
+        +Shop shop
+        +int Price
+        +bool IsPurchased
+        -int countRate
+    }
+    class CardInShop{
+        +CardDisplay cardDisplay
+        -bool inited
+        +int InitId
+        +GetCard()
+        +UpdateCardGoodInfo()
+    }
+    class RandomBook{
+        +GetBook()
+    }
+    class DeleteCard
+}
+```
+
+这四个系统之间的功能依赖关系较为紧密，因此绘制在同一张模块调用关系图中，如上图所示。（为了避免繁杂，只展示类型中一些主要的类型及方法。下同）下面是对这四个系统中模块的功能介绍：
+
+- `MonoBehavior`：Unity脚本的共同父类。（下同，不再重复介绍）
+- `SceneFader`：场景跳转模块。提供方法在加载场景时淡入；或跳转到目标场景时淡出。
+- `LocalSaveData`：游戏存档的储存模块，包含了游戏过程中玩家的各项属性、背包资源、解锁地图等数据；同时包含了一些便于对存档数据进行读写操作的方法。大部分系统依赖于该模块来交换和暂存数据。
+- `LocalSaveDataManager`：静态模块，提供方法从本地文件读取存档；或将存档保存为本地文件。
+- `StorySceneLoader`：提供方法在剧情结束后跳转到下一个目标场景。
+- `SkipStory`：提供方法直接快速跳过剧情。
+- `Map`：构成地图系统的主要模块。本身具有与存档系统交互的功能，同时提供方法使玩家返回主界面。
+- `MapNode`：与Map模块组合，记录每一个地图节点的相关数据，提供方法跳转到该节点对应的场景。
+- `Reward`：实现在宝箱节点或剧情/战斗结束之后向玩家提供各种奖励功能的模块，本身具有与存档系统交互的功能。
+- `RewardItem`：依赖于Reward模块，调用Reward中的对应方法向存档中写入奖励数据。
+- `Problem`：提供方法实现地图中未知节点中答题功能的模块，本身具有与存档系统交互的功能。
+- `Break`：提供方法实现地图中客栈节点的模块，本身具有与存档系统交互的功能。
+- `Shop`：提供方法实现地图中商铺节点的模块，本身具有与存档系统交互的功能。
+- `ShopItem`：依赖于Shop模块，调用Shop中的对应方法从存档中读取剩余银币进行交易，并将结果数据写入到存档中。
+- `CardInShop`：继承自ShopItem，主要实现从商铺中购买卡牌的功能。
+- `DeleteCard`：继承自ShopItem，主要实现从商铺中回收卡牌的功能。
+- `RandomBook`：继承自ShopItem，主要实现从商铺中抽选典籍的功能。
+
+##### 战斗系统
+
+```mermaid
+classDiagram
+MonoBehaviour<|--GameController
+class GameController{
+    +PlayAudio()
+    -EnemyInit()
+    +DrawCards()
+    +WaitingDiscards()
+    -SelectAttack()
+    +AllAttack()
+    +AddShield()
+    +UpArrow()
+    +DownArrow()
+    -AttackPointsAdjust()
+    -DefencePointsAdjust()
+    +CardExecuteAction()
+}
+MonoBehaviour<|--DisplayController
+GameController*--DisplayController
+class DisplayController{
+	+UpdateHPSlider()
+    +AnimatePanelAndText()
+    +CreatePanel()
+    -CreateText()
+}
+MonoBehaviour<|--SavesController
+GameController*--SavesController
+class SavesController{
+    +LocalSaveData localSaveData
+    +LoadLocalData()
+    +SaveLocalData()
+} 
+MonoBehaviour<|--Creature
+GameController<|..Creature
+class Creature{
+    +int hp
+    +int hpLimit
+    +int ap
+    +int dp
+    +int shield
+    +BuffContainer buffContainer
+    -int roundCount
+    +AddHP()
+    +ReduceHP()
+    +AddShield()
+    +AddBuff()
+}
+Creature*--BuffContainer
+class BuffContainer{
+    +List<Buff> buffs
+    +float AttackRate
+    +float DefenceRate
+    +int StealedCoins
+    +int ExtraCard
+    +int ExtraSP
+    +BuffContainerStatus
+    +AddBuff()
+    +CallAttack()
+    +CallDefence()
+    +CallPlayCard()
+    +EffectUpdate()
+    +RoundUpdate()
+    +Clarify()
+    -RemoveBuff()
+    -ExistBuff()
+    +GetLevel()
+}
+BuffContainer*--Buff
+class Buff{
+    +int id
+    +string name
+    +BuffType Type
+    +BuffStyle Style
+    +string Effect
+    +int Level
+    +Buff()
+    +ChangeLevel()
+    +DecreaseLevel()
+    +IncreaseLevel()
+}
+Creature<|--Enemy
+class Enemy{
+    +bool active
+    +int id
+    +int index
+    +IntendType intendType
+    +int intendValue
+    +int intendTimes
+    -EnemyInfo info
+    -Buff giveBuff
+    -Buff extraGiveBuff
+    -Creature buffReceiver
+    -bool waitSelect
+    +Init()
+    +Prepare()
+    -DecideGrowth()
+    -GetIntendType()
+    -GetIntendValue()
+    +IsIntendAttack()
+    +Execute()
+    -Attack()
+}
+Creature<|--Player
+class Player{
+    +int sp
+    +int spInit
+    +int coins
+    +List<int> books
+    +Init() 
+    +RecoverSp()
+    +AddSp()
+    +ReduceSp()
+    +AddCoins()
+    +ReduceCoins()
+    +ContainsBook()
+}
+MonoBehaviour<|--FriendItem
+GameController<|..FriendItem
+class FriendItem{
+    +int index
+    +int WaitRound
+    -DisplayInstruction()
+    -CallFriend()
+}
+MonoBehaviour<|--CardPile
+GameController<|..CardPile
+CardPile*--CardList
+class CardList{
+    -List<Card> Cards
+    +int Count
+    +int CountAttackCards
+    +int CountSpellCards
+    +int CountEquipCards
+    +AddCards()
+    +RemoveCards()
+    +ContainsCard()
+    +ClearCards()
+    +UpgradeAllCards()
+    +Top()
+}
+CardList*--Card
+class Card{
+    +int id
+    +int cost
+    +CardType type
+    +CardRarity rarity
+    +bool isPlused
+    +bool disposable
+    +int playTimes
+    +CardDisplayInfo displayInfo
+    +Play()
+    +Upgrade()
+    +Export()
+    -void ReadCardData()
+}
+CardPile<|--DrawPile
+class DrawPile{
+    +Init()
+    -Shuffle()
+    +DrawCards()
+}
+CardPile<|--HandCards
+class HandCards{
+    +AddExtraCards()
+    +DisposeNonAttackCards()
+}
+MonoBehaviour<|--HandCardsUI
+HandCards<|..HandCardsUI
+class HandCardsUI{
+    +GameObject cardTemplate
+    +GameObject cardTemplateLite
+    +HandCards hc
+    -float cardWidth
+    -float spacing    
+    +Rect PlayArea
+    +ReturnCards()
+    +CardDisplayInfoUpdate()
+    -CardDisplayIndexUpdate()
+    +DrawCards()
+    +DisposeNonAttackCards()
+    +RemoveCard()
+    +CardsDisplayInfoUpdate()
+    +CardDisplayUpdate()
+    +DisCards()
+}
+CardPile<|--DiscardPile
+class DiscardPile{
+    +List<Card> discards
+    +List<Card> disposedCards
+    +AddCardToDiscard()
+    +AddCardToDisposable()
+    +AddCardsToDiscard()
+    +AddCardsToDisposable()
+}
+MonoBehaviour<|--BookViewer
+GameController<|..BookViewer
+class BookViewer{
+    -Init()
+    +OpenPage()
+    +ClosePage()
+    +UpdateBookDisplayInfo()
+    +DisplayInstruction()
+}
+MonoBehaviour<|--CardPileViewer
+GameController<|..CardPileViewer
+class CardPileViewer{
+    +OpenPage()
+    +ClosePage()
+}
+MonoBehaviour<|--BezierArrows
+GameController<|..BezierArrows
+MonoBehaviour<|--RoundButton
+GameController<|..RoundButton
+MonoBehaviour<|--BuffInfo
+GameController<|..BuffInfo
+class BuffInfo{
+    +OpenPage()
+    +ClosePage()
+}
+```
+
+战斗系统的功能模块设计如上图所示，接下来对每个模块的功能进行介绍：
+
+- `GameController`：整个战斗系统的核心控制模块，战斗系统中的基本所有模块都依赖于该模块运行。负责整场战斗中所有底层数据以及游戏进程的控制。
+- `DisplayController`：与GameController组合，负责控制整个战斗系统中的用户界面显示内容。
+- `SavesController`：与GameController组合，负责控制战斗系统与存档系统之间的数据交互。
+- `Creature`：玩家和敌人的共同基类，包括了一些共同的属性（如血量、攻击力、防御力等）和方法。
+- `Enemy`：继承自Creature类的敌人模块，除了重载基类部分方法外主要增加了有关回合意图的控制功能。
+- `Player`：继承自Creature类的玩家模块，除了重载基类部分方法外主要增加了有关玩家算术值和典籍的相关属性和方法。
+- `BuffContainer`：与Creature组合。
 
 ### 3.5 美术、声效
 
